@@ -158,6 +158,25 @@ impl Parser<'_> {
             if params.stop_char != StopChar::Lf {
                 // Obtain default type and separator
                 let (default_type, multi_value) = entry.name.default_types();
+
+                // URI and CAL-ADDRESS values are not TEXT: `,` and `;` are
+                // literal characters (RFC 5545, Section 3.3.13), so such a
+                // value is never split, even on multi-valued properties.
+                let multi_value = match &default_type {
+                    ValueType::Ical(default_type)
+                        if matches!(
+                            params
+                                .data_type
+                                .as_ref()
+                                .map_or(Some(default_type), |v| v.iana()),
+                            Some(ICalendarValueType::Uri | ICalendarValueType::CalAddress)
+                        ) =>
+                    {
+                        ValueSeparator::None
+                    }
+                    _ => multi_value,
+                };
+
                 match multi_value {
                     ValueSeparator::None => {
                         self.expect_single_value();

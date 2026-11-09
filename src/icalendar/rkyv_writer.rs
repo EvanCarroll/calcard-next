@@ -107,7 +107,7 @@ impl ArchivedICalendarEntry {
                 }
                 ArchivedICalendarParameterValue::Uri(uri) => {
                     out.write_atomic("\"")?;
-                    write_uri(out, uri, false)?;
+                    write_uri(out, uri)?;
                     out.write_atomic("\"")?;
                 }
                 ArchivedICalendarParameterValue::Cutype(v) => {
@@ -182,7 +182,7 @@ impl ArchivedICalendarEntry {
                         continue;
                     }
                     ArchivedICalendarValue::Uri(v) => {
-                        write_uri(out, v, true)?;
+                        write_uri(out, v)?;
                         continue;
                     }
                     ArchivedICalendarValue::PartialDateTime(v) => {
@@ -236,10 +236,12 @@ impl ArchivedICalendarEntry {
     }
 }
 
+/// Writes a URI as it is (RFC 5545, Section 3.3.13): `,` and `;` are not escaped.
+/// A backslash or line break, which a valid URI never contains, is still escaped
+/// so the content line stays intact.
 pub(crate) fn write_uri<W: Write>(
     out: &mut FoldingWriter<'_, W>,
     value: &ArchivedUri,
-    escape: bool,
 ) -> std::fmt::Result {
     match value {
         ArchivedUri::Data(v) => {
@@ -247,14 +249,10 @@ pub(crate) fn write_uri<W: Write>(
             out.write_str("data:")?;
             out.write_str(media_type)?;
             out.write_str(";")?;
-            if escape {
-                out.write_atomic("base64\\,")?;
-            } else {
-                out.write_atomic("base64,")?;
-            }
+            out.write_atomic("base64,")?;
             write_bytes(out, &v.data)
         }
-        ArchivedUri::Location(v) => write_text(out, v, escape, escape),
+        ArchivedUri::Location(v) => write_text(out, v, false, false),
     }
 }
 
