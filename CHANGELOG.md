@@ -1,4 +1,4 @@
-Unreleased
+calcard-next 1.0.1 (2026-11-09)
 ================================
 - Fix: iCalendar URI and CAL-ADDRESS property values are no longer backslash-escaped as if they were TEXT (RFC 5545, Section 3.3.13). For example, `geo:1,2` and `data:text/plain;base64,...` were written as `geo:1\,2` and `data:text/plain;base64\,...`, which other clients read as part of the URI (stalwartlabs/calcard#27). Escaped values written by earlier versions still parse.
 - Fix: properties with `VALUE=URI` or `VALUE=CAL-ADDRESS`, including unknown `X-` properties such as `X-APPLE-STRUCTURED-LOCATION`, are parsed as a single value, so `;` and `,` inside the URI are kept instead of splitting it into several values.
