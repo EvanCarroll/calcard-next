@@ -32,6 +32,10 @@ jobs:
 
       - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          # "latest" resolves to wasm-pack 0.9.1, whose bundled wasm-opt cannot
+          # read the reference-types output of current Rust.
+          version: v0.15.1
 
       - uses: actions/cache@v4
         with:
