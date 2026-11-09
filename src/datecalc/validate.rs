@@ -9,12 +9,14 @@ use super::{
     rrule::{NWeekday, RRule},
 };
 use crate::{common::timezone::Tz, icalendar::ICalendarFrequency};
+use jiff::Zoned;
 use std::{borrow::Cow, ops::RangeInclusive};
 
 pub(crate) static MONTH_RANGE: RangeInclusive<u8> = 1..=12;
-pub(crate) static YEAR_RANGE: RangeInclusive<i32> = -10_000..=10_000;
+/// The range of years supported by `jiff` civil dates.
+pub(crate) static YEAR_RANGE: RangeInclusive<i32> = -9_999..=9_999;
 
-type Validator = &'static dyn Fn(&RRule, &chrono::DateTime<Tz>) -> Result<(), ValidationError>;
+type Validator = &'static dyn Fn(&RRule, &Zoned) -> Result<(), ValidationError>;
 
 const VALIDATION_PIPELINE: [Validator; 11] = [
     &validate_until,
@@ -38,7 +40,7 @@ const VALIDATION_PIPELINE: [Validator; 11] = [
 /// Validation will always be enforced and can not be disabled using feature flags.
 pub(crate) fn validate_rrule_forced(
     rrule: &RRule,
-    dt_start: &chrono::DateTime<Tz>,
+    dt_start: &Zoned,
 ) -> Result<(), ValidationError> {
     VALIDATION_PIPELINE
         .into_iter()
@@ -48,31 +50,27 @@ pub(crate) fn validate_rrule_forced(
 // Until:
 // - Timezones are correctly synced as specified in the RFC
 // - Value should be later than `dt_start`.
-fn validate_until(rrule: &RRule, dt_start: &chrono::DateTime<Tz>) -> Result<(), ValidationError> {
-    match rrule.until {
+fn validate_until(rrule: &RRule, dt_start: &Zoned) -> Result<(), ValidationError> {
+    match &rrule.until {
         Some(until) => {
-            match dt_start.timezone() {
+            let dt_start_tz = Tz::from(dt_start.time_zone());
+            let until_tz = Tz::from(until.time_zone());
+            match dt_start_tz {
                 Tz::Tz(_) => {
-                    if until.timezone() != Tz::UTC {
+                    if until_tz != Tz::UTC {
                         return Err(ValidationError::DtStartUntilMismatchTimezone {
-                            dt_start_tz: dt_start
-                                .timezone()
-                                .name()
-                                .unwrap_or(Cow::Borrowed("Floating")),
-                            until_tz: until.timezone().name().unwrap_or(Cow::Borrowed("Floating")),
+                            dt_start_tz: dt_start_tz.name().unwrap_or(Cow::Borrowed("Floating")),
+                            until_tz: until_tz.name().unwrap_or(Cow::Borrowed("Floating")),
                             expected: vec!["UTC".into()],
                         });
                     }
                 }
                 v => {
                     let allowed_timezones = vec![v, Tz::UTC];
-                    if !allowed_timezones.contains(&until.timezone()) {
+                    if !allowed_timezones.contains(&until_tz) {
                         return Err(ValidationError::DtStartUntilMismatchTimezone {
-                            dt_start_tz: dt_start
-                                .timezone()
-                                .name()
-                                .unwrap_or(Cow::Borrowed("Floating")),
-                            until_tz: until.timezone().name().unwrap_or(Cow::Borrowed("Floating")),
+                            dt_start_tz: dt_start_tz.name().unwrap_or(Cow::Borrowed("Floating")),
+                            until_tz: until_tz.name().unwrap_or(Cow::Borrowed("Floating")),
                             expected: allowed_timezones
                                 .into_iter()
                                 .map(|tz| tz.name().unwrap_or(Cow::Borrowed("Floating")))
@@ -82,10 +80,10 @@ fn validate_until(rrule: &RRule, dt_start: &chrono::DateTime<Tz>) -> Result<(), 
                 }
             }
 
-            if until < *dt_start {
+            if until < dt_start {
                 return Err(ValidationError::UntilBeforeStart {
-                    until: until.to_rfc3339(),
-                    dt_start: dt_start.to_rfc3339(),
+                    until: to_rfc3339(until),
+                    dt_start: to_rfc3339(dt_start),
                 });
             }
             Ok(())
@@ -96,10 +94,7 @@ fn validate_until(rrule: &RRule, dt_start: &chrono::DateTime<Tz>) -> Result<(), 
 
 // By_set_pos:
 // - Can be a value from -366 to -1 and 1 to 366 depending on `freq`
-fn validate_by_set_pos(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_set_pos(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     validate_not_equal_for_vec(&0, &rrule.by_set_pos, "BYSETPOS")?;
     let range = match rrule.freq {
         ICalendarFrequency::Yearly | ICalendarFrequency::Daily => -366..=366, // TODO is the daily range correct?
@@ -136,10 +131,7 @@ fn validate_by_set_pos(
 
 // By_month:
 // - Can be a value from 1 to 12.
-fn validate_by_month(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_month(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     for item in &rrule.by_month {
         if !MONTH_RANGE.contains(&item.month()) {
             return Err(ValidationError::InvalidFieldValueRange {
@@ -155,10 +147,7 @@ fn validate_by_month(
 
 // By_month_day:
 // - Can be a value from -31 to -1 and 1 to 31.
-fn validate_by_month_day(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_month_day(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     validate_not_equal_for_vec(&0, &rrule.by_month_day, "BYMONTHDAY")?;
     validate_range_for_vec(&(-31..=31), &rrule.by_month_day, "BYMONTHDAY")?;
     // - MUST NOT be specified when the FREQ rule part is set to WEEKLY.
@@ -177,10 +166,7 @@ fn validate_by_month_day(
 
 // By_year_day:
 // - Can be a value from -366 to -1 and 1 to 366.
-fn validate_by_year_day(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_year_day(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     validate_not_equal_for_vec(&0, &rrule.by_year_day, "BYYEARDAY")?;
     validate_range_for_vec(&(-366..=366), &rrule.by_year_day, "BYYEARDAY")?;
     // - MUST NOT be specified when the FREQ rule part is set to DAILY, WEEKLY, or MONTHLY.
@@ -201,10 +187,7 @@ fn validate_by_year_day(
 }
 // By_week_no:
 // - Can be a value from -53 to -1 and 1 to 53.
-fn validate_by_week_number(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_week_number(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     validate_not_equal_for_vec(&0, &rrule.by_week_no, "BYWEEKNO")?;
     validate_range_for_vec(&(-53..=53), &rrule.by_week_no, "BYWEEKNO")?;
     // - MUST NOT be used when the FREQ rule part is set to anything other than YEARLY.
@@ -224,10 +207,7 @@ fn validate_by_week_number(
 // By_weekday:
 // - Check if value for `Nth` is within range.
 //   The Range depends on frequency and can only happen weekly, so `/7` from normal count.
-fn validate_by_weekday(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_weekday(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     let range = match rrule.freq {
         ICalendarFrequency::Yearly | ICalendarFrequency::Daily => (-366 / 7)..=(366 / 7 + 1), // TODO is the daily range correct?
         ICalendarFrequency::Monthly => (-31 / 7)..=(31 / 7 + 1),
@@ -254,35 +234,23 @@ fn validate_by_weekday(
 
 // By_hour:
 // - Can be a value from 0 to 23.
-fn validate_by_hour(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_hour(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     validate_range_for_vec(&(0..=23), &rrule.by_hour, "BYHOUR")
 }
 
 // By_minute:
 // - Can be a value from 0 to 59.
-fn validate_by_minute(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_minute(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     validate_range_for_vec(&(0..=59), &rrule.by_minute, "BYMINUTE")
 }
 
 // By_second:
 // - Can be a value from 0 to 59.
-fn validate_by_second(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_second(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     validate_range_for_vec(&(0..=59), &rrule.by_second, "BYSECOND")
 }
 
-fn validate_by_easter(
-    rrule: &RRule,
-    _dt_start: &chrono::DateTime<Tz>,
-) -> Result<(), ValidationError> {
+fn validate_by_easter(rrule: &RRule, _dt_start: &Zoned) -> Result<(), ValidationError> {
     // By_easter:
     // - Can be a value from -366 to 366.
     //   Validated below
@@ -358,4 +326,9 @@ fn validate_not_equal_for_vec<T: PartialEq<T> + ToString>(
         });
     }
     Ok(())
+}
+
+/// Formats a date-time as RFC 3339 with a numeric UTC offset.
+fn to_rfc3339(dt: &Zoned) -> String {
+    dt.strftime("%Y-%m-%dT%H:%M:%S%:z").to_string()
 }

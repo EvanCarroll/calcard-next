@@ -52,7 +52,7 @@ fn is_filtered_by_weekday(ii: &IterInfo, current_day: usize, rrule: &RRule) -> b
         .iter()
         .filter_map(|by_weekday| match by_weekday {
             // Get only `Every` occurrences.
-            NWeekday::Every(weekday) => Some(weekday.num_days_from_monday()),
+            NWeekday::Every(weekday) => Some(weekday.to_monday_zero_offset() as u32),
             NWeekday::Nth(_, _) => None,
         })
         .peekable();

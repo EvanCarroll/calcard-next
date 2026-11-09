@@ -8,7 +8,7 @@ use crate::{
     common::{
         IanaParse, LinkRelation, PartialDateTime,
         parser::Boolean,
-        timezone::{Tz, TzTimestamp},
+        timezone::{Tz, TzTimestamp, ZonedTz},
     },
     icalendar::*,
     jscalendar::{
@@ -17,7 +17,7 @@ use crate::{
     },
     jscontact::export::params::ParamValue,
 };
-use chrono::{DateTime, NaiveDateTime, TimeZone};
+use jiff::{Timestamp, Zoned, civil, tz::TimeZone};
 use jmap_tools::{Key, Value};
 use std::str::FromStr;
 
@@ -288,7 +288,7 @@ impl ICalendarEntry {
      it (Section 3.2.19 of [RFC5545]).
     */
 
-    pub(super) fn with_date(mut self, dt: DateTime<Tz>, is_date: bool) -> Self {
+    pub(super) fn with_date(mut self, dt: Zoned, is_date: bool) -> Self {
         if !is_date {
             return self.with_date_time(dt);
         }
@@ -303,7 +303,7 @@ impl ICalendarEntry {
         self
     }
 
-    pub(super) fn with_dates(mut self, dts: Vec<DateTime<Tz>>, is_date: bool) -> Self {
+    pub(super) fn with_dates(mut self, dts: Vec<Zoned>, is_date: bool) -> Self {
         if !is_date {
             return self.with_date_times(dts);
         }
@@ -320,7 +320,7 @@ impl ICalendarEntry {
         self
     }
 
-    pub(super) fn with_date_time(mut self, dt: DateTime<Tz>) -> Self {
+    pub(super) fn with_date_time(mut self, dt: Zoned) -> Self {
         debug_assert!(self.values.is_empty());
 
         // A date-time value cannot have the PERIOD value type
@@ -346,7 +346,7 @@ impl ICalendarEntry {
         self
     }
 
-    pub(super) fn with_period(mut self, dt: DateTime<Tz>, duration: ICalendarDuration) -> Self {
+    pub(super) fn with_period(mut self, dt: Zoned, duration: ICalendarDuration) -> Self {
         self = self.with_date_time(dt);
 
         if let Some(ICalendarValue::PartialDateTime(start)) = self.values.pop() {
@@ -365,14 +365,14 @@ impl ICalendarEntry {
         self
     }
 
-    pub(super) fn with_date_times(mut self, dts: Vec<DateTime<Tz>>) -> Self {
+    pub(super) fn with_date_times(mut self, dts: Vec<Zoned>) -> Self {
         debug_assert!(self.values.is_empty());
 
         let tz_id = self.tz_id();
         let has_tz_id = tz_id.is_some();
         let entry_tz = tz_id
             .and_then(|id| Tz::from_str(id).ok())
-            .or_else(|| dts.first().map(|dt| dt.timezone()));
+            .or_else(|| dts.first().map(|dt| dt.tz()));
 
         for (pos, dt) in dts.into_iter().enumerate() {
             self.insert_date(dt, has_tz_id, pos == 0, entry_tz);
@@ -383,24 +383,24 @@ impl ICalendarEntry {
 
     fn insert_date(
         &mut self,
-        mut dt: DateTime<Tz>,
+        mut dt: Zoned,
         has_tz_id: bool,
         add_tz_id: bool,
         entry_tz: Option<Tz>,
     ) {
         if let Some(tz) = entry_tz
-            && tz != dt.timezone()
+            && tz != dt.tz()
         {
-            dt = dt.with_timezone(&tz);
+            dt = dt.with_tz(tz);
         }
 
-        let tz = dt.timezone();
+        let tz = dt.tz();
         if has_tz_id {
             self.values
                 .push(PartialDateTime::from_naive_timestamp(dt.to_naive_timestamp()).into());
         } else if tz.is_utc() {
             self.values
-                .push(PartialDateTime::from_utc_timestamp(dt.timestamp()).into());
+                .push(PartialDateTime::from_utc_timestamp(dt.timestamp().as_second()).into());
         } else {
             if add_tz_id && let Some(tz_name) = tz.name() {
                 self.params
@@ -413,13 +413,14 @@ impl ICalendarEntry {
 }
 
 impl JSCalendarDateTime {
-    pub fn to_utc_date_time(&self) -> Option<DateTime<Tz>> {
-        DateTime::from_timestamp(self.timestamp, 0)
-            .and_then(|local| Tz::UTC.from_local_datetime(&local.naive_utc()).single())
+    pub fn to_utc_date_time(&self) -> Option<Zoned> {
+        Tz::UTC.from_timestamp(self.timestamp)
     }
 
-    pub fn to_naive_date_time(&self) -> Option<NaiveDateTime> {
-        DateTime::from_timestamp(self.timestamp, 0).map(|local| local.naive_utc())
+    pub fn to_naive_date_time(&self) -> Option<civil::DateTime> {
+        Timestamp::from_second(self.timestamp)
+            .ok()
+            .map(|timestamp| TimeZone::UTC.to_datetime(timestamp))
     }
 }
 

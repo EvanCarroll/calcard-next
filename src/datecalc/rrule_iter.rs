@@ -9,18 +9,18 @@ use super::rrule::RRule;
 use super::utils::add_time_to_date;
 use super::{IterInfo, MAX_ITER_LOOP, build_pos_list, utils::date_from_ordinal};
 use super::{get_hour, get_minute, get_second};
-use crate::common::timezone::Tz;
 use crate::icalendar::ICalendarFrequency;
-use chrono::NaiveTime;
+use jiff::{Zoned, civil, tz::TimeZone};
 use std::collections::VecDeque;
 
 #[derive(Debug, Clone)]
 pub(crate) struct RRuleIter {
     pub(crate) counter_date: DateTimeIter,
     pub(crate) ii: IterInfo,
-    pub(crate) timeset: Vec<NaiveTime>,
-    pub(crate) dt_start: chrono::DateTime<Tz>,
-    pub(crate) buffer: VecDeque<chrono::DateTime<Tz>>,
+    pub(crate) timeset: Vec<civil::Time>,
+    pub(crate) dt_start: Zoned,
+    pub(crate) tz: TimeZone,
+    pub(crate) buffer: VecDeque<Zoned>,
     pub(crate) finished: bool,
     pub(crate) count: Option<u32>,
     pub(crate) limited: bool,
@@ -28,7 +28,7 @@ pub(crate) struct RRuleIter {
 }
 
 impl RRuleIter {
-    pub(crate) fn new(rrule: &RRule, dt_start: &chrono::DateTime<Tz>, limited: bool) -> Self {
+    pub(crate) fn new(rrule: &RRule, dt_start: &Zoned, limited: bool) -> Self {
         let ii = IterInfo::new(rrule, dt_start);
 
         let hour = get_hour(dt_start);
@@ -41,7 +41,8 @@ impl RRuleIter {
             counter_date: dt_start.into(),
             ii,
             timeset,
-            dt_start: *dt_start,
+            dt_start: dt_start.clone(),
+            tz: dt_start.time_zone().clone(),
             buffer: VecDeque::new(),
             finished: false,
             count,
@@ -53,19 +54,19 @@ impl RRuleIter {
     /// Attempts to add a date to the result. Returns `true` if we should
     /// terminate the iteration.
     fn try_add_datetime(
-        dt: chrono::DateTime<Tz>,
+        dt: Zoned,
         rrule: &RRule,
         count: &mut Option<u32>,
-        buffer: &mut VecDeque<chrono::DateTime<Tz>>,
-        dt_start: &chrono::DateTime<Tz>,
+        buffer: &mut VecDeque<Zoned>,
+        dt_start: &Zoned,
     ) -> bool {
-        if matches!(rrule.until, Some(until) if dt > until) {
+        if matches!(&rrule.until, Some(until) if &dt > until) {
             // We can break because `pos_list` is sorted and
             // all the next dates will only be larger than `until`.
             return true;
         }
 
-        if dt >= *dt_start {
+        if &dt >= dt_start {
             buffer.push_back(dt);
 
             if let Some(count) = count {
@@ -118,8 +119,6 @@ impl RRuleIter {
                 self.counter_date.day,
             );
 
-            let tz = self.dt_start.timezone();
-
             if rrule.by_set_pos.is_empty() {
                 // Loop over `start..end`
                 for current_day in &dayset {
@@ -127,9 +126,11 @@ impl RRuleIter {
                     let year_ordinal = self.ii.year_ordinal();
                     // Ordinal conversion uses UTC: if we apply local-TZ here, then
                     // just below we'll end up double-applying.
-                    let date = date_from_ordinal(year_ordinal + current_day);
+                    let Some(date) = date_from_ordinal(year_ordinal + current_day) else {
+                        continue;
+                    };
                     for time in &self.timeset {
-                        let Some(dt) = add_time_to_date(tz, date, *time) else {
+                        let Some(dt) = add_time_to_date(&self.tz, date, *time) else {
                             continue;
                         };
                         if Self::try_add_datetime(
@@ -149,7 +150,7 @@ impl RRuleIter {
                     &dayset,
                     &self.timeset,
                     self.ii.year_ordinal(),
-                    self.dt_start.timezone(),
+                    &self.tz,
                 );
                 for dt in pos_list {
                     if Self::try_add_datetime(
@@ -191,7 +192,7 @@ impl RRuleIter {
 }
 
 impl Iterator for RRuleIter {
-    type Item = chrono::DateTime<Tz>;
+    type Item = Zoned;
 
     fn next(&mut self) -> Option<Self::Item> {
         if !self.buffer.is_empty() {

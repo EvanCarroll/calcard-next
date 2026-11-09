@@ -5,22 +5,56 @@
  */
 
 use super::duration_from_midnight;
-use crate::common::timezone::Tz;
-use chrono::{NaiveDate, NaiveTime, Utc};
+use jiff::{Zoned, civil, tz::TimeZone};
 use std::ops;
 
-const DAY_SECS: i64 = 24 * 60 * 60;
-
+/// Returns the number of days between 1970-01-01 and the given proleptic
+/// Gregorian date (negative for earlier dates).
+///
+/// See <http://howardhinnant.github.io/date_algorithms.html#days_from_civil>.
 #[inline(always)]
-pub(crate) fn date_from_ordinal(ordinal: i64) -> NaiveDate {
-    chrono::DateTime::<Utc>::from_timestamp(ordinal * DAY_SECS, 0)
-        .unwrap_or_default()
-        .date_naive()
+pub(crate) fn days_since_unix_epoch(year: i32, month: u32, day: u32) -> i64 {
+    let year = i64::from(year) - i64::from(month <= 2);
+    let era = year.div_euclid(400);
+    let year_of_era = year - era * 400;
+    let month = i64::from(month);
+    let day_of_year =
+        (153 * (if month > 2 { month - 3 } else { month + 9 }) + 2) / 5 + i64::from(day) - 1;
+    let day_of_era = year_of_era * 365 + year_of_era / 4 - year_of_era / 100 + day_of_year;
+    era * 146_097 + day_of_era - 719_468
 }
 
+/// Returns the weekday of the given date, counting from Monday as `0`.
 #[inline(always)]
-pub(crate) fn days_since_unix_epoch(date: &chrono::DateTime<Utc>) -> i64 {
-    date.timestamp() / DAY_SECS
+pub(crate) fn weekday_from_monday(year: i32, month: u32, day: u32) -> u32 {
+    // 1970-01-01 was a Thursday.
+    (days_since_unix_epoch(year, month, day) + 3).rem_euclid(7) as u32
+}
+
+/// Returns the zero-based day of the year of the given date.
+#[inline(always)]
+pub(crate) fn ordinal0(year: i32, month: u32, day: u32) -> u32 {
+    (days_since_unix_epoch(year, month, day) - days_since_unix_epoch(year, 1, 1)) as u32
+}
+
+/// Converts a number of days since 1970-01-01 to a civil date, returning
+/// `None` when the date is outside the range supported by `jiff`.
+///
+/// See <http://howardhinnant.github.io/date_algorithms.html#civil_from_days>.
+#[inline(always)]
+pub(crate) fn date_from_ordinal(ordinal: i64) -> Option<civil::Date> {
+    let days = ordinal + 719_468;
+    let era = days.div_euclid(146_097);
+    let day_of_era = days - era * 146_097;
+    let year_of_era =
+        (day_of_era - day_of_era / 1460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
+    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
+    let mp = (5 * day_of_year + 2) / 153;
+    let day = day_of_year - (153 * mp + 2) / 5 + 1;
+    let month = if mp < 10 { mp + 3 } else { mp - 9 };
+    let year = year_of_era + era * 400 + i64::from(month <= 2);
+
+    civil::Date::new(i16::try_from(year).ok()?, month as i8, day as i8).ok()
 }
 
 #[inline(always)]
@@ -68,16 +102,19 @@ where
 }
 
 pub(crate) fn add_time_to_date(
-    tz: Tz,
-    date: NaiveDate,
-    time: NaiveTime,
-) -> Option<chrono::DateTime<Tz>> {
-    if let Some(dt) = date.and_time(time).and_local_timezone(tz).single() {
+    tz: &TimeZone,
+    date: civil::Date,
+    time: civil::Time,
+) -> Option<Zoned> {
+    if let Ok(dt) = tz.to_ambiguous_zoned(date.to_datetime(time)).unambiguous() {
         return Some(dt);
     }
     // If the day is a daylight saving time, the above code might not work, and we
     // can try to get a valid datetime by adding the `time` as a duration instead.
-    let dt = date.and_hms_opt(0, 0, 0)?.and_local_timezone(tz).single()?;
+    let dt = tz
+        .to_ambiguous_zoned(date.to_datetime(civil::Time::midnight()))
+        .unambiguous()
+        .ok()?;
     let day_duration = duration_from_midnight(time);
-    dt.checked_add_signed(day_duration)
+    dt.checked_add(day_duration).ok()
 }

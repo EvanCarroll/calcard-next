@@ -1,3 +1,25 @@
+calcard-next 1.0.0 (2026-11-09)
+================================
+- Forked from `calcard` 0.3.14 as `calcard-next`, now maintained by Evan Carroll. The upstream `calcard` repository was archived when its development moved into the Stalwart repository.
+- Crate renamed from `calcard` to `calcard-next`; the import path is now `calcard_next`.
+- Replaced `chrono` and `chrono-tz` with [`jiff`](https://docs.rs/jiff) 0.2, using its bundled IANA time zone database (2026e) so results do not depend on the host system. Breaking API changes:
+  - `chrono::DateTime<Tz>` is now `jiff::Zoned` everywhere (`CalendarExpand`, `CalendarEvent`, `to_date_time_with_tz()`, `ArchivedICalendarPeriod::time_range()`, `JSCalendarDateTime::to_utc_date_time()`, `RRule::validate()`). Floating times are `Zoned` values in jiff's `Etc/Unknown` zone, which behaves like UTC.
+  - `chrono::TimeDelta` is now `jiff::SignedDuration`, and `ICalendarDuration::to_time_delta()` is renamed to `to_duration()`.
+  - `DateTimeResult` now holds a `jiff::civil::DateTime` and an `Option<jiff::tz::Offset>`; `Tz::offset_from_utc_date()` takes a `jiff::civil::Date`; weekday conversions use `jiff::civil::Weekday`.
+  - `Tz::Fixed` wraps a `jiff::tz::Offset` and `Tz::Tz` wraps the new `IanaTz` type instead of `chrono_tz::Tz`. The numeric identifiers returned by `Tz::as_id()` are unchanged, so persisted values remain valid.
+  - `Tz` no longer implements chrono's `TimeZone` trait and `RRuleOffset` is removed. Use `Tz::to_time_zone()`, `Tz::from_local_datetime()`, `Tz::from_utc_datetime()`, `Tz::from_timestamp()`, `Tz::offset_at()`, the `ZonedTz` extension trait (`.tz()`, `.with_tz()`) and `Tz::from(&jiff::tz::TimeZone)`.
+  - With the `serde` feature, date-times serialize as RFC 9557 strings (for example `2024-03-08T09:30:00-05:00[America/New_York]`) and durations as ISO 8601 strings (`PT1H30M`).
+- Recurrence years are now limited to the range supported by `jiff` (-9999 to 9999).
+- Recurrence expansion output is unchanged. The only difference in generated `VTIMEZONE` components comes from the newer time zone data (`Africa/Casablanca`).
+- Removed the `mail-parser` and `mail-builder` dependencies:
+  - Base64, quoted-printable and percent-encoding are handled by [`encodify`](https://docs.rs/encodify). Quoted-printable values no longer keep trailing spaces at the end of the value (RFC 2045, section 6.7).
+  - Text in legacy character sets (the `CHARSET` parameter of vCard 2.1 and vCalendar 1.0 data) is decoded by [`encoding_rs`](https://docs.rs/encoding_rs) behind the new `legacy-charsets` feature, which is enabled by default. Size-sensitive builds such as WebAssembly can disable it with `default-features = false`; such text is then kept as text when its bytes are valid UTF-8 and stored as binary data otherwise, without being decoded as Latin-1 (including quoted-printable values without a `CHARSET` parameter). The original `CHARSET` label is not kept, as before.
+  - With `legacy-charsets`, decoding is done by `encoding_rs`. Every charset label recognized before is still recognized, and Shift_JIS, EUC-JP, ISO-2022-JP, GB2312/GBK/GB18030, Big5, EUC-KR, IBM866 and windows-874 text is now decoded instead of being garbled.
+  - JSCalendar date-times are parsed with `jiff` as RFC 3339/ISO 8601: a lowercase `t`, a space separator, omitted seconds and the basic format (`20200115T130000`) are now accepted; a UTC offset on a `UTCDateTime` property (such as `updated`) is now applied instead of ignored; impossible values (`2020-02-30T00:00:00`, hour 25), single-digit fields and trailing characters are now rejected and kept verbatim instead of being silently rolled over or misread.
+- Updated `hashify` to 0.3; the `wasm` feature no longer needs `hashify/force-32bit`, since hashify now selects 32-bit tables automatically.
+- Modules use the `foo.rs` + `foo/` layout instead of `mod.rs` files.
+- Added golden-output regression tests (`tests/golden.rs`, regenerate with `UPDATE_GOLDEN=1 cargo test --test golden`) and time zone tests.
+
 calcard 0.3.14
 ================================
 - Updated JSCalendar conversion rules according to `draft-ietf-calext-jscalendar-icalendar-26` and `draft-ietf-calext-jscalendarbis-20`.

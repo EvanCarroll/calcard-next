@@ -1,4 +1,4 @@
-import init, { version, convert } from "./pkg/calcard_web.js";
+import init, { version, convert } from "./pkg/calcard_next_web.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -115,7 +115,7 @@ async function boot() {
   try {
     await init();
     const v = version();
-    badge.textContent = `calcard v${v}`;
+    badge.textContent = `calcard-next v${v}`;
     badge.dataset.state = "ok";
     $("version").textContent = `v${v}`;
   } catch (err) {

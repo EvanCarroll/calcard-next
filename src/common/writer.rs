@@ -6,8 +6,6 @@
 
 use super::parser::Timestamp;
 use crate::vcard::Jscomp;
-use mail_builder::encoders::base64::*;
-use mail_parser::DateTime;
 use std::fmt::{Display, Write};
 
 pub(crate) const MAX_LINE_LEN: usize = 75;
@@ -116,58 +114,7 @@ pub(crate) fn write_text(
 }
 
 pub(crate) fn write_bytes(out: &mut impl Write, value: &[u8]) -> std::fmt::Result {
-    const CHARPAD: u8 = b'=';
-
-    let mut i = 0;
-    let mut t1;
-    let mut t2;
-    let mut t3;
-
-    if value.len() > 2 {
-        while i < value.len() - 2 {
-            t1 = value[i];
-            t2 = value[i + 1];
-            t3 = value[i + 2];
-
-            for ch in [
-                E0[t1 as usize],
-                E1[(((t1 & 0x03) << 4) | ((t2 >> 4) & 0x0F)) as usize],
-                E1[(((t2 & 0x0F) << 2) | ((t3 >> 6) & 0x03)) as usize],
-                E2[t3 as usize],
-            ] {
-                out.write_char(char::from(ch))?;
-            }
-
-            i += 3;
-        }
-    }
-
-    let remaining = value.len() - i;
-    if remaining > 0 {
-        t1 = value[i];
-        let chs = if remaining == 1 {
-            [
-                E0[t1 as usize],
-                E1[((t1 & 0x03) << 4) as usize],
-                CHARPAD,
-                CHARPAD,
-            ]
-        } else {
-            t2 = value[i + 1];
-            [
-                E0[t1 as usize],
-                E1[(((t1 & 0x03) << 4) | ((t2 >> 4) & 0x0F)) as usize],
-                E2[((t2 & 0x0F) << 2) as usize],
-                CHARPAD,
-            ]
-        };
-
-        for ch in chs.iter() {
-            out.write_char(char::from(*ch))?;
-        }
-    }
-
-    Ok(())
+    write!(out, "{}", encodify::base64::STANDARD.display(value))
 }
 
 pub(crate) trait NeedsQuotes {
@@ -245,11 +192,16 @@ pub(crate) fn write_jscomps(out: &mut impl LineWriter, values: &[Jscomp]) -> std
 
 impl Display for Timestamp {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let dt = DateTime::from_timestamp(self.0);
+        let dt = crate::common::utc_date_time(self.0);
         write!(
             f,
             "{:04}{:02}{:02}T{:02}{:02}{:02}Z",
-            dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second
+            dt.year(),
+            dt.month(),
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            dt.second()
         )
     }
 }

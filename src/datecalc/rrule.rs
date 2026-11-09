@@ -13,7 +13,7 @@ use crate::{
     common::timezone::Tz,
     icalendar::{ICalendarFrequency, ICalendarMonth, ICalendarRecurrenceRule},
 };
-use chrono::{DateTime, Datelike, Weekday};
+use jiff::{Zoned, civil::Weekday};
 use std::cmp::Ordering;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -21,7 +21,7 @@ pub struct RRule {
     pub(crate) freq: ICalendarFrequency,
     pub(crate) interval: u16,
     pub(crate) count: Option<u32>,
-    pub(crate) until: Option<DateTime<Tz>>,
+    pub(crate) until: Option<Zoned>,
     pub(crate) week_start: Weekday,
     pub(crate) by_set_pos: Vec<i32>,
     pub(crate) by_month: Vec<ICalendarMonth>,
@@ -47,7 +47,7 @@ impl RRule {
             } else {
                 None
             },
-            week_start: ical.wkst.map(Into::into).unwrap_or(Weekday::Mon),
+            week_start: ical.wkst.map(Into::into).unwrap_or(Weekday::Monday),
             by_set_pos: ical.bysetpos.clone(),
             by_month: ical.bymonth.clone(),
             by_month_day: ical
@@ -84,7 +84,7 @@ pub enum NWeekday {
 }
 
 impl RRule {
-    pub(crate) fn finalize_parsed_rrule(mut self, dt_start: &DateTime<Tz>) -> Self {
+    pub(crate) fn finalize_parsed_rrule(mut self, dt_start: &Zoned) -> Self {
         // Can only be set to true if the feature flag is set.
         let by_easter_is_some = self.by_easter.is_some();
 
@@ -168,7 +168,7 @@ impl RRule {
         self
     }
 
-    pub fn validate(self, dt_start: DateTime<Tz>) -> Result<RRule, RRuleError> {
+    pub fn validate(self, dt_start: Zoned) -> Result<RRule, RRuleError> {
         let rrule = self.finalize_parsed_rrule(&dt_start);
 
         // Validate required checks (defined by RFC 5545)
@@ -208,7 +208,7 @@ impl Default for RRule {
             interval: 1,
             count: None,
             until: None,
-            week_start: Weekday::Mon,
+            week_start: Weekday::Monday,
             by_set_pos: Vec::new(),
             by_month: Vec::new(),
             by_month_day: Vec::new(),
@@ -241,16 +241,16 @@ fn n_weekday_cmp(val1: NWeekday, val2: NWeekday) -> Ordering {
     match val1 {
         NWeekday::Every(wday) => match val2 {
             NWeekday::Every(other_wday) => wday
-                .num_days_from_monday()
-                .cmp(&other_wday.num_days_from_monday()),
+                .to_monday_zero_offset()
+                .cmp(&other_wday.to_monday_zero_offset()),
             NWeekday::Nth(_n, _other_wday) => Ordering::Less,
         },
         NWeekday::Nth(n, wday) => match val2 {
             NWeekday::Every(_) => Ordering::Greater,
             NWeekday::Nth(other_n, other_wday) => match n.cmp(&other_n) {
                 Ordering::Equal => wday
-                    .num_days_from_monday()
-                    .cmp(&other_wday.num_days_from_monday()),
+                    .to_monday_zero_offset()
+                    .cmp(&other_wday.to_monday_zero_offset()),
                 less_or_greater => less_or_greater,
             },
         },

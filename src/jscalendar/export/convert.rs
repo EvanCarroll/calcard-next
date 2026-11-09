@@ -7,7 +7,7 @@
 use crate::{
     common::{
         IanaParse, PartialDateTime,
-        timezone::{Tz, TzTimestamp},
+        timezone::{Tz, TzTimestamp, ZonedTz},
     },
     icalendar::*,
     jscalendar::{
@@ -16,7 +16,7 @@ use crate::{
     },
 };
 use ahash::{AHashMap, AHashSet};
-use chrono::{TimeDelta, TimeZone};
+use jiff::SignedDuration;
 use jmap_tools::{JsonPointer, JsonPointerHandler, JsonPointerItem, Key, Map, Value};
 use std::str::FromStr;
 
@@ -276,16 +276,12 @@ impl ICalendar {
         }
 
         // Add start date
-        if let Some(start) = start.and_then(|dt| {
-            state
-                .tz
-                .unwrap_or_default()
-                .from_local_datetime(&dt)
-                .single()
-        }) {
+        if let Some(start) =
+            start.and_then(|dt| state.tz.unwrap_or_default().from_local_datetime(dt))
+        {
             state.start = Some(start);
         }
-        if let Some(dt) = state.start {
+        if let Some(dt) = state.start.clone() {
             component.entries.push(
                 ICalendarEntry::new(ICalendarProperty::Dtstart)
                     .import_converted(&[JSCalendarProperty::Start], &mut root_conversions)
@@ -1384,11 +1380,7 @@ impl ICalendar {
                                 rrule.until = value
                                     .to_naive_date_time()
                                     .and_then(|dt| {
-                                        state
-                                            .tz
-                                            .unwrap_or_default()
-                                            .from_local_datetime(&dt)
-                                            .single()
+                                        state.tz.unwrap_or_default().from_local_datetime(dt)
                                     })
                                     .map(|dt| {
                                         if state.is_date {
@@ -1396,7 +1388,9 @@ impl ICalendar {
                                                 dt.to_naive_timestamp(),
                                             )
                                         } else {
-                                            PartialDateTime::from_utc_timestamp(dt.timestamp())
+                                            PartialDateTime::from_utc_timestamp(
+                                                dt.timestamp().as_second(),
+                                            )
                                         }
                                     });
                             }
@@ -1559,13 +1553,10 @@ impl ICalendar {
                     Value::Element(JSCalendarValue::DateTime(dt)),
                     ICalendarComponentType::VTodo,
                 ) => {
-                    if let Some(dt) = dt.to_naive_date_time().and_then(|dt| {
-                        state
-                            .tz
-                            .unwrap_or_default()
-                            .from_local_datetime(&dt)
-                            .single()
-                    }) {
+                    if let Some(dt) = dt
+                        .to_naive_date_time()
+                        .and_then(|dt| state.tz.unwrap_or_default().from_local_datetime(dt))
+                    {
                         component.entries.push(
                             ICalendarEntry::new(ICalendarProperty::Due)
                                 .import_converted(&[JSCalendarProperty::Due], &mut root_conversions)
@@ -1583,8 +1574,7 @@ impl ICalendar {
                             .tz_rid
                             .or(state.tz)
                             .unwrap_or_default()
-                            .from_local_datetime(&dt)
-                            .single()
+                            .from_local_datetime(dt)
                     }) {
                         add_recurrence_id = false;
                         component.entries.push(
@@ -1609,14 +1599,16 @@ impl ICalendar {
                     })
                     .import_converted(&[JSCalendarProperty::Duration], &mut root_conversions);
                     if entry.name == ICalendarProperty::Dtend {
-                        if let Some(end) = state.start.and_then(|start| {
-                            start.checked_add_signed(TimeDelta::seconds(duration.as_seconds()))
+                        if let Some(end) = state.start.as_ref().and_then(|start| {
+                            start
+                                .checked_add(SignedDuration::from_secs(duration.as_seconds()))
+                                .ok()
                         }) {
                             component.entries.push(
                                 entry.with_date(
                                     state
                                         .tz_end
-                                        .map(|tz_end| end.with_timezone(&tz_end))
+                                        .map(|tz_end| end.with_tz(tz_end))
                                         .unwrap_or(end),
                                     state.is_date,
                                 ),
@@ -1886,13 +1878,10 @@ impl ICalendar {
                 else {
                     continue;
                 };
-                let Some(dt) = jsdt.to_naive_date_time().and_then(|dt| {
-                    state
-                        .tz
-                        .unwrap_or_default()
-                        .from_local_datetime(&dt)
-                        .single()
-                }) else {
+                let Some(dt) = jsdt
+                    .to_naive_date_time()
+                    .and_then(|dt| state.tz.unwrap_or_default().from_local_datetime(dt))
+                else {
                     continue;
                 };
                 let has_converted_prop = converted_props

@@ -1,0 +1,458 @@
+== charset.ics
+{
+  "@type": "Group",
+  "entries": [
+    {
+      "@type": "Event",
+      "iCalendar": {
+        "name": "vevent",
+        "properties": [
+          [
+            "comment",
+            {},
+            "unknown",
+            "Müller ÿ€"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "Köln"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "1987;ENCODING=QUOTED-PRINTABLE:=53=65=F1=6F=72"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "€ price"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "Łódź"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "Żółć"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "Москва"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "Привет"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "Привет"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "Київ"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "Αθήνα"
+          ],
+          [
+            "comment",
+            {},
+            "unknown",
+            "שלום"
+          ]
+        ]
+      },
+      "start": "2024-01-01T10:00:00",
+      "timeZone": "Etc/UTC",
+      "uid": "c1",
+      "updated": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "iCalendar": {
+    "name": "vcalendar",
+    "properties": [
+      [
+        "version",
+        {},
+        "unknown",
+        "2.0"
+      ]
+    ]
+  },
+  "prodId": "-//calcard-next//golden//EN"
+}
+--
+BEGIN:VCALENDAR
+BEGIN:VEVENT
+COMMENT:1987\;ENCODING=QUOTED-PRINTABLE:=53=65=F1=6F=72
+COMMENT:Köln
+COMMENT:Müller ÿ€
+COMMENT:Łódź
+COMMENT:Żółć
+COMMENT:Αθήνα
+COMMENT:Київ
+COMMENT:Москва
+COMMENT:Привет
+COMMENT:Привет
+COMMENT:שלום
+COMMENT:€ price
+DTSTAMP:20240101T000000Z
+DTSTART:20240101T100000Z
+UID:c1
+END:VEVENT
+PRODID:-//calcard-next//golden//EN
+VERSION:2.0
+END:VCALENDAR
+
+== charset_21.vcf
+{
+  "@type": "Card",
+  "name": {
+    "full": "Charset Test"
+  },
+  "notes": {
+    "k1": {
+      "note": "Müller ÿ€"
+    },
+    "k10": {
+      "note": "Київ"
+    },
+    "k11": {
+      "note": "Αθήνα"
+    },
+    "k12": {
+      "note": "שלום"
+    },
+    "k13": {
+      "note": "İstanbul"
+    },
+    "k14": {
+      "note": "€uro"
+    },
+    "k15": {
+      "note": "Œuvre €"
+    },
+    "k16": {
+      "note": "ไทย"
+    },
+    "k17": {
+      "note": "Ça va ñ"
+    },
+    "k18": {
+      "note": "Привет"
+    },
+    "k19": {
+      "note": "café"
+    },
+    "k2": {
+      "note": "Köln"
+    },
+    "k20": {
+      "note": "日本語"
+    },
+    "k21": {
+      "note": "日本語"
+    },
+    "k22": {
+      "note": "日本語"
+    },
+    "k23": {
+      "note": "中文"
+    },
+    "k24": {
+      "note": "中文"
+    },
+    "k25": {
+      "note": "中文"
+    },
+    "k26": {
+      "note": "中文"
+    },
+    "k27": {
+      "note": "한국어"
+    },
+    "k28": {
+      "note": "한국어"
+    },
+    "k29": {
+      "note": "hi"
+    },
+    "k3": {
+      "note": "1987;ENCODING=QUOTED-PRINTABLE:=53=65=F1=6F=72"
+    },
+    "k30": {
+      "note": "hi"
+    },
+    "k31": {
+      "note": "hi"
+    },
+    "k32": {
+      "note": "hi"
+    },
+    "k33": {
+      "note": "Hi Mom -☺-!"
+    },
+    "k34": {
+      "note": "valid ✓"
+    },
+    "k35": {
+      "note": "data:;base64,aW52YWxpZCD//g=="
+    },
+    "k36": {
+      "note": "data:;base64,Ynl0ZXMg6Q=="
+    },
+    "k37": {
+      "note": "ไทย"
+    },
+    "k4": {
+      "note": "€ price"
+    },
+    "k5": {
+      "note": "Łódź"
+    },
+    "k6": {
+      "note": "Żółć"
+    },
+    "k7": {
+      "note": "Москва"
+    },
+    "k8": {
+      "note": "Привет"
+    },
+    "k9": {
+      "note": "Привет"
+    }
+  },
+  "vCard": {
+    "properties": [
+      [
+        "version",
+        {},
+        "unknown",
+        "2.1"
+      ]
+    ]
+  },
+  "version": "1.0"
+}
+--
+BEGIN:VCARD
+FN:Charset Test
+NOTE;CHARSET=UTF-8;PROP-ID=k10:Київ
+NOTE;CHARSET=UTF-8;PROP-ID=k11:Αθήνα
+NOTE;CHARSET=UTF-8;PROP-ID=k12:שלום
+NOTE;CHARSET=UTF-8;PROP-ID=k13:İstanbul
+NOTE;CHARSET=UTF-8;PROP-ID=k14:€uro
+NOTE;CHARSET=UTF-8;PROP-ID=k15:Œuvre €
+NOTE;CHARSET=UTF-8;PROP-ID=k16:ไทย
+NOTE;CHARSET=UTF-8;PROP-ID=k17:Ça va ñ
+NOTE;CHARSET=UTF-8;PROP-ID=k18:Привет
+NOTE;CHARSET=UTF-8;PROP-ID=k19:café
+NOTE;CHARSET=UTF-8;PROP-ID=k1:Müller ÿ€
+NOTE;CHARSET=UTF-8;PROP-ID=k20:日本語
+NOTE;CHARSET=UTF-8;PROP-ID=k21:日本語
+NOTE;CHARSET=UTF-8;PROP-ID=k22:日本語
+NOTE;CHARSET=UTF-8;PROP-ID=k23:中文
+NOTE;CHARSET=UTF-8;PROP-ID=k24:中文
+NOTE;CHARSET=UTF-8;PROP-ID=k25:中文
+NOTE;CHARSET=UTF-8;PROP-ID=k26:中文
+NOTE;CHARSET=UTF-8;PROP-ID=k27:한국어
+NOTE;CHARSET=UTF-8;PROP-ID=k28:한국어
+NOTE;CHARSET=UTF-8;PROP-ID=k2:Köln
+NOTE;CHARSET=UTF-8;PROP-ID=k33:Hi Mom -☺-!
+NOTE;CHARSET=UTF-8;PROP-ID=k34:valid ✓
+NOTE;CHARSET=UTF-8;PROP-ID=k37:ไทย
+NOTE;CHARSET=UTF-8;PROP-ID=k4:€ price
+NOTE;CHARSET=UTF-8;PROP-ID=k5:Łódź
+NOTE;CHARSET=UTF-8;PROP-ID=k6:Żółć
+NOTE;CHARSET=UTF-8;PROP-ID=k7:Москва
+NOTE;CHARSET=UTF-8;PROP-ID=k8:Привет
+NOTE;CHARSET=UTF-8;PROP-ID=k9:Привет
+NOTE;PROP-ID=k29:hi
+NOTE;PROP-ID=k30:hi
+NOTE;PROP-ID=k31:hi
+NOTE;PROP-ID=k32:hi
+NOTE;PROP-ID=k35:data:\;base64\,aW52YWxpZCD//g==
+NOTE;PROP-ID=k36:data:\;base64\,Ynl0ZXMg6Q==
+NOTE;PROP-ID=k3:1987\;ENCODING=QUOTED-PRINTABLE:=53=65=F1=6F=72
+VERSION:2.1
+END:VCARD
+
+== codec_attach.ics
+{
+  "@type": "Group",
+  "entries": [
+    {
+      "@type": "Event",
+      "description": "Line one\r\nLine two continued",
+      "iCalendar": {
+        "convertedProperties": {
+          "links/3bde6b50-1129-5342-9ede-a391f275b2aa/href": {
+            "name": "attach"
+          },
+          "links/53b54615-d3ab-59a6-b49b-6fa56f68aaf2/href": {
+            "name": "attach",
+            "parameters": {
+              "value": "BINARY"
+            }
+          },
+          "links/bd34beee-1a4d-5ee3-92cf-006875904e72/href": {
+            "name": "attach"
+          }
+        },
+        "name": "vevent"
+      },
+      "links": {
+        "3bde6b50-1129-5342-9ede-a391f275b2aa": {
+          "@type": "Link",
+          "href": "data:text/plain;base64,cGVyY2VudC1lbmNvZGVkIHRleHQ=",
+          "rel": "enclosure"
+        },
+        "53b54615-d3ab-59a6-b49b-6fa56f68aaf2": {
+          "@type": "Link",
+          "contentType": "application/octet-stream",
+          "href": "data:;base64,AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsc=",
+          "rel": "enclosure"
+        },
+        "bd34beee-1a4d-5ee3-92cf-006875904e72": {
+          "@type": "Link",
+          "contentType": "text/plain",
+          "href": "data:text/plain;base64,SGVsbG8gV29ybGQ=",
+          "rel": "enclosure"
+        }
+      },
+      "start": "2024-01-01T10:00:00",
+      "timeZone": "Etc/UTC",
+      "title": "Réunion d'équipe",
+      "uid": "a1",
+      "updated": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "iCalendar": {
+    "name": "vcalendar",
+    "properties": [
+      [
+        "version",
+        {},
+        "unknown",
+        "2.0"
+      ]
+    ]
+  },
+  "prodId": "-//calcard-next//golden//EN"
+}
+--
+BEGIN:VCALENDAR
+BEGIN:VEVENT
+ATTACH:data:text/plain;base64\,cGVyY2VudC1lbmNvZGVkIHRleHQ=
+ATTACH;ENCODING=BASE64;FMTTYPE=application/octet-stream;VALUE=BINARY:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsc=
+ATTACH;FMTTYPE=text/plain:data:text/plain;base64\,SGVsbG8gV29ybGQ=
+DESCRIPTION:Line one\r\nLine two continued
+DTSTAMP:20240101T000000Z
+DTSTART:20240101T100000Z
+SUMMARY:Réunion d'équipe
+UID:a1
+END:VEVENT
+PRODID:-//calcard-next//golden//EN
+VERSION:2.0
+END:VCALENDAR
+
+== codec_qp_21.vcf
+{
+  "@type": "Card",
+  "addresses": {
+    "k1": {
+      "components": [
+        {
+          "kind": "name",
+          "value": "Straße 5€"
+        },
+        {
+          "kind": "locality",
+          "value": "Köln"
+        },
+        {
+          "kind": "postcode",
+          "value": "50667"
+        },
+        {
+          "kind": "country",
+          "value": "Deutschland"
+        }
+      ],
+      "contexts": {
+        "private": true
+      }
+    }
+  },
+  "name": {
+    "components": [
+      {
+        "kind": "surname",
+        "value": "Müller"
+      },
+      {
+        "kind": "given",
+        "value": "Jürgen"
+      }
+    ],
+    "full": "Jürgen Müller"
+  },
+  "notes": {
+    "k1": {
+      "note": "Café au lait — soft line break and trailing space"
+    }
+  },
+  "organizations": {
+    "k1": {
+      "name": "日本"
+    }
+  },
+  "titles": {
+    "k1": {
+      "kind": "title",
+      "name": "bad escape =ZZ and == here"
+    }
+  },
+  "vCard": {
+    "properties": [
+      [
+        "version",
+        {},
+        "unknown",
+        "2.1"
+      ]
+    ]
+  },
+  "version": "1.0"
+}
+--
+BEGIN:VCARD
+ADR;CHARSET=UTF-8;JSCOMPS=";11;3;5;6";PROP-ID=k1;TYPE=HOME:;;Straße 5€;Köln;;50667;Deutschland;;;;;Straße 5€;;;;;;
+FN;CHARSET=UTF-8:Jürgen Müller
+N;CHARSET=UTF-8;JSCOMPS=";0;1":Müller;Jürgen;;;;;
+NOTE;CHARSET=UTF-8;PROP-ID=k1:Café au lait — soft line break and trailing space
+ORG;CHARSET=UTF-8;PROP-ID=k1:日本
+TITLE;PROP-ID=k1:bad escape =ZZ and == here
+VERSION:2.1
+END:VCARD
+

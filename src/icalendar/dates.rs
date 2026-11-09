@@ -14,14 +14,16 @@ use crate::{
     icalendar::ICalendarParameterName,
 };
 use ahash::{AHashMap, AHashSet};
-use chrono::{DateTime, TimeDelta, TimeZone, Timelike};
+use jiff::{SignedDuration, Zoned};
 use std::fmt::{Display, Formatter};
+
+const ONE_DAY: SignedDuration = SignedDuration::from_hours(24);
 
 #[allow(clippy::type_complexity)]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct CalendarExpand {
-    pub events: Vec<CalendarEvent<DateTime<Tz>, TimeOrDelta<DateTime<Tz>, TimeDelta>>>,
+    pub events: Vec<CalendarEvent<Zoned, TimeOrDelta<Zoned, SignedDuration>>>,
     pub errors: Vec<CalendarError>,
 }
 
@@ -34,10 +36,7 @@ pub struct CalendarEvent<S, E> {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(tag = "type", content = "data"))]
 pub enum TimeOrDelta<T, D> {
     Time(T),
@@ -74,7 +73,7 @@ impl ICalendar {
                     Ok(Some(event)) => {
                         if event.rrule.is_some() {
                             rrules.push((comp_id as u32, event));
-                        } else if let Some(rid) = event.rid {
+                        } else if let Some(rid) = event.rid.clone() {
                             overridden.insert((event.rrule_seq, rid), (comp_id as u32, event));
                         } else if let Some(cal_event) = event.event {
                             expand.events.push(cal_event);
@@ -94,9 +93,8 @@ impl ICalendar {
         // Expand recurrences
         for (mut comp_id, event) in rrules {
             let rrule = event.rrule.unwrap();
-            let floating_start = if let Some(floating_start) = Tz::Floating
-                .from_local_datetime(&event.dt_start.date_time)
-                .single()
+            let floating_start = if let Some(floating_start) =
+                Tz::Floating.from_local_datetime(event.dt_start.date_time)
             {
                 floating_start
             } else {
@@ -106,7 +104,7 @@ impl ICalendar {
                 });
                 continue;
             };
-            let rrule = match rrule.validate(floating_start) {
+            let rrule = match rrule.validate(floating_start.clone()) {
                 Ok(rrule) => rrule,
                 Err(err) => {
                     expand.errors.push(CalendarError {
@@ -133,24 +131,25 @@ impl ICalendar {
                 } else {
                     break;
                 }
-                let mut date = if date.timezone().is_floating() {
+                let mut date = if date.time_zone().is_unknown() {
                     event
                         .start_tz
-                        .from_local_datetime(&date.naive_local())
-                        .single()
+                        .from_local_datetime(date.datetime())
                         .unwrap_or(date)
                 } else {
                     date
                 };
-                if let Some(override_offset) = override_offset {
-                    date += override_offset;
+                if let Some(override_offset) = override_offset
+                    && let Ok(shifted) = date.checked_add(override_offset)
+                {
+                    date = shifted;
                 }
-                match overridden.remove(&(event.rrule_seq, date)) {
+                match overridden.remove(&(event.rrule_seq, date.clone())) {
                     Some((new_comp_id, overridden_event)) => {
                         if let Some(new_event) = overridden_event.event {
                             if overridden_event.rid_this_and_future {
                                 comp_id = new_comp_id;
-                                override_offset = Some(new_event.start - date);
+                                override_offset = Some(new_event.start.duration_since(&date));
                             }
                             expand.events.push(new_event);
                         }
@@ -180,15 +179,15 @@ impl ICalendar {
 
 #[allow(clippy::type_complexity)]
 struct CalendarEventBuilder<'x> {
-    event: Option<CalendarEvent<DateTime<Tz>, TimeOrDelta<DateTime<Tz>, TimeDelta>>>,
+    event: Option<CalendarEvent<Zoned, TimeOrDelta<Zoned, SignedDuration>>>,
     dt_start: DateTimeResult,
     dt_start_tzid: Option<&'x str>,
     start_tz: Tz,
-    default_duration: TimeDelta,
+    default_duration: SignedDuration,
     rrule: Option<RRule>,
     rrule_seq: i64,
     exdates: Vec<(Option<&'x str>, DateTimeResult)>,
-    rid: Option<DateTime<Tz>>,
+    rid: Option<Zoned>,
     rid_this_and_future: bool,
 }
 
@@ -198,7 +197,7 @@ impl ICalendarComponent {
         &self,
         comp_id: u32,
         tz_resolver: &TzResolver<&'_ str>,
-        events: &mut Vec<CalendarEvent<DateTime<Tz>, TimeOrDelta<DateTime<Tz>, TimeDelta>>>,
+        events: &mut Vec<CalendarEvent<Zoned, TimeOrDelta<Zoned, SignedDuration>>>,
     ) -> Result<Option<CalendarEventBuilder<'_>>, CalendarErrorType> {
         let mut dt_start = None;
         let mut dt_start_tzid = None;
@@ -282,7 +281,7 @@ impl ICalendarComponent {
                                 }
                                 ICalendarPeriod::Duration { start, duration } => {
                                     if let (Some(start), Some(duration)) =
-                                        (start.to_date_time(), duration.to_time_delta())
+                                        (start.to_date_time(), duration.to_duration())
                                     {
                                         rdates_periods.push((
                                             tz_id,
@@ -387,10 +386,10 @@ impl ICalendarComponent {
                     comp_id,
                 });
             }
-            dt_end.date_time - dt_start.date_time
+            dt_end.date_time.duration_since(dt_start.date_time)
         } else if let Some(duration) = duration {
             let duration = duration
-                .to_time_delta()
+                .to_duration()
                 .ok_or(CalendarErrorType::InvalidDuration)?;
             if rrule.is_none() {
                 event = Some(CalendarEvent {
@@ -422,7 +421,7 @@ impl ICalendarComponent {
                     comp_id,
                 });
             }
-            due.date_time - dt_start.date_time
+            due.date_time.duration_since(dt_start.date_time)
         } else {
             /*
                For cases where a "VEVENT" calendar component
@@ -438,13 +437,15 @@ impl ICalendarComponent {
                 // If the start has time, we use the same time for the end
                 dt_start
                     .date_time
-                    .with_hour(23)
-                    .and_then(|dt| dt.with_minute(59))
-                    .and_then(|dt| dt.with_second(59))
-                    .map(|dt| dt - dt_start.date_time)
-                    .unwrap_or_else(|| TimeDelta::days(1))
+                    .with()
+                    .hour(23)
+                    .minute(59)
+                    .second(59)
+                    .build()
+                    .map(|dt| dt.duration_since(dt_start.date_time))
+                    .unwrap_or(ONE_DAY)
             } else {
-                TimeDelta::days(1)
+                ONE_DAY
             };
             if rrule.is_none() {
                 event = Some(CalendarEvent {
@@ -502,8 +503,8 @@ impl ICalendarComponent {
     }
 }
 
-impl TimeOrDelta<DateTimeResult, TimeDelta> {
-    pub fn into_date_time_with_tz(self, tz: Tz) -> Option<TimeOrDelta<DateTime<Tz>, TimeDelta>> {
+impl TimeOrDelta<DateTimeResult, SignedDuration> {
+    pub fn into_date_time_with_tz(self, tz: Tz) -> Option<TimeOrDelta<Zoned, SignedDuration>> {
         match self {
             TimeOrDelta::Time(time) => time.to_date_time_with_tz(tz).map(TimeOrDelta::Time),
             TimeOrDelta::Delta(delta) => Some(TimeOrDelta::Delta(delta)),
@@ -511,25 +512,33 @@ impl TimeOrDelta<DateTimeResult, TimeDelta> {
     }
 }
 
-impl CalendarEvent<DateTime<Tz>, TimeOrDelta<DateTime<Tz>, TimeDelta>> {
+impl CalendarEvent<Zoned, TimeOrDelta<Zoned, SignedDuration>> {
     pub fn timestamps(&self) -> (i64, i64) {
-        let timestamp = self.start.timestamp();
-        let end_timestamp = match self.end {
-            TimeOrDelta::Time(time) => time.timestamp(),
-            TimeOrDelta::Delta(delta) => timestamp + delta.num_seconds(),
+        let timestamp = self.start.timestamp().as_second();
+        let end_timestamp = match &self.end {
+            TimeOrDelta::Time(time) => time.timestamp().as_second(),
+            TimeOrDelta::Delta(delta) => timestamp + delta.as_secs(),
         };
 
         (timestamp, end_timestamp)
     }
 
-    pub fn try_into_date_time(self) -> Option<CalendarEvent<DateTime<Tz>, DateTime<Tz>>> {
+    pub fn try_into_date_time(self) -> Option<CalendarEvent<Zoned, Zoned>> {
         match self.end {
             TimeOrDelta::Time(time) => Some(time),
-            TimeOrDelta::Delta(delta) => self
-                .start
-                .naive_local()
-                .checked_add_signed(delta)
-                .and_then(|end| end.and_local_timezone(self.start.timezone()).single()),
+            TimeOrDelta::Delta(delta) => {
+                self.start
+                    .datetime()
+                    .checked_add(delta)
+                    .ok()
+                    .and_then(|end| {
+                        self.start
+                            .time_zone()
+                            .to_ambiguous_zoned(end)
+                            .unambiguous()
+                            .ok()
+                    })
+            }
         }
         .map(|end| CalendarEvent {
             start: self.start,

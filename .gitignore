@@ -7,3 +7,4 @@ specs/
 *.md
 !CHANGELOG.md
 !README.md
+tests/golden/*.actual

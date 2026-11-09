@@ -7,15 +7,18 @@
 /*
     DISCLAIMER:
     This code has been written by an LLM and is inefficient and unidiomatic.
-    It was created to demonstrate calcard in the browser and is not intended for production use.
+    It was created to demonstrate calcard-next in the browser and is not intended for production use.
     It may contain errors, security vulnerabilities, or other issues that could cause harm if used
     in a real-world application. Use at your own risk.
 */
 
 use std::borrow::Cow;
 
-use calcard::{
-    Entry, Parser, common::timezone::Tz, icalendar::dates::CalendarExpand, jscalendar::JSCalendar,
+use calcard_next::{
+    Entry, Parser,
+    common::timezone::{Tz, ZonedTz},
+    icalendar::dates::CalendarExpand,
+    jscalendar::JSCalendar,
     jscontact::JSContact,
 };
 use serde::Serialize;
@@ -88,7 +91,9 @@ fn do_convert(input: &str) -> ConvertResult {
     let source = input.trim_start();
 
     if source.is_empty() {
-        return ConvertResult::error("Paste an iCalendar, JSCalendar, vCard or JSContact document.");
+        return ConvertResult::error(
+            "Paste an iCalendar, JSCalendar, vCard or JSContact document.",
+        );
     }
 
     if source.starts_with("BEGIN:") {
@@ -144,7 +149,9 @@ fn do_convert(input: &str) -> ConvertResult {
                     Some(icalendar) => {
                         let conversion = icalendar.to_string();
                         let occurrences = expand(icalendar.expand_dates(Tz::Floating, 25));
-                        let roundtrip = icalendar.into_jscalendar::<String, String>().to_string_pretty();
+                        let roundtrip = icalendar
+                            .into_jscalendar::<String, String>()
+                            .to_string_pretty();
                         ConvertResult::ok(
                             "JSCalendar",
                             "iCalendar",
@@ -170,7 +177,9 @@ fn do_convert(input: &str) -> ConvertResult {
                 Err(err) => ConvertResult::error(format!("Failed to parse JSContact: {err}")),
             }
         } else {
-            ConvertResult::error("This does not look like a valid JSCalendar or JSContact document.")
+            ConvertResult::error(
+                "This does not look like a valid JSCalendar or JSContact document.",
+            )
         }
     } else {
         ConvertResult::error(
@@ -191,21 +200,13 @@ fn expand(expanded: CalendarExpand) -> Vec<Occurrence> {
         .map(|event| Occurrence {
             from: format!(
                 "{} ({})",
-                event.start.format("%a %b %-d, %Y %-I:%M%P"),
-                event
-                    .start
-                    .timezone()
-                    .name()
-                    .unwrap_or(Cow::Borrowed("Floating"))
+                event.start.strftime("%a %b %-d, %Y %-I:%M%P"),
+                event.start.tz().name().unwrap_or(Cow::Borrowed("Floating"))
             ),
             to: format!(
                 "{} ({})",
-                event.end.format("%a %b %-d, %Y %-I:%M%P"),
-                event
-                    .end
-                    .timezone()
-                    .name()
-                    .unwrap_or(Cow::Borrowed("Floating"))
+                event.end.strftime("%a %b %-d, %Y %-I:%M%P"),
+                event.end.tz().name().unwrap_or(Cow::Borrowed("Floating"))
             ),
         })
         .collect()

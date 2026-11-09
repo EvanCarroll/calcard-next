@@ -12,7 +12,6 @@ use crate::{
         JSContactType, JSContactValue,
     },
 };
-use chrono::DateTime;
 use jmap_tools::{Element, JsonPointer, JsonPointerItem, Key, Value};
 use std::{borrow::Cow, str::FromStr};
 
@@ -48,8 +47,9 @@ where
                 }
                 JSContactProperty::Created
                 | JSContactProperty::Updated
-                | JSContactProperty::Utc => DateTime::parse_from_rfc3339(value)
-                    .map(|dt| JSContactValue::Timestamp(dt.timestamp()))
+                | JSContactProperty::Utc => value
+                    .parse::<jiff::Timestamp>()
+                    .map(|dt| JSContactValue::Timestamp(dt.as_second()))
                     .ok(),
                 JSContactProperty::Kind => JSContactKind::from_str(value)
                     .ok()
@@ -91,9 +91,7 @@ where
             JSContactValue::Level(v) => v.as_str().into(),
             JSContactValue::Relation(v) => v.as_str().into(),
             JSContactValue::PhoneticSystem(v) => v.as_str().into(),
-            JSContactValue::Timestamp(v) => mail_parser::DateTime::from_timestamp(*v)
-                .to_rfc3339()
-                .into(),
+            JSContactValue::Timestamp(v) => crate::common::utc_rfc3339(*v).into(),
             JSContactValue::CalendarScale(v) => v.as_js_str().into(),
             JSContactValue::Id(v) => v.to_string().into(),
             JSContactValue::BlobId(v) => v.to_string().into(),

@@ -1,16 +1,19 @@
+# calcard-next
+
+[![crates.io](https://img.shields.io/crates/v/calcard-next)](https://crates.io/crates/calcard-next)
+[![build](https://github.com/EvanCarroll/calcard-next/actions/workflows/rust.yml/badge.svg)](https://github.com/EvanCarroll/calcard-next/actions/workflows/rust.yml)
+[![docs.rs](https://img.shields.io/docsrs/calcard-next)](https://docs.rs/calcard-next)
+[![crates.io](https://img.shields.io/crates/l/calcard-next)](http://www.apache.org/licenses/LICENSE-2.0)
+
 > [!IMPORTANT]
-> **This repository is archived.** Development of the iCalendar, vCard, JSCalendar and JSContact library has moved to the [Stalwart repository](https://github.com/stalwartlabs/stalwart), where it is maintained as part of Stalwart. This repository is read-only and kept for reference; `calcard` 0.3.14 is the last version published from here.
+> **`calcard-next` is the official fork of [`calcard`](https://github.com/stalwartlabs/calcard).**
+> Stalwart Labs archived the standalone `calcard` repository after `calcard` 0.3.14, when development moved into the [Stalwart repository](https://github.com/stalwartlabs/stalwart). From here on, `calcard-next` is maintained by **Evan Carroll** as an independent, standalone crate. Please file issues and pull requests at [EvanCarroll/calcard-next](https://github.com/EvanCarroll/calcard-next).
+>
+> To migrate, replace `calcard` with `calcard-next` in your `Cargo.toml` and `use calcard::` with `use calcard_next::` in your code.
 
-# calcard
+`calcard-next` is a Rust crate for parsing, generating, and converting calendaring and contact data across multiple formats. It supports iCalendar and vCard, making it easy to work with `.ics` and `.vcf` files. It also fully handles JSCalendar and JSContact, the emerging standards commonly used in JMAP-based systems. In addition to parsing and serializing these formats, `calcard-next` provides seamless conversion between iCalendar and JSCalendar, as well as between vCard and JSContact, enabling smooth interoperability between traditional and modern calendaring and contact protocols.
 
-[![crates.io](https://img.shields.io/crates/v/calcard)](https://crates.io/crates/calcard)
-[![build](https://github.com/stalwartlabs/calcard/actions/workflows/rust.yml/badge.svg)](https://github.com/stalwartlabs/calcard/actions/workflows/rust.yml)
-[![docs.rs](https://img.shields.io/docsrs/calcard)](https://docs.rs/calcard)
-[![crates.io](https://img.shields.io/crates/l/calcard)](http://www.apache.org/licenses/LICENSE-2.0)
-
-`calcard` is a Rust crate for parsing, generating, and converting calendaring and contact data across multiple formats. It supports iCalendar and vCard, making it easy to work with `.ics` and `.vcf` files. It also fully handles JSCalendar and JSContact, the emerging standards commonly used in JMAP-based systems. In addition to parsing and serializing these formats, `calcard` provides seamless conversion between iCalendar and JSCalendar, as well as between vCard and JSContact, enabling smooth interoperability between traditional and modern calendaring and contact protocols.
-
-In general, this library abides by the Postel's law or [Robustness Principle](https://en.wikipedia.org/wiki/Robustness_principle) which states that an implementation must be conservative in its sending behavior and liberal in its receiving behavior. This means that `calcard` will make a best effort to parse non-conformant iCal/vCard/JSCalendar/JSContact objects as long as these do not deviate too much from the standard.
+In general, this library abides by the Postel's law or [Robustness Principle](https://en.wikipedia.org/wiki/Robustness_principle) which states that an implementation must be conservative in its sending behavior and liberal in its receiving behavior. This means that `calcard-next` will make a best effort to parse non-conformant iCal/vCard/JSCalendar/JSContact objects as long as these do not deviate too much from the standard.
 
 ## Features
 
@@ -24,6 +27,8 @@ Comprehensive features for working with calendaring and contact data, including:
 - Seamless conversion between **vCard** and **JSContact**.
 - **Recurrence rules expansion**: Accurately computes and enumerates repeating events based on iCalendar and JSCalendar RRULEs.
 - **IANA timezone detection**: Automatically resolves and handles custom and proprietary timezones.
+- **Legacy character sets**: Decodes vCard 2.1 and vCalendar 1.0 text declared in non-UTF-8 character sets (`CHARSET=Shift_JIS`, `ISO-8859-1`, ...). This is the default `legacy-charsets` feature; size-sensitive builds such as WebAssembly can disable it, in which case such text is preserved as binary data.
+- **Modern date-time types**: Built on [`jiff`](https://docs.rs/jiff), with a bundled IANA time zone database for reproducible results on every platform.
 
 ## Usage
 
@@ -216,12 +221,16 @@ Licensed under either of
 
 at your option.
 
-## Funding
+## Maintainer
 
-Part of the development of this library was funded through the [NGI Zero Core](https://nlnet.nl/NGI0/), a fund established by [NLnet](https://nlnet.nl/) with financial support from the European Commission's programme, under the aegis of DG Communications Networks, Content and Technology under grant agreement No 101092990.
+`calcard-next` is maintained by Evan Carroll.
 
-If you find this library useful you can help by [becoming a sponsor](https://opencollective.com/stalwart). Thank you!
+## History and Funding
+
+`calcard-next` is a fork of `calcard`, originally written by [Stalwart Labs](https://stalw.art).
 
 ## Copyright
 
-Copyright (C) 2020, Stalwart Labs LLC
+Copyright (C) 2026, Evan Carroll (`calcard-next` modifications)
+
+Copyright (C) 2020, Stalwart Labs LLC (original `calcard` code)

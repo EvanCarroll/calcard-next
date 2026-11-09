@@ -1,0 +1,1 @@
+{"@type": "Group", "uid": "g-date_only", "updated": "2020-01-15", "entries": [{"@type": "Event", "uid": "e-date_only", "updated": "2020-01-15", "created": "2020-01-15", "title": "date date_only", "start": "2020-01-15", "timeZone": "America/New_York", "duration": "PT1H", "recurrenceRules": [{"@type": "RecurrenceRule", "frequency": "daily", "until": "2020-01-15"}]}]}

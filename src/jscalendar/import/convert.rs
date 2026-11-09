@@ -5,14 +5,14 @@
  */
 
 use crate::{
-    common::timezone::{Tz, TzTimestamp},
+    common::timezone::{Tz, TzTimestamp, ZonedTz},
     icalendar::{timezone::TzResolver, *},
     jscalendar::{
         import::{ConversionOptions, EntryState, State, params::ExtractParams},
         *,
     },
 };
-use chrono::DateTime;
+use jiff::Zoned;
 use jmap_tools::{JsonPointer, Key, Map, Value};
 
 impl ICalendar {
@@ -183,7 +183,7 @@ impl ICalendar {
                             continue;
                         };
                         let recurrence_id = recurrence_id
-                            .with_timezone(&component.tz_start.unwrap_or_default())
+                            .with_tz(component.tz_start.unwrap_or_default())
                             .to_naive_timestamp();
                         let _ = recurrence.uid.take();
 
@@ -1064,11 +1064,10 @@ impl ICalendar {
                         entry.set_converted_to::<I>(&[JSCalendarProperty::Start::<I>
                             .to_string()
                             .as_ref()]);
-                        start_date = Some(dt);
-
                         if state.tz_start.is_none() {
-                            state.tz_start = dt.timezone().to_resolved();
+                            state.tz_start = dt.tz().to_resolved();
                         }
+                        start_date = Some(dt);
                     } else {
                         state.tz_start = None;
                         entry.entry.values = [ICalendarValue::PartialDateTime(value)]
@@ -1088,7 +1087,7 @@ impl ICalendar {
                         .to_date_time()
                         .and_then(|dt| dt.to_date_time_with_tz(state.tz_end.unwrap_or_default()))
                         .and_then(|dt| {
-                            let delta = dt.signed_duration_since(start_date.unwrap()).num_seconds();
+                            let delta = dt.duration_since(start_date.as_ref().unwrap()).as_secs();
                             (delta > 0).then_some((delta, dt))
                         })
                     {
@@ -1103,9 +1102,10 @@ impl ICalendar {
                         */
 
                         let days = if !value.has_time() {
-                            dt.date_naive()
-                                .signed_duration_since(start_date.unwrap().date_naive())
-                                .num_days()
+                            dt.date()
+                                .duration_since(start_date.as_ref().unwrap().date())
+                                .as_secs()
+                                / 86_400
                         } else {
                             0
                         };
@@ -1142,7 +1142,7 @@ impl ICalendar {
                         entry.set_map_name();
 
                         if state.tz_end.is_none() {
-                            state.tz_end = dt.timezone().to_resolved();
+                            state.tz_end = dt.tz().to_resolved();
                         }
                         if state.tz_start.is_none() {
                             state.tz_start = state.tz_end;
@@ -1179,13 +1179,13 @@ impl ICalendar {
 
                         state.has_dates = true;
                         if state.tz_start.is_none() {
-                            state.tz_start = dt.timezone().to_resolved();
+                            state.tz_start = dt.tz().to_resolved();
                         }
 
                         state.entries.insert(
                             Key::Property(JSCalendarProperty::Due),
                             Value::Element(JSCalendarValue::DateTime(JSCalendarDateTime::new(
-                                dt.with_timezone(&state.tz_start.unwrap_or_default())
+                                dt.with_tz(state.tz_start.unwrap_or_default())
                                     .to_naive_timestamp(),
                                 true,
                             ))),
@@ -1266,6 +1266,7 @@ impl ICalendar {
                         .and_then(|dt| dt.to_date_time_with_tz(rid_tz.unwrap_or_default()))
                     {
                         state.has_dates = true;
+                        let dt_tz = dt.tz();
                         state.recurrence_id = Some(dt);
 
                         // Remove IANA TZ references
@@ -1281,7 +1282,7 @@ impl ICalendar {
                             .as_ref()]);
 
                         if state.tz_start.is_none() {
-                            state.tz_start = dt.timezone().to_resolved();
+                            state.tz_start = dt_tz.to_resolved();
                         }
                     } else {
                         entry.entry.values = [ICalendarValue::PartialDateTime(value)]
@@ -1326,7 +1327,7 @@ impl ICalendar {
                     {
                         state.has_dates = true;
                         if state.tz_start.is_none() {
-                            state.tz_start = start.timezone().to_resolved();
+                            state.tz_start = start.tz().to_resolved();
                         }
 
                         let tz_start = state.tz_start.unwrap_or_default();
@@ -1339,7 +1340,7 @@ impl ICalendar {
                                 period_to_date_time(&entry.entry.values[pos], tz).unwrap();
                             let key = Key::Property(JSCalendarProperty::DateTime(
                                 JSCalendarDateTime::new(
-                                    dt.with_timezone(&tz_start).to_naive_timestamp(),
+                                    dt.with_tz(tz_start).to_naive_timestamp(),
                                     true,
                                 ),
                             ));
@@ -1395,7 +1396,7 @@ impl ICalendar {
                         }
 
                         if state.tz_start.is_none() {
-                            state.tz_start = dt.timezone().to_resolved();
+                            state.tz_start = dt.tz().to_resolved();
                         }
 
                         let overrides = state
@@ -1426,7 +1427,7 @@ impl ICalendar {
                         {
                             let key = Key::Property(JSCalendarProperty::DateTime(
                                 JSCalendarDateTime::new(
-                                    dt.with_timezone(&state.tz_start.unwrap_or_default())
+                                    dt.with_tz(state.tz_start.unwrap_or_default())
                                         .to_naive_timestamp(),
                                     true,
                                 ),
@@ -1474,7 +1475,7 @@ impl ICalendar {
                                 .map(|dt| {
                                     Value::Element(JSCalendarValue::DateTime(
                                         JSCalendarDateTime::new(
-                                            dt.with_timezone(&state.tz_start.unwrap_or_default())
+                                            dt.with_tz(state.tz_start.unwrap_or_default())
                                                 .to_naive_timestamp(),
                                             true,
                                         ),
@@ -2026,19 +2027,15 @@ impl ICalendar {
     }
 }
 
-fn period_to_date_time(
-    value: &ICalendarValue,
-    tz: Tz,
-) -> Option<(DateTime<Tz>, ICalendarDuration)> {
+fn period_to_date_time(value: &ICalendarValue, tz: Tz) -> Option<(Zoned, ICalendarDuration)> {
     match value {
         ICalendarValue::Period(ICalendarPeriod::Range { start, end }) => {
             let start = start.to_date_time()?.to_date_time_with_tz(tz)?;
             let end = end.to_date_time()?.to_date_time_with_tz(tz)?;
 
-            Some((
-                start,
-                ICalendarDuration::from_seconds(end.signed_duration_since(start).num_seconds()),
-            ))
+            let duration = ICalendarDuration::from_seconds(end.duration_since(&start).as_secs());
+
+            Some((start, duration))
         }
         ICalendarValue::Period(ICalendarPeriod::Duration { start, duration }) => Some((
             start.to_date_time()?.to_date_time_with_tz(tz)?,

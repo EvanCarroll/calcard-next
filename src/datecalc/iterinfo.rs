@@ -8,10 +8,10 @@ use super::counter_date::DateTimeIter;
 use super::easter::easter;
 use super::get_month;
 use super::rrule::{NWeekday, RRule};
+use super::utils::ordinal0;
 use super::{monthinfo::MonthInfo, yearinfo::YearInfo};
-use crate::common::timezone::Tz;
 use crate::icalendar::ICalendarFrequency;
-use chrono::{Datelike, NaiveTime, TimeZone};
+use jiff::{Zoned, civil};
 
 #[derive(Debug, Clone)]
 pub(crate) struct IterInfo {
@@ -22,8 +22,8 @@ pub(crate) struct IterInfo {
 }
 
 impl IterInfo {
-    pub fn new(rrule: &RRule, dt_start: &chrono::DateTime<Tz>) -> Self {
-        let year = dt_start.year();
+    pub fn new(rrule: &RRule, dt_start: &Zoned) -> Self {
+        let year = i32::from(dt_start.year());
         let month = get_month(dt_start);
 
         let year_info = YearInfo::new(year, rrule);
@@ -128,14 +128,11 @@ impl IterInfo {
     pub fn weekday_set(&self, year: i32, month: u32, day: u32) -> Vec<usize> {
         let set_len = usize::from(self.year_len() + 7);
 
-        let mut date_ordinal = chrono::Utc
-            .with_ymd_and_hms(year, month, day, 0, 0, 0)
-            .unwrap()
-            .ordinal0() as usize;
+        let mut date_ordinal = ordinal0(year, month, day) as usize;
 
         let mut set = vec![];
 
-        let week_start_num_days_from_monday = self.rrule.week_start.num_days_from_monday();
+        let week_start_num_days_from_monday = self.rrule.week_start.to_monday_zero_offset() as u32;
 
         for _ in 0..7 {
             if date_ordinal >= set_len {
@@ -152,15 +149,10 @@ impl IterInfo {
     }
 
     pub fn day_dayset(year: i32, month: u32, day: u32) -> Vec<usize> {
-        let date_ordinal = chrono::Utc
-            .with_ymd_and_hms(year, month, day, 0, 0, 0)
-            .unwrap()
-            .ordinal0();
-
-        vec![date_ordinal as usize]
+        vec![ordinal0(year, month, day) as usize]
     }
 
-    pub fn hour_timeset(&self, hour: u8) -> Vec<NaiveTime> {
+    pub fn hour_timeset(&self, hour: u8) -> Vec<civil::Time> {
         self.rrule
             .by_minute
             .iter()
@@ -168,20 +160,16 @@ impl IterInfo {
             .collect()
     }
 
-    pub fn min_timeset(&self, hour: u8, minute: u8) -> Vec<NaiveTime> {
+    pub fn min_timeset(&self, hour: u8, minute: u8) -> Vec<civil::Time> {
         self.rrule
             .by_second
             .iter()
-            .filter_map(|second| {
-                NaiveTime::from_hms_opt(u32::from(hour), u32::from(minute), u32::from(*second))
-            })
+            .filter_map(|second| time_from_hms(hour, minute, *second))
             .collect()
     }
 
-    pub fn sec_timeset(hour: u8, minute: u8, second: u8) -> Vec<NaiveTime> {
-        if let Some(time) =
-            NaiveTime::from_hms_opt(u32::from(hour), u32::from(minute), u32::from(second))
-        {
+    pub fn sec_timeset(hour: u8, minute: u8, second: u8) -> Vec<civil::Time> {
+        if let Some(time) = time_from_hms(hour, minute, second) {
             vec![time]
         } else {
             vec![]
@@ -214,7 +202,7 @@ impl IterInfo {
     /// This is usually called after calling the `increment_counter_date` where we know
     /// that we get a valid `DateTime` back, and there is no need to do any duplicate
     /// validation.
-    pub fn get_timeset_unchecked(&self, hour: u8, minute: u8, second: u8) -> Vec<NaiveTime> {
+    pub fn get_timeset_unchecked(&self, hour: u8, minute: u8, second: u8) -> Vec<civil::Time> {
         match self.rrule.freq {
             ICalendarFrequency::Hourly => self.hour_timeset(hour),
             ICalendarFrequency::Minutely => self.min_timeset(hour, minute),
@@ -229,7 +217,7 @@ impl IterInfo {
     ///
     /// An empty set is returned if the hour, minute and second aren't valid,
     /// according to the `RRule`.
-    pub fn get_timeset(&self, hour: u8, minute: u8, second: u8) -> Vec<NaiveTime> {
+    pub fn get_timeset(&self, hour: u8, minute: u8, second: u8) -> Vec<civil::Time> {
         match self.rrule.freq {
             ICalendarFrequency::Hourly
             | ICalendarFrequency::Minutely
@@ -259,13 +247,10 @@ impl IterInfo {
                 .iter()
                 .flat_map(|hour| {
                     self.rrule.by_minute.iter().flat_map(move |minute| {
-                        self.rrule.by_second.iter().filter_map(move |second| {
-                            NaiveTime::from_hms_opt(
-                                u32::from(*hour),
-                                u32::from(*minute),
-                                u32::from(*second),
-                            )
-                        })
+                        self.rrule
+                            .by_second
+                            .iter()
+                            .filter_map(move |second| time_from_hms(*hour, *minute, *second))
                     })
                 })
                 .collect(),
@@ -275,4 +260,15 @@ impl IterInfo {
     pub fn rrule(&self) -> &RRule {
         &self.rrule
     }
+}
+
+#[inline(always)]
+fn time_from_hms(hour: u8, minute: u8, second: u8) -> Option<civil::Time> {
+    civil::Time::new(
+        i8::try_from(hour).ok()?,
+        i8::try_from(minute).ok()?,
+        i8::try_from(second).ok()?,
+        0,
+    )
+    .ok()
 }

@@ -4,15 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0 OR MIT
  */
 
-use super::{Data, PartialDateTime, tokenizer::Token};
+use super::{Data, PartialDateTime, tokenizer::Token, unchecked_timestamp};
 use crate::{
     Parser,
     common::{IanaParse, IanaString, IanaType},
     icalendar::Uri,
-};
-use mail_parser::{
-    DateTime,
-    decoders::{base64::base64_decode, hex::decode_hex},
 };
 use std::{borrow::Cow, iter::Peekable, slice::Iter, str::FromStr};
 
@@ -145,16 +141,13 @@ impl Data {
             let text = text.get(offset_start..).unwrap_or_default();
             if !text.is_empty() {
                 if is_base64 {
-                    if let Some(bytes) = base64_decode(text) {
+                    if let Ok(bytes) = encodify::base64::LENIENT.decode(text) {
                         bin.data = bytes;
                         return Some(bin);
                     }
-                } else {
-                    let (success, bytes) = decode_hex(text);
-                    if success {
-                        bin.data = bytes;
-                        return Some(bin);
-                    }
+                } else if let Ok(bytes) = encodify::hex::PERCENT.decode(text) {
+                    bin.data = bytes.into_owned();
+                    return Some(bin);
                 }
             }
         }
@@ -298,31 +291,58 @@ impl PartialDateTime {
         self.has_date() && self.has_time()
     }
 
-    fn to_datetime(&self) -> Option<DateTime> {
-        if self.has_date() && self.has_time() {
-            DateTime {
-                year: self.year.unwrap(),
-                month: self.month.unwrap(),
-                day: self.day.unwrap(),
-                hour: self.hour.unwrap(),
-                minute: self.minute.unwrap(),
-                second: self.second.unwrap_or_default(),
-                tz_before_gmt: self.tz_minus,
-                tz_hour: self.tz_hour.unwrap_or_default(),
-                tz_minute: self.tz_minute.unwrap_or_default(),
-            }
-            .into()
-        } else {
-            None
-        }
-    }
-
     pub fn to_rfc3339(&self) -> Option<String> {
-        self.to_datetime().map(|dt| dt.to_rfc3339())
+        if !self.has_date_and_time() {
+            return None;
+        }
+        let (tz_hour, tz_minute) = (
+            self.tz_hour.unwrap_or_default(),
+            self.tz_minute.unwrap_or_default(),
+        );
+        let date_time = format!(
+            "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}",
+            self.year?,
+            self.month?,
+            self.day?,
+            self.hour?,
+            self.minute?,
+            self.second.unwrap_or_default(),
+        );
+
+        Some(if tz_hour != 0 || tz_minute != 0 {
+            format!(
+                "{date_time}{}{tz_hour:02}:{tz_minute:02}",
+                if self.tz_minus { '-' } else { '+' }
+            )
+        } else {
+            format!("{date_time}Z")
+        })
     }
 
+    /// Returns the Unix timestamp of this date-time, applying its UTC offset.
+    ///
+    /// Calendar fields are not validated: out-of-range values, which lenient
+    /// parsing lets through, roll over into the following units.
     pub fn to_timestamp(&self) -> Option<i64> {
-        self.to_datetime().map(|dt| dt.to_timestamp())
+        if !self.has_date_and_time() {
+            return None;
+        }
+        let local = unchecked_timestamp(
+            self.year?,
+            self.month?,
+            self.day?,
+            self.hour?,
+            self.minute?,
+            self.second.unwrap_or_default(),
+        );
+        let offset = i64::from(self.tz_hour.unwrap_or_default()) * 3600
+            + i64::from(self.tz_minute.unwrap_or_default()) * 60;
+
+        Some(if self.tz_minus {
+            local + offset
+        } else {
+            local - offset
+        })
     }
 }
 

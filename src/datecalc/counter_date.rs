@@ -9,10 +9,10 @@ use super::{
     error::{RRuleError, checked_add_u32, checked_mul_u32},
     masks::MASKS,
     rrule::RRule,
-    utils::is_leap_year,
+    utils::{is_leap_year, weekday_from_monday},
 };
-use crate::{common::timezone::Tz, icalendar::ICalendarFrequency};
-use chrono::{Datelike, TimeZone, Timelike, Utc, Weekday};
+use crate::icalendar::ICalendarFrequency;
+use jiff::{Zoned, civil::Weekday};
 use std::collections::HashSet;
 
 const MINUTES_IN_A_DAY: u32 = 60 * 24;
@@ -94,19 +94,14 @@ impl DateTimeIter {
         };
         let year_day = u32::from(month_range_mask[self.month as usize - 1]) + self.day - 1;
         let year_day_mod = year_day % 7;
-        let year_start_weekday = Utc
-            .with_ymd_and_hms(self.year, 1, 1, 0, 0, 0)
-            // It should never fail, since there is always a 1st of January, is there?
-            .unwrap()
-            .weekday()
-            .num_days_from_monday();
+        let year_start_weekday = weekday_from_monday(self.year, 1, 1);
 
         (year_day_mod + year_start_weekday) % 7
     }
 
     fn increment_weekly(&mut self, interval: u16, week_start: Weekday) -> Result<(), RRuleError> {
         let weekday = self.get_weekday();
-        let option_week_start = week_start.num_days_from_monday();
+        let option_week_start = week_start.to_monday_zero_offset() as u32;
         let interval = u32::from(interval);
         // Calculate the amount of day to move forward.
         let day_delta = if option_week_start > weekday {
@@ -309,15 +304,15 @@ impl DateTimeIter {
     }
 }
 
-impl From<&chrono::DateTime<Tz>> for DateTimeIter {
-    fn from(dt: &chrono::DateTime<Tz>) -> Self {
+impl From<&Zoned> for DateTimeIter {
+    fn from(dt: &Zoned) -> Self {
         Self {
-            year: dt.year(),
-            month: dt.month(),
-            day: dt.day(),
-            hour: dt.hour(),
-            minute: dt.minute(),
-            second: dt.second(),
+            year: i32::from(dt.year()),
+            month: dt.month() as u32,
+            day: dt.day() as u32,
+            hour: dt.hour() as u32,
+            minute: dt.minute() as u32,
+            second: dt.second() as u32,
         }
     }
 }

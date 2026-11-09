@@ -1,0 +1,8 @@
+BEGIN:VCARD
+VERSION:4.0
+FN:Data URI Test
+PHOTO:data:image/png;base64,iVBORw0KGgpoZWxsbw==
+LOGO:data:text/plain,hello%20world%21%0A
+SOUND:data:audio/basic,bad%zzescape
+KEY:data:application/pgp-keys;base64,QUJD RE=
+END:VCARD

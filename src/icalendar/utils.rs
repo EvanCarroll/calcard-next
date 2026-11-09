@@ -502,8 +502,8 @@ impl ICalendarDuration {
         }
     }
 
-    pub fn to_time_delta(&self) -> Option<chrono::TimeDelta> {
-        chrono::TimeDelta::new(self.as_seconds(), 0)
+    pub fn to_duration(&self) -> Option<jiff::SignedDuration> {
+        Some(jiff::SignedDuration::from_secs(self.as_seconds()))
     }
 
     pub fn as_seconds(&self) -> i64 {

@@ -1,42 +1,50 @@
 [package]
-name = "calcard"
-description = "iCalendar/JSCalendar and vCard/JSContact parsing, building and conversion library for Rust"
-version = "0.3.14"
-authors = [ "Stalwart Labs <hello@stalw.art>"]
+name = "calcard-next"
+description = "Maintained fork of calcard: iCalendar/JSCalendar and vCard/JSContact parsing, building and conversion library for Rust"
+version = "1.0.0"
+authors = ["Evan Carroll"]
 license = "Apache-2.0 OR MIT"
 edition = "2024"
-repository = "https://github.com/stalwartlabs/calcard"
-homepage = "https://github.com/stalwartlabs/calcard"
+repository = "https://github.com/EvanCarroll/calcard-next"
+homepage = "https://github.com/EvanCarroll/calcard-next"
 keywords = ["icalendar", "vcard", "jscalendar", "jscontact", "parser"]
 categories = ["date-and-time", "email", "parser-implementations"]
 readme = "README.md"
+exclude = [".github/", "tests/"]
 resolver = "2"
 
 [dependencies]
-jmap-tools = { version = "0.1", optional = true }
-ahash = "0.8.11"
-chrono = "0.4.40"
-chrono-tz = "0.10.3"
-hashify = "0.2.7"
-mail-builder = { version = "1.0.0", default-features = false }
-mail-parser = "0.11"
-uuid = { version = "1.26", default-features = false, features = ["v5"], optional = true }
-rkyv = { version = "0.8", optional = true }
-serde = { version = "1.0", features = ["derive"], optional = true }
-serde_json = { version = "1.0", optional = true }
+jmap-tools = { version = "0.1.8", optional = true }
+ahash = "0.8.12"
+encodify = "1.0.2"
+encoding_rs = { version = "0.8.44", optional = true }
+hashify = "0.3.2"
+jiff = { version = "0.2.41", default-features = false, features = ["std", "tz-fat", "tzdb-bundle-always", "perf-inline"] }
+uuid = { version = "1.29.2", default-features = false, features = ["v5"], optional = true }
+rkyv = { version = "0.8.18", optional = true }
+serde = { version = "1.0.229", features = ["derive"], optional = true }
+serde_json = { version = "1.0.154", optional = true }
 
 [features]
-default = ["jmap"]
+default = ["jmap", "legacy-charsets"]
 rkyv = ["dep:rkyv"]
-serde = ["dep:serde", "chrono/serde"]
+serde = ["dep:serde", "jiff/serde"]
 jmap = ["jmap-tools", "uuid", "serde", "serde_json"]
-wasm = ["hashify/force-32bit"]
+wasm = ["jiff/js"]
+# Decode text in non-UTF-8 character sets declared by the `CHARSET` parameter
+# of vCard 2.1 and vCalendar 1.0 data (enabled by default). Without it, such
+# text is kept as binary data and `encoding_rs` is not compiled, which mainly
+# matters for size-sensitive builds such as WebAssembly.
+legacy-charsets = ["dep:encoding_rs"]
 
 [dev-dependencies]
-chrono = { version = "0.4", features = ["serde"] }
-serde = { version = "1.0", features = ["derive"] }
-rkyv = { version = "0.8" }
-serde_json = "1.0"
+serde = { version = "1.0.229", features = ["derive"] }
+rkyv = { version = "0.8.18" }
+serde_json = "1.0.154"
 
 [lib]
 doctest = false
+
+[[test]]
+name = "golden"
+required-features = ["jmap"]

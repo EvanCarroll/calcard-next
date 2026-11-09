@@ -5,7 +5,7 @@
  */
 
 use crate::{
-    common::{CalendarScale, IanaParse, IanaString, IdReference, LinkRelation},
+    common::{CalendarScale, IanaParse, IanaString, IdReference, LinkRelation, parse_rfc3339},
     icalendar::{
         ICalendarDuration, ICalendarFrequency, ICalendarMethod, ICalendarMonth, ICalendarSkip,
         ICalendarWeekday,
@@ -19,7 +19,6 @@ use crate::{
     },
 };
 use jmap_tools::{Element, JsonPointer, JsonPointerItem, Key, Value};
-use mail_parser::DateTime;
 use std::{borrow::Cow, str::FromStr};
 
 impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
@@ -47,18 +46,18 @@ impl<I: JSCalendarId, B: JSCalendarId> Element for JSCalendarValue<I, B> {
                 | JSCalendarProperty::ScheduleUpdated
                 | JSCalendarProperty::When
                 | JSCalendarProperty::UtcStart
-                | JSCalendarProperty::UtcEnd => DateTime::parse_rfc3339(value).map(|dt| {
+                | JSCalendarProperty::UtcEnd => parse_rfc3339(value, false).map(|timestamp| {
                     JSCalendarValue::DateTime(JSCalendarDateTime {
-                        timestamp: dt.to_timestamp_local(),
+                        timestamp,
                         is_local: false,
                     })
                 }),
                 JSCalendarProperty::Due
                 | JSCalendarProperty::RecurrenceId
                 | JSCalendarProperty::Start
-                | JSCalendarProperty::Until => DateTime::parse_rfc3339(value).map(|dt| {
+                | JSCalendarProperty::Until => parse_rfc3339(value, true).map(|timestamp| {
                     JSCalendarValue::DateTime(JSCalendarDateTime {
-                        timestamp: dt.to_timestamp_local(),
+                        timestamp,
                         is_local: true,
                     })
                 }),
@@ -169,9 +168,9 @@ impl<I: JSCalendarId> jmap_tools::Property for JSCalendarProperty<I> {
         match key {
             Some(Key::Property(key)) => match key.patch_or_prop() {
                 JSCalendarProperty::RecurrenceOverrides => {
-                    DateTime::parse_rfc3339(value).map(|dt| {
+                    parse_rfc3339(value, true).map(|timestamp| {
                         JSCalendarProperty::DateTime(JSCalendarDateTime {
-                            timestamp: dt.to_timestamp_local(),
+                            timestamp,
                             is_local: true,
                         })
                     })

@@ -69,7 +69,7 @@ impl MonthInfo {
             for by_weekday in &rrule.by_weekday {
                 // Only check Nth occurrences here
                 if let NWeekday::Nth(number, weekday) = by_weekday {
-                    let weekday = (weekday.num_days_from_monday()) as i16;
+                    let weekday = i16::from(weekday.to_monday_zero_offset());
                     let nth_weekday = if *number < 0 {
                         let number = match u32::try_from(-number) {
                             Ok(num) => num,

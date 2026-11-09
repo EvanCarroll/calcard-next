@@ -5,16 +5,15 @@
  */
 
 use super::utils::{add_time_to_date, date_from_ordinal, pymod};
-use crate::common::timezone::Tz;
-use chrono::NaiveTime;
+use jiff::{Zoned, civil, tz::TimeZone};
 
 pub(crate) fn build_pos_list(
     by_set_pos: &[i32],
     dayset: &[usize],
-    timeset: &[NaiveTime],
+    timeset: &[civil::Time],
     year_ordinal: i64,
-    tz: Tz,
-) -> Vec<chrono::DateTime<Tz>> {
+    tz: &TimeZone,
+) -> Vec<Zoned> {
     let mut pos_list = vec![];
 
     if timeset.is_empty() {
@@ -46,7 +45,9 @@ pub(crate) fn build_pos_list(
         let day = *day as i64;
 
         // Get ordinal which is UTC
-        let date = date_from_ordinal(year_ordinal + day);
+        let Some(date) = date_from_ordinal(year_ordinal + day) else {
+            continue;
+        };
         // Create new Date + Time combination
         // Use Time from `timeset`.
         let time = timeset[time_pos];

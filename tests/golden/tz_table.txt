@@ -1,0 +1,911 @@
+0 0 Some("Africa/Abidjan") utc=false floating=false
+1 1 Some("Africa/Accra") utc=false floating=false
+2 2 Some("Africa/Addis_Ababa") utc=false floating=false
+3 3 Some("Africa/Algiers") utc=false floating=false
+4 4 Some("Africa/Asmara") utc=false floating=false
+5 5 Some("Africa/Asmera") utc=false floating=false
+6 6 Some("Africa/Bamako") utc=false floating=false
+7 7 Some("Africa/Bangui") utc=false floating=false
+8 8 Some("Africa/Banjul") utc=false floating=false
+9 9 Some("Africa/Bissau") utc=false floating=false
+10 10 Some("Africa/Blantyre") utc=false floating=false
+11 11 Some("Africa/Brazzaville") utc=false floating=false
+12 12 Some("Africa/Bujumbura") utc=false floating=false
+13 13 Some("Africa/Cairo") utc=false floating=false
+14 14 Some("Africa/Casablanca") utc=false floating=false
+15 15 Some("Africa/Ceuta") utc=false floating=false
+16 16 Some("Africa/Conakry") utc=false floating=false
+17 17 Some("Africa/Dakar") utc=false floating=false
+18 18 Some("Africa/Dar_es_Salaam") utc=false floating=false
+19 19 Some("Africa/Djibouti") utc=false floating=false
+20 20 Some("Africa/Douala") utc=false floating=false
+21 21 Some("Africa/El_Aaiun") utc=false floating=false
+22 22 Some("Africa/Freetown") utc=false floating=false
+23 23 Some("Africa/Gaborone") utc=false floating=false
+24 24 Some("Africa/Harare") utc=false floating=false
+25 25 Some("Africa/Johannesburg") utc=false floating=false
+26 26 Some("Africa/Juba") utc=false floating=false
+27 27 Some("Africa/Kampala") utc=false floating=false
+28 28 Some("Africa/Khartoum") utc=false floating=false
+29 29 Some("Africa/Kigali") utc=false floating=false
+30 30 Some("Africa/Kinshasa") utc=false floating=false
+31 31 Some("Africa/Lagos") utc=false floating=false
+32 32 Some("Africa/Libreville") utc=false floating=false
+33 33 Some("Africa/Lome") utc=false floating=false
+34 34 Some("Africa/Luanda") utc=false floating=false
+35 35 Some("Africa/Lubumbashi") utc=false floating=false
+36 36 Some("Africa/Lusaka") utc=false floating=false
+37 37 Some("Africa/Malabo") utc=false floating=false
+38 38 Some("Africa/Maputo") utc=false floating=false
+39 39 Some("Africa/Maseru") utc=false floating=false
+40 40 Some("Africa/Mbabane") utc=false floating=false
+41 41 Some("Africa/Mogadishu") utc=false floating=false
+42 42 Some("Africa/Monrovia") utc=false floating=false
+43 43 Some("Africa/Nairobi") utc=false floating=false
+44 44 Some("Africa/Ndjamena") utc=false floating=false
+45 45 Some("Africa/Niamey") utc=false floating=false
+46 46 Some("Africa/Nouakchott") utc=false floating=false
+47 47 Some("Africa/Ouagadougou") utc=false floating=false
+48 48 Some("Africa/Porto-Novo") utc=false floating=false
+49 49 Some("Africa/Sao_Tome") utc=false floating=false
+50 50 Some("Africa/Timbuktu") utc=false floating=false
+51 51 Some("Africa/Tripoli") utc=false floating=false
+52 52 Some("Africa/Tunis") utc=false floating=false
+53 53 Some("Africa/Windhoek") utc=false floating=false
+54 54 Some("America/Adak") utc=false floating=false
+55 55 Some("America/Anchorage") utc=false floating=false
+56 56 Some("America/Anguilla") utc=false floating=false
+57 57 Some("America/Antigua") utc=false floating=false
+58 58 Some("America/Araguaina") utc=false floating=false
+59 59 Some("America/Argentina/Buenos_Aires") utc=false floating=false
+60 60 Some("America/Argentina/Catamarca") utc=false floating=false
+61 61 Some("America/Argentina/ComodRivadavia") utc=false floating=false
+62 62 Some("America/Argentina/Cordoba") utc=false floating=false
+63 63 Some("America/Argentina/Jujuy") utc=false floating=false
+64 64 Some("America/Argentina/La_Rioja") utc=false floating=false
+65 65 Some("America/Argentina/Mendoza") utc=false floating=false
+66 66 Some("America/Argentina/Rio_Gallegos") utc=false floating=false
+67 67 Some("America/Argentina/Salta") utc=false floating=false
+68 68 Some("America/Argentina/San_Juan") utc=false floating=false
+69 69 Some("America/Argentina/San_Luis") utc=false floating=false
+70 70 Some("America/Argentina/Tucuman") utc=false floating=false
+71 71 Some("America/Argentina/Ushuaia") utc=false floating=false
+72 72 Some("America/Aruba") utc=false floating=false
+73 73 Some("America/Asuncion") utc=false floating=false
+74 74 Some("America/Atikokan") utc=false floating=false
+75 75 Some("America/Atka") utc=false floating=false
+76 76 Some("America/Bahia") utc=false floating=false
+77 77 Some("America/Bahia_Banderas") utc=false floating=false
+78 78 Some("America/Barbados") utc=false floating=false
+79 79 Some("America/Belem") utc=false floating=false
+80 80 Some("America/Belize") utc=false floating=false
+81 81 Some("America/Blanc-Sablon") utc=false floating=false
+82 82 Some("America/Boa_Vista") utc=false floating=false
+83 83 Some("America/Bogota") utc=false floating=false
+84 84 Some("America/Boise") utc=false floating=false
+85 85 Some("America/Buenos_Aires") utc=false floating=false
+86 86 Some("America/Cambridge_Bay") utc=false floating=false
+87 87 Some("America/Campo_Grande") utc=false floating=false
+88 88 Some("America/Cancun") utc=false floating=false
+89 89 Some("America/Caracas") utc=false floating=false
+90 90 Some("America/Catamarca") utc=false floating=false
+91 91 Some("America/Cayenne") utc=false floating=false
+92 92 Some("America/Cayman") utc=false floating=false
+93 93 Some("America/Chicago") utc=false floating=false
+94 94 Some("America/Chihuahua") utc=false floating=false
+95 95 Some("America/Ciudad_Juarez") utc=false floating=false
+96 96 Some("America/Coral_Harbour") utc=false floating=false
+97 97 Some("America/Cordoba") utc=false floating=false
+98 98 Some("America/Costa_Rica") utc=false floating=false
+99 99 Some("America/Coyhaique") utc=false floating=false
+100 100 Some("America/Creston") utc=false floating=false
+101 101 Some("America/Cuiaba") utc=false floating=false
+102 102 Some("America/Curacao") utc=false floating=false
+103 103 Some("America/Danmarkshavn") utc=false floating=false
+104 104 Some("America/Dawson") utc=false floating=false
+105 105 Some("America/Dawson_Creek") utc=false floating=false
+106 106 Some("America/Denver") utc=false floating=false
+107 107 Some("America/Detroit") utc=false floating=false
+108 108 Some("America/Dominica") utc=false floating=false
+109 109 Some("America/Edmonton") utc=false floating=false
+110 110 Some("America/Eirunepe") utc=false floating=false
+111 111 Some("America/El_Salvador") utc=false floating=false
+112 112 Some("America/Ensenada") utc=false floating=false
+113 113 Some("America/Fort_Nelson") utc=false floating=false
+114 114 Some("America/Fort_Wayne") utc=false floating=false
+115 115 Some("America/Fortaleza") utc=false floating=false
+116 116 Some("America/Glace_Bay") utc=false floating=false
+117 117 Some("America/Godthab") utc=false floating=false
+118 118 Some("America/Goose_Bay") utc=false floating=false
+119 119 Some("America/Grand_Turk") utc=false floating=false
+120 120 Some("America/Grenada") utc=false floating=false
+121 121 Some("America/Guadeloupe") utc=false floating=false
+122 122 Some("America/Guatemala") utc=false floating=false
+123 123 Some("America/Guayaquil") utc=false floating=false
+124 124 Some("America/Guyana") utc=false floating=false
+125 125 Some("America/Halifax") utc=false floating=false
+126 126 Some("America/Havana") utc=false floating=false
+127 127 Some("America/Hermosillo") utc=false floating=false
+128 128 Some("America/Indiana/Indianapolis") utc=false floating=false
+129 129 Some("America/Indiana/Knox") utc=false floating=false
+130 130 Some("America/Indiana/Marengo") utc=false floating=false
+131 131 Some("America/Indiana/Petersburg") utc=false floating=false
+132 132 Some("America/Indiana/Tell_City") utc=false floating=false
+133 133 Some("America/Indiana/Vevay") utc=false floating=false
+134 134 Some("America/Indiana/Vincennes") utc=false floating=false
+135 135 Some("America/Indiana/Winamac") utc=false floating=false
+136 136 Some("America/Indianapolis") utc=false floating=false
+137 137 Some("America/Inuvik") utc=false floating=false
+138 138 Some("America/Iqaluit") utc=false floating=false
+139 139 Some("America/Jamaica") utc=false floating=false
+140 140 Some("America/Jujuy") utc=false floating=false
+141 141 Some("America/Juneau") utc=false floating=false
+142 142 Some("America/Kentucky/Louisville") utc=false floating=false
+143 143 Some("America/Kentucky/Monticello") utc=false floating=false
+144 144 Some("America/Knox_IN") utc=false floating=false
+145 145 Some("America/Kralendijk") utc=false floating=false
+146 146 Some("America/La_Paz") utc=false floating=false
+147 147 Some("America/Lima") utc=false floating=false
+148 148 Some("America/Los_Angeles") utc=false floating=false
+149 149 Some("America/Louisville") utc=false floating=false
+150 150 Some("America/Lower_Princes") utc=false floating=false
+151 151 Some("America/Maceio") utc=false floating=false
+152 152 Some("America/Managua") utc=false floating=false
+153 153 Some("America/Manaus") utc=false floating=false
+154 154 Some("America/Marigot") utc=false floating=false
+155 155 Some("America/Martinique") utc=false floating=false
+156 156 Some("America/Matamoros") utc=false floating=false
+157 157 Some("America/Mazatlan") utc=false floating=false
+158 158 Some("America/Mendoza") utc=false floating=false
+159 159 Some("America/Menominee") utc=false floating=false
+160 160 Some("America/Merida") utc=false floating=false
+161 161 Some("America/Metlakatla") utc=false floating=false
+162 162 Some("America/Mexico_City") utc=false floating=false
+163 163 Some("America/Miquelon") utc=false floating=false
+164 164 Some("America/Moncton") utc=false floating=false
+165 165 Some("America/Monterrey") utc=false floating=false
+166 166 Some("America/Montevideo") utc=false floating=false
+167 167 Some("America/Montreal") utc=false floating=false
+168 168 Some("America/Montserrat") utc=false floating=false
+169 169 Some("America/Nassau") utc=false floating=false
+170 170 Some("America/New_York") utc=false floating=false
+171 171 Some("America/Nipigon") utc=false floating=false
+172 172 Some("America/Nome") utc=false floating=false
+173 173 Some("America/Noronha") utc=false floating=false
+174 174 Some("America/North_Dakota/Beulah") utc=false floating=false
+175 175 Some("America/North_Dakota/Center") utc=false floating=false
+176 176 Some("America/North_Dakota/New_Salem") utc=false floating=false
+177 177 Some("America/Nuuk") utc=false floating=false
+178 178 Some("America/Ojinaga") utc=false floating=false
+179 179 Some("America/Panama") utc=false floating=false
+180 180 Some("America/Pangnirtung") utc=false floating=false
+181 181 Some("America/Paramaribo") utc=false floating=false
+182 182 Some("America/Phoenix") utc=false floating=false
+183 183 Some("America/Port-au-Prince") utc=false floating=false
+184 184 Some("America/Port_of_Spain") utc=false floating=false
+185 185 Some("America/Porto_Acre") utc=false floating=false
+186 186 Some("America/Porto_Velho") utc=false floating=false
+187 187 Some("America/Puerto_Rico") utc=false floating=false
+188 188 Some("America/Punta_Arenas") utc=false floating=false
+189 189 Some("America/Rainy_River") utc=false floating=false
+190 190 Some("America/Rankin_Inlet") utc=false floating=false
+191 191 Some("America/Recife") utc=false floating=false
+192 192 Some("America/Regina") utc=false floating=false
+193 193 Some("America/Resolute") utc=false floating=false
+194 194 Some("America/Rio_Branco") utc=false floating=false
+195 195 Some("America/Rosario") utc=false floating=false
+196 196 Some("America/Santa_Isabel") utc=false floating=false
+197 197 Some("America/Santarem") utc=false floating=false
+198 198 Some("America/Santiago") utc=false floating=false
+199 199 Some("America/Santo_Domingo") utc=false floating=false
+200 200 Some("America/Sao_Paulo") utc=false floating=false
+201 201 Some("America/Scoresbysund") utc=false floating=false
+202 202 Some("America/Shiprock") utc=false floating=false
+203 203 Some("America/Sitka") utc=false floating=false
+204 204 Some("America/St_Barthelemy") utc=false floating=false
+205 205 Some("America/St_Johns") utc=false floating=false
+206 206 Some("America/St_Kitts") utc=false floating=false
+207 207 Some("America/St_Lucia") utc=false floating=false
+208 208 Some("America/St_Thomas") utc=false floating=false
+209 209 Some("America/St_Vincent") utc=false floating=false
+210 210 Some("America/Swift_Current") utc=false floating=false
+211 211 Some("America/Tegucigalpa") utc=false floating=false
+212 212 Some("America/Thule") utc=false floating=false
+213 213 Some("America/Thunder_Bay") utc=false floating=false
+214 214 Some("America/Tijuana") utc=false floating=false
+215 215 Some("America/Toronto") utc=false floating=false
+216 216 Some("America/Tortola") utc=false floating=false
+217 217 Some("America/Vancouver") utc=false floating=false
+218 218 Some("America/Virgin") utc=false floating=false
+219 219 Some("America/Whitehorse") utc=false floating=false
+220 220 Some("America/Winnipeg") utc=false floating=false
+221 221 Some("America/Yakutat") utc=false floating=false
+222 222 Some("America/Yellowknife") utc=false floating=false
+223 223 Some("Antarctica/Casey") utc=false floating=false
+224 224 Some("Antarctica/Davis") utc=false floating=false
+225 225 Some("Antarctica/DumontDUrville") utc=false floating=false
+226 226 Some("Antarctica/Macquarie") utc=false floating=false
+227 227 Some("Antarctica/Mawson") utc=false floating=false
+228 228 Some("Antarctica/McMurdo") utc=false floating=false
+229 229 Some("Antarctica/Palmer") utc=false floating=false
+230 230 Some("Antarctica/Rothera") utc=false floating=false
+231 231 Some("Antarctica/South_Pole") utc=false floating=false
+232 232 Some("Antarctica/Syowa") utc=false floating=false
+233 233 Some("Antarctica/Troll") utc=false floating=false
+234 234 Some("Antarctica/Vostok") utc=false floating=false
+235 235 Some("Arctic/Longyearbyen") utc=false floating=false
+236 236 Some("Asia/Aden") utc=false floating=false
+237 237 Some("Asia/Almaty") utc=false floating=false
+238 238 Some("Asia/Amman") utc=false floating=false
+239 239 Some("Asia/Anadyr") utc=false floating=false
+240 240 Some("Asia/Aqtau") utc=false floating=false
+241 241 Some("Asia/Aqtobe") utc=false floating=false
+242 242 Some("Asia/Ashgabat") utc=false floating=false
+243 243 Some("Asia/Ashkhabad") utc=false floating=false
+244 244 Some("Asia/Atyrau") utc=false floating=false
+245 245 Some("Asia/Baghdad") utc=false floating=false
+246 246 Some("Asia/Bahrain") utc=false floating=false
+247 247 Some("Asia/Baku") utc=false floating=false
+248 248 Some("Asia/Bangkok") utc=false floating=false
+249 249 Some("Asia/Barnaul") utc=false floating=false
+250 250 Some("Asia/Beirut") utc=false floating=false
+251 251 Some("Asia/Bishkek") utc=false floating=false
+252 252 Some("Asia/Brunei") utc=false floating=false
+253 253 Some("Asia/Calcutta") utc=false floating=false
+254 254 Some("Asia/Chita") utc=false floating=false
+255 255 Some("Asia/Choibalsan") utc=false floating=false
+256 256 Some("Asia/Chongqing") utc=false floating=false
+257 257 Some("Asia/Chungking") utc=false floating=false
+258 258 Some("Asia/Colombo") utc=false floating=false
+259 259 Some("Asia/Dacca") utc=false floating=false
+260 260 Some("Asia/Damascus") utc=false floating=false
+261 261 Some("Asia/Dhaka") utc=false floating=false
+262 262 Some("Asia/Dili") utc=false floating=false
+263 263 Some("Asia/Dubai") utc=false floating=false
+264 264 Some("Asia/Dushanbe") utc=false floating=false
+265 265 Some("Asia/Famagusta") utc=false floating=false
+266 266 Some("Asia/Gaza") utc=false floating=false
+267 267 Some("Asia/Harbin") utc=false floating=false
+268 268 Some("Asia/Hebron") utc=false floating=false
+269 269 Some("Asia/Ho_Chi_Minh") utc=false floating=false
+270 270 Some("Asia/Hong_Kong") utc=false floating=false
+271 271 Some("Asia/Hovd") utc=false floating=false
+272 272 Some("Asia/Irkutsk") utc=false floating=false
+273 273 Some("Asia/Istanbul") utc=false floating=false
+274 274 Some("Asia/Jakarta") utc=false floating=false
+275 275 Some("Asia/Jayapura") utc=false floating=false
+276 276 Some("Asia/Jerusalem") utc=false floating=false
+277 277 Some("Asia/Kabul") utc=false floating=false
+278 278 Some("Asia/Kamchatka") utc=false floating=false
+279 279 Some("Asia/Karachi") utc=false floating=false
+280 280 Some("Asia/Kashgar") utc=false floating=false
+281 281 Some("Asia/Kathmandu") utc=false floating=false
+282 282 Some("Asia/Katmandu") utc=false floating=false
+283 283 Some("Asia/Khandyga") utc=false floating=false
+284 284 Some("Asia/Kolkata") utc=false floating=false
+285 285 Some("Asia/Krasnoyarsk") utc=false floating=false
+286 286 Some("Asia/Kuala_Lumpur") utc=false floating=false
+287 287 Some("Asia/Kuching") utc=false floating=false
+288 288 Some("Asia/Kuwait") utc=false floating=false
+289 289 Some("Asia/Macao") utc=false floating=false
+290 290 Some("Asia/Macau") utc=false floating=false
+291 291 Some("Asia/Magadan") utc=false floating=false
+292 292 Some("Asia/Makassar") utc=false floating=false
+293 293 Some("Asia/Manila") utc=false floating=false
+294 294 Some("Asia/Muscat") utc=false floating=false
+295 295 Some("Asia/Nicosia") utc=false floating=false
+296 296 Some("Asia/Novokuznetsk") utc=false floating=false
+297 297 Some("Asia/Novosibirsk") utc=false floating=false
+298 298 Some("Asia/Omsk") utc=false floating=false
+299 299 Some("Asia/Oral") utc=false floating=false
+300 300 Some("Asia/Phnom_Penh") utc=false floating=false
+301 301 Some("Asia/Pontianak") utc=false floating=false
+302 302 Some("Asia/Pyongyang") utc=false floating=false
+303 303 Some("Asia/Qatar") utc=false floating=false
+304 304 Some("Asia/Qostanay") utc=false floating=false
+305 305 Some("Asia/Qyzylorda") utc=false floating=false
+306 306 Some("Asia/Rangoon") utc=false floating=false
+307 307 Some("Asia/Riyadh") utc=false floating=false
+308 308 Some("Asia/Saigon") utc=false floating=false
+309 309 Some("Asia/Sakhalin") utc=false floating=false
+310 310 Some("Asia/Samarkand") utc=false floating=false
+311 311 Some("Asia/Seoul") utc=false floating=false
+312 312 Some("Asia/Shanghai") utc=false floating=false
+313 313 Some("Asia/Singapore") utc=false floating=false
+314 314 Some("Asia/Srednekolymsk") utc=false floating=false
+315 315 Some("Asia/Taipei") utc=false floating=false
+316 316 Some("Asia/Tashkent") utc=false floating=false
+317 317 Some("Asia/Tbilisi") utc=false floating=false
+318 318 Some("Asia/Tehran") utc=false floating=false
+319 319 Some("Asia/Tel_Aviv") utc=false floating=false
+320 320 Some("Asia/Thimbu") utc=false floating=false
+321 321 Some("Asia/Thimphu") utc=false floating=false
+322 322 Some("Asia/Tokyo") utc=false floating=false
+323 323 Some("Asia/Tomsk") utc=false floating=false
+324 324 Some("Asia/Ujung_Pandang") utc=false floating=false
+325 325 Some("Asia/Ulaanbaatar") utc=false floating=false
+326 326 Some("Asia/Ulan_Bator") utc=false floating=false
+327 327 Some("Asia/Urumqi") utc=false floating=false
+328 328 Some("Asia/Ust-Nera") utc=false floating=false
+329 329 Some("Asia/Vientiane") utc=false floating=false
+330 330 Some("Asia/Vladivostok") utc=false floating=false
+331 331 Some("Asia/Yakutsk") utc=false floating=false
+332 332 Some("Asia/Yangon") utc=false floating=false
+333 333 Some("Asia/Yekaterinburg") utc=false floating=false
+334 334 Some("Asia/Yerevan") utc=false floating=false
+335 335 Some("Atlantic/Azores") utc=false floating=false
+336 336 Some("Atlantic/Bermuda") utc=false floating=false
+337 337 Some("Atlantic/Canary") utc=false floating=false
+338 338 Some("Atlantic/Cape_Verde") utc=false floating=false
+339 339 Some("Atlantic/Faeroe") utc=false floating=false
+340 340 Some("Atlantic/Faroe") utc=false floating=false
+341 341 Some("Atlantic/Jan_Mayen") utc=false floating=false
+342 342 Some("Atlantic/Madeira") utc=false floating=false
+343 343 Some("Atlantic/Reykjavik") utc=false floating=false
+344 344 Some("Atlantic/South_Georgia") utc=false floating=false
+345 345 Some("Atlantic/St_Helena") utc=false floating=false
+346 346 Some("Atlantic/Stanley") utc=false floating=false
+347 347 Some("Australia/ACT") utc=false floating=false
+348 348 Some("Australia/Adelaide") utc=false floating=false
+349 349 Some("Australia/Brisbane") utc=false floating=false
+350 350 Some("Australia/Broken_Hill") utc=false floating=false
+351 351 Some("Australia/Canberra") utc=false floating=false
+352 352 Some("Australia/Currie") utc=false floating=false
+353 353 Some("Australia/Darwin") utc=false floating=false
+354 354 Some("Australia/Eucla") utc=false floating=false
+355 355 Some("Australia/Hobart") utc=false floating=false
+356 356 Some("Australia/LHI") utc=false floating=false
+357 357 Some("Australia/Lindeman") utc=false floating=false
+358 358 Some("Australia/Lord_Howe") utc=false floating=false
+359 359 Some("Australia/Melbourne") utc=false floating=false
+360 360 Some("Australia/NSW") utc=false floating=false
+361 361 Some("Australia/North") utc=false floating=false
+362 362 Some("Australia/Perth") utc=false floating=false
+363 363 Some("Australia/Queensland") utc=false floating=false
+364 364 Some("Australia/South") utc=false floating=false
+365 365 Some("Australia/Sydney") utc=false floating=false
+366 366 Some("Australia/Tasmania") utc=false floating=false
+367 367 Some("Australia/Victoria") utc=false floating=false
+368 368 Some("Australia/West") utc=false floating=false
+369 369 Some("Australia/Yancowinna") utc=false floating=false
+370 370 Some("Brazil/Acre") utc=false floating=false
+371 371 Some("Brazil/DeNoronha") utc=false floating=false
+372 372 Some("Brazil/East") utc=false floating=false
+373 373 Some("Brazil/West") utc=false floating=false
+374 374 Some("CET") utc=false floating=false
+375 375 Some("CST6CDT") utc=false floating=false
+376 376 Some("Canada/Atlantic") utc=false floating=false
+377 377 Some("Canada/Central") utc=false floating=false
+378 378 Some("Canada/Eastern") utc=false floating=false
+379 379 Some("Canada/Mountain") utc=false floating=false
+380 380 Some("Canada/Newfoundland") utc=false floating=false
+381 381 Some("Canada/Pacific") utc=false floating=false
+382 382 Some("Canada/Saskatchewan") utc=false floating=false
+383 383 Some("Canada/Yukon") utc=false floating=false
+384 384 Some("Chile/Continental") utc=false floating=false
+385 385 Some("Chile/EasterIsland") utc=false floating=false
+386 386 Some("Cuba") utc=false floating=false
+387 387 Some("EET") utc=false floating=false
+388 388 Some("EST") utc=false floating=false
+389 389 Some("EST5EDT") utc=false floating=false
+390 390 Some("Egypt") utc=false floating=false
+391 391 Some("Eire") utc=false floating=false
+392 392 Some("Etc/GMT") utc=true floating=false
+393 393 Some("Etc/GMT+0") utc=false floating=false
+394 394 Some("Etc/GMT+1") utc=false floating=false
+395 395 Some("Etc/GMT+10") utc=false floating=false
+396 396 Some("Etc/GMT+11") utc=false floating=false
+397 397 Some("Etc/GMT+12") utc=false floating=false
+398 398 Some("Etc/GMT+2") utc=false floating=false
+399 399 Some("Etc/GMT+3") utc=false floating=false
+400 400 Some("Etc/GMT+4") utc=false floating=false
+401 401 Some("Etc/GMT+5") utc=false floating=false
+402 402 Some("Etc/GMT+6") utc=false floating=false
+403 403 Some("Etc/GMT+7") utc=false floating=false
+404 404 Some("Etc/GMT+8") utc=false floating=false
+405 405 Some("Etc/GMT+9") utc=false floating=false
+406 406 Some("Etc/GMT-0") utc=false floating=false
+407 407 Some("Etc/GMT-1") utc=false floating=false
+408 408 Some("Etc/GMT-10") utc=false floating=false
+409 409 Some("Etc/GMT-11") utc=false floating=false
+410 410 Some("Etc/GMT-12") utc=false floating=false
+411 411 Some("Etc/GMT-13") utc=false floating=false
+412 412 Some("Etc/GMT-14") utc=false floating=false
+413 413 Some("Etc/GMT-2") utc=false floating=false
+414 414 Some("Etc/GMT-3") utc=false floating=false
+415 415 Some("Etc/GMT-4") utc=false floating=false
+416 416 Some("Etc/GMT-5") utc=false floating=false
+417 417 Some("Etc/GMT-6") utc=false floating=false
+418 418 Some("Etc/GMT-7") utc=false floating=false
+419 419 Some("Etc/GMT-8") utc=false floating=false
+420 420 Some("Etc/GMT-9") utc=false floating=false
+421 421 Some("Etc/GMT0") utc=false floating=false
+422 422 Some("Etc/Greenwich") utc=false floating=false
+423 423 Some("Etc/UCT") utc=false floating=false
+424 424 Some("Etc/UTC") utc=true floating=false
+425 425 Some("Etc/Universal") utc=false floating=false
+426 426 Some("Etc/Zulu") utc=false floating=false
+427 427 Some("Europe/Amsterdam") utc=false floating=false
+428 428 Some("Europe/Andorra") utc=false floating=false
+429 429 Some("Europe/Astrakhan") utc=false floating=false
+430 430 Some("Europe/Athens") utc=false floating=false
+431 431 Some("Europe/Belfast") utc=false floating=false
+432 432 Some("Europe/Belgrade") utc=false floating=false
+433 433 Some("Europe/Berlin") utc=false floating=false
+434 434 Some("Europe/Bratislava") utc=false floating=false
+435 435 Some("Europe/Brussels") utc=false floating=false
+436 436 Some("Europe/Bucharest") utc=false floating=false
+437 437 Some("Europe/Budapest") utc=false floating=false
+438 438 Some("Europe/Busingen") utc=false floating=false
+439 439 Some("Europe/Chisinau") utc=false floating=false
+440 440 Some("Europe/Copenhagen") utc=false floating=false
+441 441 Some("Europe/Dublin") utc=false floating=false
+442 442 Some("Europe/Gibraltar") utc=false floating=false
+443 443 Some("Europe/Guernsey") utc=false floating=false
+444 444 Some("Europe/Helsinki") utc=false floating=false
+445 445 Some("Europe/Isle_of_Man") utc=false floating=false
+446 446 Some("Europe/Istanbul") utc=false floating=false
+447 447 Some("Europe/Jersey") utc=false floating=false
+448 448 Some("Europe/Kaliningrad") utc=false floating=false
+449 449 Some("Europe/Kiev") utc=false floating=false
+450 450 Some("Europe/Kirov") utc=false floating=false
+451 451 Some("Europe/Kyiv") utc=false floating=false
+452 452 Some("Europe/Lisbon") utc=false floating=false
+453 453 Some("Europe/Ljubljana") utc=false floating=false
+454 454 Some("Europe/London") utc=false floating=false
+455 455 Some("Europe/Luxembourg") utc=false floating=false
+456 456 Some("Europe/Madrid") utc=false floating=false
+457 457 Some("Europe/Malta") utc=false floating=false
+458 458 Some("Europe/Mariehamn") utc=false floating=false
+459 459 Some("Europe/Minsk") utc=false floating=false
+460 460 Some("Europe/Monaco") utc=false floating=false
+461 461 Some("Europe/Moscow") utc=false floating=false
+462 462 Some("Europe/Nicosia") utc=false floating=false
+463 463 Some("Europe/Oslo") utc=false floating=false
+464 464 Some("Europe/Paris") utc=false floating=false
+465 465 Some("Europe/Podgorica") utc=false floating=false
+466 466 Some("Europe/Prague") utc=false floating=false
+467 467 Some("Europe/Riga") utc=false floating=false
+468 468 Some("Europe/Rome") utc=false floating=false
+469 469 Some("Europe/Samara") utc=false floating=false
+470 470 Some("Europe/San_Marino") utc=false floating=false
+471 471 Some("Europe/Sarajevo") utc=false floating=false
+472 472 Some("Europe/Saratov") utc=false floating=false
+473 473 Some("Europe/Simferopol") utc=false floating=false
+474 474 Some("Europe/Skopje") utc=false floating=false
+475 475 Some("Europe/Sofia") utc=false floating=false
+476 476 Some("Europe/Stockholm") utc=false floating=false
+477 477 Some("Europe/Tallinn") utc=false floating=false
+478 478 Some("Europe/Tirane") utc=false floating=false
+479 479 Some("Europe/Tiraspol") utc=false floating=false
+480 480 Some("Europe/Ulyanovsk") utc=false floating=false
+481 481 Some("Europe/Uzhgorod") utc=false floating=false
+482 482 Some("Europe/Vaduz") utc=false floating=false
+483 483 Some("Europe/Vatican") utc=false floating=false
+484 484 Some("Europe/Vienna") utc=false floating=false
+485 485 Some("Europe/Vilnius") utc=false floating=false
+486 486 Some("Europe/Volgograd") utc=false floating=false
+487 487 Some("Europe/Warsaw") utc=false floating=false
+488 488 Some("Europe/Zagreb") utc=false floating=false
+489 489 Some("Europe/Zaporozhye") utc=false floating=false
+490 490 Some("Europe/Zurich") utc=false floating=false
+491 491 Some("GB") utc=false floating=false
+492 492 Some("GB-Eire") utc=false floating=false
+493 493 Some("GMT") utc=false floating=false
+494 494 Some("GMT+0") utc=false floating=false
+495 495 Some("GMT-0") utc=false floating=false
+496 496 Some("GMT0") utc=false floating=false
+497 497 Some("Greenwich") utc=false floating=false
+498 498 Some("HST") utc=false floating=false
+499 499 Some("Hongkong") utc=false floating=false
+500 500 Some("Iceland") utc=false floating=false
+501 501 Some("Indian/Antananarivo") utc=false floating=false
+502 502 Some("Indian/Chagos") utc=false floating=false
+503 503 Some("Indian/Christmas") utc=false floating=false
+504 504 Some("Indian/Cocos") utc=false floating=false
+505 505 Some("Indian/Comoro") utc=false floating=false
+506 506 Some("Indian/Kerguelen") utc=false floating=false
+507 507 Some("Indian/Mahe") utc=false floating=false
+508 508 Some("Indian/Maldives") utc=false floating=false
+509 509 Some("Indian/Mauritius") utc=false floating=false
+510 510 Some("Indian/Mayotte") utc=false floating=false
+511 511 Some("Indian/Reunion") utc=false floating=false
+512 512 Some("Iran") utc=false floating=false
+513 513 Some("Israel") utc=false floating=false
+514 514 Some("Jamaica") utc=false floating=false
+515 515 Some("Japan") utc=false floating=false
+516 516 Some("Kwajalein") utc=false floating=false
+517 517 Some("Libya") utc=false floating=false
+518 518 Some("MET") utc=false floating=false
+519 519 Some("MST") utc=false floating=false
+520 520 Some("MST7MDT") utc=false floating=false
+521 521 Some("Mexico/BajaNorte") utc=false floating=false
+522 522 Some("Mexico/BajaSur") utc=false floating=false
+523 523 Some("Mexico/General") utc=false floating=false
+524 524 Some("NZ") utc=false floating=false
+525 525 Some("NZ-CHAT") utc=false floating=false
+526 526 Some("Navajo") utc=false floating=false
+527 527 Some("PRC") utc=false floating=false
+528 528 Some("PST8PDT") utc=false floating=false
+529 529 Some("Pacific/Apia") utc=false floating=false
+530 530 Some("Pacific/Auckland") utc=false floating=false
+531 531 Some("Pacific/Bougainville") utc=false floating=false
+532 532 Some("Pacific/Chatham") utc=false floating=false
+533 533 Some("Pacific/Chuuk") utc=false floating=false
+534 534 Some("Pacific/Easter") utc=false floating=false
+535 535 Some("Pacific/Efate") utc=false floating=false
+536 536 Some("Pacific/Enderbury") utc=false floating=false
+537 537 Some("Pacific/Fakaofo") utc=false floating=false
+538 538 Some("Pacific/Fiji") utc=false floating=false
+539 539 Some("Pacific/Funafuti") utc=false floating=false
+540 540 Some("Pacific/Galapagos") utc=false floating=false
+541 541 Some("Pacific/Gambier") utc=false floating=false
+542 542 Some("Pacific/Guadalcanal") utc=false floating=false
+543 543 Some("Pacific/Guam") utc=false floating=false
+544 544 Some("Pacific/Honolulu") utc=false floating=false
+545 545 Some("Pacific/Johnston") utc=false floating=false
+546 546 Some("Pacific/Kanton") utc=false floating=false
+547 547 Some("Pacific/Kiritimati") utc=false floating=false
+548 548 Some("Pacific/Kosrae") utc=false floating=false
+549 549 Some("Pacific/Kwajalein") utc=false floating=false
+550 550 Some("Pacific/Majuro") utc=false floating=false
+551 551 Some("Pacific/Marquesas") utc=false floating=false
+552 552 Some("Pacific/Midway") utc=false floating=false
+553 553 Some("Pacific/Nauru") utc=false floating=false
+554 554 Some("Pacific/Niue") utc=false floating=false
+555 555 Some("Pacific/Norfolk") utc=false floating=false
+556 556 Some("Pacific/Noumea") utc=false floating=false
+557 557 Some("Pacific/Pago_Pago") utc=false floating=false
+558 558 Some("Pacific/Palau") utc=false floating=false
+559 559 Some("Pacific/Pitcairn") utc=false floating=false
+560 560 Some("Pacific/Pohnpei") utc=false floating=false
+561 561 Some("Pacific/Ponape") utc=false floating=false
+562 562 Some("Pacific/Port_Moresby") utc=false floating=false
+563 563 Some("Pacific/Rarotonga") utc=false floating=false
+564 564 Some("Pacific/Saipan") utc=false floating=false
+565 565 Some("Pacific/Samoa") utc=false floating=false
+566 566 Some("Pacific/Tahiti") utc=false floating=false
+567 567 Some("Pacific/Tarawa") utc=false floating=false
+568 568 Some("Pacific/Tongatapu") utc=false floating=false
+569 569 Some("Pacific/Truk") utc=false floating=false
+570 570 Some("Pacific/Wake") utc=false floating=false
+571 571 Some("Pacific/Wallis") utc=false floating=false
+572 572 Some("Pacific/Yap") utc=false floating=false
+573 573 Some("Poland") utc=false floating=false
+574 574 Some("Portugal") utc=false floating=false
+575 575 Some("ROC") utc=false floating=false
+576 576 Some("ROK") utc=false floating=false
+577 577 Some("Singapore") utc=false floating=false
+578 578 Some("Turkey") utc=false floating=false
+579 579 Some("UCT") utc=false floating=false
+580 580 Some("US/Alaska") utc=false floating=false
+581 581 Some("US/Aleutian") utc=false floating=false
+582 582 Some("US/Arizona") utc=false floating=false
+583 583 Some("US/Central") utc=false floating=false
+584 584 Some("US/East-Indiana") utc=false floating=false
+585 585 Some("US/Eastern") utc=false floating=false
+586 586 Some("US/Hawaii") utc=false floating=false
+587 587 Some("US/Indiana-Starke") utc=false floating=false
+588 588 Some("US/Michigan") utc=false floating=false
+589 589 Some("US/Mountain") utc=false floating=false
+590 590 Some("US/Pacific") utc=false floating=false
+591 591 Some("US/Samoa") utc=false floating=false
+592 592 Some("Etc/UTC") utc=true floating=false
+593 593 Some("Universal") utc=false floating=false
+594 594 Some("W-SU") utc=false floating=false
+595 595 Some("WET") utc=false floating=false
+596 596 Some("Zulu") utc=false floating=false
+32768 32768 None utc=false floating=true
+32769 32769 Some("Etc/GMT+23")
+32784 32784 Some("Etc/GMT+23")
+32799 32799 Some("Etc/GMT+23")
+32814 32814 Some("Etc/GMT+23")
+32829 32829 Some("Etc/GMT+22")
+32844 32844 Some("Etc/GMT+22")
+32859 32859 Some("Etc/GMT+22")
+32874 32874 Some("Etc/GMT+22")
+32889 32889 Some("Etc/GMT+21")
+32904 32904 Some("Etc/GMT+21")
+32919 32919 Some("Etc/GMT+21")
+32934 32934 Some("Etc/GMT+21")
+32949 32949 Some("Etc/GMT+20")
+32964 32964 Some("Etc/GMT+20")
+32979 32979 Some("Etc/GMT+20")
+32994 32994 Some("Etc/GMT+20")
+33009 33009 Some("Etc/GMT+19")
+33024 33024 Some("Etc/GMT+19")
+33039 33039 Some("Etc/GMT+19")
+33054 33054 Some("Etc/GMT+19")
+33069 33069 Some("Etc/GMT+18")
+33084 33084 Some("Etc/GMT+18")
+33099 33099 Some("Etc/GMT+18")
+33114 33114 Some("Etc/GMT+18")
+33129 33129 Some("Etc/GMT+17")
+33144 33144 Some("Etc/GMT+17")
+33159 33159 Some("Etc/GMT+17")
+33174 33174 Some("Etc/GMT+17")
+33189 33189 Some("Etc/GMT+16")
+33204 33204 Some("Etc/GMT+16")
+33219 33219 Some("Etc/GMT+16")
+33234 33234 Some("Etc/GMT+16")
+33249 33249 Some("Etc/GMT+15")
+33264 33264 Some("Etc/GMT+15")
+33279 33279 Some("Etc/GMT+15")
+33294 33294 Some("Etc/GMT+15")
+33309 33309 Some("Etc/GMT+14")
+33324 33324 Some("Etc/GMT+14")
+33339 33339 Some("Etc/GMT+14")
+33354 33354 Some("Etc/GMT+14")
+33369 33369 Some("Etc/GMT+13")
+33384 33384 Some("Etc/GMT+13")
+33399 33399 Some("Etc/GMT+13")
+33414 33414 Some("Etc/GMT+13")
+33429 33429 Some("Etc/GMT+12")
+33444 33444 Some("Etc/GMT+12")
+33459 33459 Some("Etc/GMT+12")
+33474 33474 Some("Etc/GMT+12")
+33489 33489 Some("Etc/GMT+11")
+33504 33504 Some("Etc/GMT+11")
+33519 33519 Some("Etc/GMT+11")
+33534 33534 Some("Etc/GMT+11")
+33549 33549 Some("Etc/GMT+10")
+33564 33564 Some("Etc/GMT+10")
+33579 33579 Some("Etc/GMT+10")
+33594 33594 Some("Etc/GMT+10")
+33609 33609 Some("Etc/GMT+9")
+33624 33624 Some("Etc/GMT+9")
+33639 33639 Some("Etc/GMT+9")
+33654 33654 Some("Etc/GMT+9")
+33669 33669 Some("Etc/GMT+8")
+33684 33684 Some("Etc/GMT+8")
+33699 33699 Some("Etc/GMT+8")
+33714 33714 Some("Etc/GMT+8")
+33729 33729 Some("Etc/GMT+7")
+33744 33744 Some("Etc/GMT+7")
+33759 33759 Some("Etc/GMT+7")
+33774 33774 Some("Etc/GMT+7")
+33789 33789 Some("Etc/GMT+6")
+33804 33804 Some("Etc/GMT+6")
+33819 33819 Some("Etc/GMT+6")
+33834 33834 Some("Etc/GMT+6")
+33849 33849 Some("Etc/GMT+5")
+33864 33864 Some("Etc/GMT+5")
+33879 33879 Some("Etc/GMT+5")
+33894 33894 Some("Etc/GMT+5")
+33909 33909 Some("Etc/GMT+4")
+33924 33924 Some("Etc/GMT+4")
+33939 33939 Some("Etc/GMT+4")
+33954 33954 Some("Etc/GMT+4")
+33969 33969 Some("Etc/GMT+3")
+33984 33984 Some("Etc/GMT+3")
+33999 33999 Some("Etc/GMT+3")
+34014 34014 Some("Etc/GMT+3")
+34029 34029 Some("Etc/GMT+2")
+34044 34044 Some("Etc/GMT+2")
+34059 34059 Some("Etc/GMT+2")
+34074 34074 Some("Etc/GMT+2")
+34089 34089 Some("Etc/GMT+1")
+34104 34104 Some("Etc/GMT+1")
+34119 34119 Some("Etc/GMT+1")
+34134 34134 Some("Etc/GMT+1")
+34149 34149 Some("Etc/UTC")
+34164 34164 Some("Etc/UTC")
+34179 34179 Some("Etc/UTC")
+34194 34194 Some("Etc/UTC")
+34209 34209 Some("Etc/UTC")
+34224 34224 Some("Etc/UTC")
+34239 34239 Some("Etc/UTC")
+34254 34254 Some("Etc/UTC")
+34269 34269 Some("Etc/GMT-1")
+34284 34284 Some("Etc/GMT-1")
+34299 34299 Some("Etc/GMT-1")
+34314 34314 Some("Etc/GMT-1")
+34329 34329 Some("Etc/GMT-2")
+34344 34344 Some("Etc/GMT-2")
+34359 34359 Some("Etc/GMT-2")
+34374 34374 Some("Etc/GMT-2")
+34389 34389 Some("Etc/GMT-3")
+34404 34404 Some("Etc/GMT-3")
+34419 34419 Some("Etc/GMT-3")
+34434 34434 Some("Etc/GMT-3")
+34449 34449 Some("Etc/GMT-4")
+34464 34464 Some("Etc/GMT-4")
+34479 34479 Some("Etc/GMT-4")
+34494 34494 Some("Etc/GMT-4")
+34509 34509 Some("Etc/GMT-5")
+34524 34524 Some("Etc/GMT-5")
+34539 34539 Some("Etc/GMT-5")
+34554 34554 Some("Etc/GMT-5")
+34569 34569 Some("Etc/GMT-6")
+34584 34584 Some("Etc/GMT-6")
+34599 34599 Some("Etc/GMT-6")
+34614 34614 Some("Etc/GMT-6")
+34629 34629 Some("Etc/GMT-7")
+34644 34644 Some("Etc/GMT-7")
+34659 34659 Some("Etc/GMT-7")
+34674 34674 Some("Etc/GMT-7")
+34689 34689 Some("Etc/GMT-8")
+34704 34704 Some("Etc/GMT-8")
+34719 34719 Some("Etc/GMT-8")
+34734 34734 Some("Etc/GMT-8")
+34749 34749 Some("Etc/GMT-9")
+34764 34764 Some("Etc/GMT-9")
+34779 34779 Some("Etc/GMT-9")
+34794 34794 Some("Etc/GMT-9")
+34809 34809 Some("Etc/GMT-10")
+34824 34824 Some("Etc/GMT-10")
+34839 34839 Some("Etc/GMT-10")
+34854 34854 Some("Etc/GMT-10")
+34869 34869 Some("Etc/GMT-11")
+34884 34884 Some("Etc/GMT-11")
+34899 34899 Some("Etc/GMT-11")
+34914 34914 Some("Etc/GMT-11")
+34929 34929 Some("Etc/GMT-12")
+34944 34944 Some("Etc/GMT-12")
+34959 34959 Some("Etc/GMT-12")
+34974 34974 Some("Etc/GMT-12")
+34989 34989 Some("Etc/GMT-13")
+35004 35004 Some("Etc/GMT-13")
+35019 35019 Some("Etc/GMT-13")
+35034 35034 Some("Etc/GMT-13")
+35049 35049 Some("Etc/GMT-14")
+35064 35064 Some("Etc/GMT-14")
+35079 35079 Some("Etc/GMT-14")
+35094 35094 Some("Etc/GMT-14")
+35109 35109 Some("Etc/GMT-15")
+35124 35124 Some("Etc/GMT-15")
+35139 35139 Some("Etc/GMT-15")
+35154 35154 Some("Etc/GMT-15")
+35169 35169 Some("Etc/GMT-16")
+35184 35184 Some("Etc/GMT-16")
+35199 35199 Some("Etc/GMT-16")
+35214 35214 Some("Etc/GMT-16")
+35229 35229 Some("Etc/GMT-17")
+35244 35244 Some("Etc/GMT-17")
+35259 35259 Some("Etc/GMT-17")
+35274 35274 Some("Etc/GMT-17")
+35289 35289 Some("Etc/GMT-18")
+35304 35304 Some("Etc/GMT-18")
+35319 35319 Some("Etc/GMT-18")
+35334 35334 Some("Etc/GMT-18")
+35349 35349 Some("Etc/GMT-19")
+35364 35364 Some("Etc/GMT-19")
+35379 35379 Some("Etc/GMT-19")
+35394 35394 Some("Etc/GMT-19")
+35409 35409 Some("Etc/GMT-20")
+35424 35424 Some("Etc/GMT-20")
+35439 35439 Some("Etc/GMT-20")
+35454 35454 Some("Etc/GMT-20")
+35469 35469 Some("Etc/GMT-21")
+35484 35484 Some("Etc/GMT-21")
+35499 35499 Some("Etc/GMT-21")
+35514 35514 Some("Etc/GMT-21")
+35529 35529 Some("Etc/GMT-22")
+35544 35544 Some("Etc/GMT-22")
+35559 35559 Some("Etc/GMT-22")
+35574 35574 Some("Etc/GMT-22")
+35589 35589 Some("Etc/GMT-23")
+35604 35604 Some("Etc/GMT-23")
+35619 35619 Some("Etc/GMT-23")
+35634 35634 Some("Etc/GMT-23")
+from_str "America/New_York" -> Ok((170, Some("America/New_York")))
+from_str "america/new_york" -> Err(())
+from_str "US/Eastern" -> Ok((585, Some("US/Eastern")))
+from_str "EST5EDT" -> Ok((389, Some("EST5EDT")))
+from_str "Etc/GMT-14" -> Ok((412, Some("Etc/GMT-14")))
+from_str "Asia/Calcutta" -> Ok((253, Some("Asia/Calcutta")))
+from_str "Eastern Standard Time" -> Ok((170, Some("America/New_York")))
+from_str "W. Europe Standard Time" -> Ok((433, Some("Europe/Berlin")))
+from_str "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi" -> Ok((416, Some("Etc/GMT-5")))
+from_str "(GMT-05:00) Eastern Time (US & Canada)" -> Ok((170, Some("America/New_York")))
+from_str "/mozilla.org/20050126_1/America/Chicago" -> Ok((93, Some("America/Chicago")))
+from_str "/softwarestudio.org/Olson_20011030_5/America/Chicago" -> Ok((93, Some("America/Chicago")))
+from_str "GMT+0200" -> Err(())
+from_str "GMT-03:30" -> Err(())
+from_str "UTC" -> Ok((592, Some("Etc/UTC")))
+from_str "Z" -> Err(())
+from_str "Floating" -> Err(())
+from_str "Not/AZone" -> Err(())
+from_str "Romance Standard Time" -> Ok((464, Some("Europe/Paris")))
+from_str "Tokyo Standard Time" -> Ok((322, Some("Asia/Tokyo")))
+from_str "Central Europe Standard Time" -> Ok((437, Some("Europe/Budapest")))
+cdo 0 -> Some((592, Some("Etc/UTC")))
+cdo 1 -> Some((454, Some("Europe/London")))
+cdo 2 -> Some((452, Some("Europe/Lisbon")))
+cdo 3 -> Some((464, Some("Europe/Paris")))
+cdo 4 -> Some((433, Some("Europe/Berlin")))
+cdo 5 -> Some((436, Some("Europe/Bucharest")))
+cdo 6 -> Some((466, Some("Europe/Prague")))
+cdo 7 -> Some((430, Some("Europe/Athens")))
+cdo 8 -> Some((200, Some("America/Sao_Paulo")))
+cdo 9 -> Some((125, Some("America/Halifax")))
+cdo 10 -> Some((170, Some("America/New_York")))
+cdo 11 -> Some((93, Some("America/Chicago")))
+cdo 12 -> Some((106, Some("America/Denver")))
+cdo 13 -> Some((148, Some("America/Los_Angeles")))
+cdo 14 -> Some((55, Some("America/Anchorage")))
+cdo 15 -> Some((544, Some("Pacific/Honolulu")))
+cdo 16 -> Some((552, Some("Pacific/Midway")))
+cdo 17 -> Some((530, Some("Pacific/Auckland")))
+cdo 18 -> Some((349, Some("Australia/Brisbane")))
+cdo 19 -> Some((348, Some("Australia/Adelaide")))
+cdo 20 -> Some((322, Some("Asia/Tokyo")))
+cdo 21 -> Some((313, Some("Asia/Singapore")))
+cdo 22 -> Some((248, Some("Asia/Bangkok")))
+cdo 23 -> Some((253, Some("Asia/Calcutta")))
+cdo 24 -> Some((294, Some("Asia/Muscat")))
+cdo 25 -> Some((318, Some("Asia/Tehran")))
+cdo 26 -> Some((245, Some("Asia/Baghdad")))
+cdo 27 -> Some((276, Some("Asia/Jerusalem")))
+cdo 28 -> Some((205, Some("America/St_Johns")))
+cdo 29 -> Some((335, Some("Atlantic/Azores")))
+cdo 30 -> Some((173, Some("America/Noronha")))
+cdo 31 -> Some((14, Some("Africa/Casablanca")))
+cdo 32 -> Some((59, Some("America/Argentina/Buenos_Aires")))
+cdo 33 -> Some((89, Some("America/Caracas")))
+cdo 34 -> Some((128, Some("America/Indiana/Indianapolis")))
+cdo 35 -> Some((83, Some("America/Bogota")))
+cdo 36 -> Some((109, Some("America/Edmonton")))
+cdo 37 -> Some((162, Some("America/Mexico_City")))
+cdo 38 -> Some((182, Some("America/Phoenix")))
+cdo 39 -> Some((549, Some("Pacific/Kwajalein")))
+cdo 40 -> Some((538, Some("Pacific/Fiji")))
+cdo 41 -> Some((291, Some("Asia/Magadan")))
+cdo 42 -> Some((355, Some("Australia/Hobart")))
+cdo 43 -> Some((543, Some("Pacific/Guam")))
+cdo 44 -> Some((353, Some("Australia/Darwin")))
+cdo 45 -> Some((312, Some("Asia/Shanghai")))
+cdo 46 -> Some((237, Some("Asia/Almaty")))
+cdo 47 -> Some((279, Some("Asia/Karachi")))
+cdo 48 -> Some((277, Some("Asia/Kabul")))
+cdo 49 -> Some((13, Some("Africa/Cairo")))
+cdo 50 -> Some((24, Some("Africa/Harare")))
+cdo 51 -> Some((461, Some("Europe/Moscow")))
+cdo 52 -> None
+cdo 53 -> Some((338, Some("Atlantic/Cape_Verde")))
+cdo 54 -> Some((247, Some("Asia/Baku")))
+cdo 55 -> Some((122, Some("America/Guatemala")))
+cdo 56 -> Some((43, Some("Africa/Nairobi")))
+cdo 57 -> None
+cdo 58 -> Some((333, Some("Asia/Yekaterinburg")))
+cdo 59 -> Some((444, Some("Europe/Helsinki")))
+cdo 60 -> Some((117, Some("America/Godthab")))
+cdo 61 -> Some((306, Some("Asia/Rangoon")))
+cdo 62 -> Some((281, Some("Asia/Kathmandu")))
+cdo 63 -> Some((272, Some("Asia/Irkutsk")))
+cdo 64 -> Some((285, Some("Asia/Krasnoyarsk")))
+cdo 65 -> Some((198, Some("America/Santiago")))
+cdo 66 -> Some((258, Some("Asia/Colombo")))
+cdo 67 -> Some((568, Some("Pacific/Tongatapu")))
+cdo 68 -> Some((330, Some("Asia/Vladivostok")))
+cdo 69 -> Some((34, Some("Africa/Luanda")))
+cdo 70 -> Some((331, Some("Asia/Yakutsk")))
+cdo 71 -> Some((261, Some("Asia/Dhaka")))
+cdo 72 -> Some((311, Some("Asia/Seoul")))
+cdo 73 -> Some((362, Some("Australia/Perth")))
+cdo 74 -> Some((288, Some("Asia/Kuwait")))
+cdo 75 -> Some((315, Some("Asia/Taipei")))
+cdo 76 -> Some((365, Some("Australia/Sydney")))
+cdo 77 -> None
+cdo 78 -> None
+cdo 79 -> None
+cdo 80 -> None
+cdo 81 -> None
+cdo 82 -> None
+cdo 83 -> None
+cdo 84 -> None
+cdo 85 -> None
+cdo 86 -> None
+cdo 87 -> None
+cdo 88 -> None
+cdo 89 -> None
+cdo 90 -> None
+cdo 91 -> None
+cdo 92 -> None
+cdo 93 -> None
+cdo 94 -> None
+cdo 95 -> None
+cdo 96 -> None
+cdo 97 -> None
+cdo 98 -> None
+cdo 99 -> None

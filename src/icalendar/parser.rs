@@ -13,10 +13,6 @@ use crate::{
     },
     icalendar::{ICalendarDay, ICalendarWeekday},
 };
-use mail_parser::decoders::{
-    base64::base64_decode, charsets::map::charset_decoder,
-    quoted_printable::quoted_printable_decode,
-};
 use std::{borrow::Cow, iter::Peekable, slice::Iter};
 
 struct Params {
@@ -219,19 +215,25 @@ impl Parser<'_> {
                         // Decode binary parts
                         if let Some(encoding) = params.encoding {
                             let (bytes, default_encoding) = match encoding {
-                                Encoding::Base64 => (base64_decode(&token.text), None),
-                                Encoding::QuotedPrintable => {
-                                    (quoted_printable_decode(&token.text), "iso-8859-1".into())
+                                Encoding::Base64 => {
+                                    (encodify::base64::LENIENT.decode(&token.text).ok(), None)
                                 }
+                                Encoding::QuotedPrintable => (
+                                    encodify::qp::BODY
+                                        .decode(&token.text)
+                                        .ok()
+                                        .map(Cow::into_owned),
+                                    "iso-8859-1".into(),
+                                ),
                             };
                             if let Some(bytes) = bytes {
-                                if let Some(decoded) =
-                                    params.charset.as_deref().or(default_encoding).and_then(
-                                        |charset| {
-                                            charset_decoder(charset.as_bytes())
-                                                .map(|decoder| decoder(&bytes))
-                                        },
-                                    )
+                                if let Some(decoded) = params
+                                    .charset
+                                    .as_deref()
+                                    .or(default_encoding)
+                                    .and_then(|charset| {
+                                        crate::common::charset::decode(charset.as_bytes(), &bytes)
+                                    })
                                 {
                                     token.text = Cow::Owned(decoded.into_bytes());
                                 } else if std::str::from_utf8(&bytes).is_ok() {

@@ -7,9 +7,8 @@
 use super::{
     masks::MASKS,
     rrule::RRule,
-    utils::{days_since_unix_epoch, get_year_len, pymod},
+    utils::{days_since_unix_epoch, get_year_len, pymod, weekday_from_monday},
 };
-use chrono::{Datelike, TimeZone, Utc};
 
 #[derive(Debug)]
 pub(crate) struct BaseMasks {
@@ -61,13 +60,10 @@ pub(crate) struct YearInfo {
 
 impl YearInfo {
     pub fn new(year: i32, rrule: &RRule) -> Self {
-        // It should never fail, since there is always a 1st of January, is there?
-        let first_year_day = Utc.with_ymd_and_hms(year, 1, 1, 0, 0, 0).unwrap();
-
         let year_len = get_year_len(year);
         let next_year_len = get_year_len(year + 1);
-        let year_ordinal = days_since_unix_epoch(&first_year_day);
-        let year_start_weekday = first_year_day.weekday().num_days_from_monday() as u16;
+        let year_ordinal = days_since_unix_epoch(year, 1, 1);
+        let year_start_weekday = weekday_from_monday(year, 1, 1) as u16;
         let base_masks = base_year_masks(year_start_weekday, year_len);
 
         let mut result = Self {
@@ -89,7 +85,7 @@ impl YearInfo {
 
         let mut week_no_mask = vec![0; usize::from(year_len) + 7];
 
-        let rrule_week_start = rrule.week_start.num_days_from_monday() as u16;
+        let rrule_week_start = rrule.week_start.to_monday_zero_offset() as u16;
         let mut no1_week_start = pymod(7 - year_start_weekday + rrule_week_start, 7);
         let first_week_start = no1_week_start;
         let year_len_ext = if no1_week_start >= 4 {
@@ -131,7 +127,7 @@ impl YearInfo {
             for j in i..i + 7 {
                 let j = usize::from(j);
                 week_no_mask[j] = 1;
-                if result.weekday_mask[j + 1] == rrule.week_start.num_days_from_monday() {
+                if result.weekday_mask[j + 1] == rrule.week_start.to_monday_zero_offset() as u32 {
                     break;
                 }
             }
@@ -149,7 +145,8 @@ impl YearInfo {
                 for j in i..i + 7 {
                     let j = usize::from(j);
                     week_no_mask[j] = 1;
-                    if result.weekday_mask[j + 1] == rrule.week_start.num_days_from_monday() {
+                    if result.weekday_mask[j + 1] == rrule.week_start.to_monday_zero_offset() as u32
+                    {
                         break;
                     }
                 }
@@ -166,14 +163,9 @@ impl YearInfo {
             let l_num_weeks = if rrule.by_week_no.contains(&-1) {
                 -1
             } else {
-                let l_year_weekday = Utc
-                    .with_ymd_and_hms(year - 1, 1, 1, 0, 0, 0)
-                    // It should never fail, since there is always a 1st of January, is there?
-                    .unwrap()
-                    .weekday()
-                    .num_days_from_monday() as u16;
+                let l_year_weekday = weekday_from_monday(year - 1, 1, 1) as u16;
 
-                let rrule_week_start = rrule.week_start.num_days_from_monday() as u16;
+                let rrule_week_start = rrule.week_start.to_monday_zero_offset() as u16;
                 let ln_no1_week_start = pymod(7 - l_year_weekday + rrule_week_start, 7);
 
                 let l_year_len = get_year_len(year - 1);

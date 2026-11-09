@@ -5,7 +5,10 @@
  */
 
 use crate::{
-    common::{Data, IanaString, IanaType, timezone::TzTimestamp},
+    common::{
+        Data, IanaString, IanaType,
+        timezone::{TzTimestamp, ZonedTz},
+    },
     icalendar::{
         ICalendarEntry, ICalendarParameterName, ICalendarProperty, ICalendarValue,
         ICalendarValueType, Uri,
@@ -252,16 +255,13 @@ impl<I: JSCalendarId, B: JSCalendarId> State<I, B> {
                     Key::Property(JSCalendarProperty::RecurrenceId),
                     Value::Element(JSCalendarValue::DateTime(JSCalendarDateTime::new(
                         recurrence_id
-                            .with_timezone(&self.tz_start.unwrap_or_default())
+                            .with_tz(self.tz_start.unwrap_or_default())
                             .to_naive_timestamp(),
                         true,
                     ))),
                 );
                 if !self.is_recurrence_instance
-                    && let Some(tz) = recurrence_id
-                        .timezone()
-                        .to_resolved()
-                        .and_then(|tz| tz.name())
+                    && let Some(tz) = recurrence_id.tz().to_resolved().and_then(|tz| tz.name())
                 {
                     self.entries.insert(
                         Key::Property(JSCalendarProperty::RecurrenceIdTimeZone),

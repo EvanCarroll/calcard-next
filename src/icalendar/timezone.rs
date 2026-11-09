@@ -13,8 +13,11 @@ use crate::{
     common::{PartialDateTime, timezone::Tz},
     icalendar::ICalendarParameterName,
 };
-use chrono::{Datelike, NaiveDate, NaiveDateTime, Offset, TimeZone, Timelike, Utc, Weekday};
-use chrono_tz::{OffsetComponents, OffsetName};
+use jiff::{
+    Timestamp,
+    civil::{self, Weekday},
+    tz::TimeZone,
+};
 use std::{collections::HashMap, ops::Range, str::FromStr};
 
 pub struct TzResolver<T> {
@@ -136,9 +139,9 @@ impl ICalendar {
         }
 
         let observances = match Tz::from_str(tz_id).ok()? {
-            Tz::Tz(tz) => build_observances(tz, from, to),
+            Tz::Tz(tz) => build_observances(&tz.time_zone(), from, to),
             Tz::Fixed(offset) => {
-                let offset = round_to_minute(offset.local_minus_utc());
+                let offset = round_to_minute(offset.seconds());
                 vec![TzObservance {
                     at: from,
                     from_offset: offset,
@@ -276,7 +279,7 @@ impl ICalendar {
             return 0;
         }
 
-        let now = Utc::now().timestamp();
+        let now = Timestamp::now().as_second();
         let (min, max) = range.unwrap_or((now, now));
         let max = max.saturating_add(recurrence_span);
         let current_year = year_of(now);
@@ -330,21 +333,21 @@ struct TzObservance {
 }
 
 impl TzObservance {
-    fn onset(&self) -> NaiveDateTime {
+    fn onset(&self) -> civil::DateTime {
         naive_utc(self.at.saturating_add(self.from_offset as i64))
     }
 
     fn rule_key(&self) -> Option<(i32, TzRuleKey)> {
         let onset = self.onset();
         let day = onset.day();
-        let ordwk = if day.saturating_add(7) > days_in_month(onset.year(), onset.month()) {
+        let ordwk = if day.saturating_add(7) > onset.days_in_month() {
             -1
         } else {
             ((day - 1) / 7 + 1) as i16
         };
 
         Some((
-            onset.year(),
+            i32::from(onset.year()),
             TzRuleKey {
                 month: u8::try_from(onset.month()).ok()?,
                 ordwk,
@@ -368,7 +371,7 @@ impl TzObservance {
         component
             .entries
             .push(ICalendarEntry::new(ICalendarProperty::Dtstart).with_value(
-                PartialDateTime::from_naive_timestamp(self.onset().and_utc().timestamp()),
+                PartialDateTime::from_naive_timestamp(utc_timestamp(self.onset())),
             ));
         component.entries.push(
             ICalendarEntry::new(ICalendarProperty::Tzoffsetfrom)
@@ -393,7 +396,7 @@ impl TzObservance {
     }
 }
 
-fn build_observances(tz: chrono_tz::Tz, from: i64, to: i64) -> Vec<TzObservance> {
+fn build_observances(tz: &TimeZone, from: i64, to: i64) -> Vec<TzObservance> {
     let (initial, initial_name) = tz_observance_at(tz, from);
     let mut observances = Vec::with_capacity(estimated_observances(from, to));
     observances.push(TzObservance {
@@ -572,7 +575,7 @@ fn collapse_observances(mut observances: Vec<TzObservance>, to: i64) -> Vec<TzOb
     observances
 }
 
-fn find_transition(tz: chrono_tz::Tz, mut low: i64, mut high: i64, low_state: TzState) -> i64 {
+fn find_transition(tz: &TimeZone, mut low: i64, mut high: i64, low_state: TzState) -> i64 {
     while high - low > 1 {
         let middle = low + (high - low) / 2;
         if tz_state_at(tz, middle) == low_state {
@@ -584,31 +587,34 @@ fn find_transition(tz: chrono_tz::Tz, mut low: i64, mut high: i64, low_state: Tz
     high
 }
 
-fn tz_state_at(tz: chrono_tz::Tz, timestamp: i64) -> TzState {
-    let offset = tz.offset_from_utc_datetime(&naive_utc(timestamp));
-
-    TzState {
-        offset: offset.fix().local_minus_utc(),
-        is_dst: offset.dst_offset().num_seconds() != 0,
-    }
+fn tz_state_at(tz: &TimeZone, timestamp: i64) -> TzState {
+    tz_observance_at(tz, timestamp).0
 }
 
-fn tz_observance_at(tz: chrono_tz::Tz, timestamp: i64) -> (TzState, Option<String>) {
-    let offset = tz.offset_from_utc_datetime(&naive_utc(timestamp));
+fn tz_observance_at(tz: &TimeZone, timestamp: i64) -> (TzState, Option<String>) {
+    let info = tz.to_offset_info(to_timestamp(timestamp));
 
     (
         TzState {
-            offset: offset.fix().local_minus_utc(),
-            is_dst: offset.dst_offset().num_seconds() != 0,
+            offset: info.offset().seconds(),
+            is_dst: info.dst().is_dst(),
         },
-        offset.abbreviation().map(|name| name.to_string()),
+        tz_abbreviation(info.abbreviation()),
     )
 }
 
-fn tz_name_at(tz: chrono_tz::Tz, timestamp: i64) -> Option<String> {
-    tz.offset_from_utc_datetime(&naive_utc(timestamp))
-        .abbreviation()
-        .map(|name| name.to_string())
+fn tz_name_at(tz: &TimeZone, timestamp: i64) -> Option<String> {
+    tz_observance_at(tz, timestamp).1
+}
+
+/// Returns the abbreviation of a time zone observance, ignoring numeric
+/// abbreviations such as `+03` or `-0330` that only restate the UTC offset.
+fn tz_abbreviation(abbreviation: &str) -> Option<String> {
+    let is_numeric = abbreviation
+        .strip_prefix(['+', '-'])
+        .is_some_and(|digits| digits.bytes().all(|b| b.is_ascii_digit()));
+
+    (!abbreviation.is_empty() && !is_numeric).then(|| abbreviation.to_string())
 }
 
 fn estimated_observances(from: i64, to: i64) -> usize {
@@ -656,10 +662,7 @@ fn recurrence_span_of(freq: &ICalendarFrequency, count: u32, interval: Option<u1
 
 fn expand_range(range: &mut Option<(i64, i64)>, value: &PartialDateTime) {
     let Some(timestamp) = value.to_date_time().map(|result| {
-        result.date_time.and_utc().timestamp()
-            - result
-                .offset
-                .map_or(0, |offset| offset.local_minus_utc() as i64)
+        utc_timestamp(result.date_time) - result.offset.map_or(0, |offset| offset.seconds() as i64)
     }) else {
         return;
     };
@@ -675,42 +678,39 @@ fn expand_range(range: &mut Option<(i64, i64)>, value: &PartialDateTime) {
     }
 }
 
-fn naive_utc(timestamp: i64) -> NaiveDateTime {
-    chrono::DateTime::from_timestamp(timestamp, 0)
-        .unwrap_or_default()
-        .naive_utc()
+fn to_timestamp(timestamp: i64) -> Timestamp {
+    Timestamp::from_second(timestamp).unwrap_or(Timestamp::UNIX_EPOCH)
+}
+
+fn naive_utc(timestamp: i64) -> civil::DateTime {
+    TimeZone::UTC.to_datetime(to_timestamp(timestamp))
+}
+
+fn utc_timestamp(date_time: civil::DateTime) -> i64 {
+    TimeZone::UTC
+        .to_timestamp(date_time)
+        .map_or(0, |timestamp| timestamp.as_second())
 }
 
 fn year_of(timestamp: i64) -> i32 {
-    naive_utc(timestamp).year()
+    i32::from(naive_utc(timestamp).year())
 }
 
 fn start_of_year(year: i32) -> i64 {
-    NaiveDate::from_ymd_opt(year, 1, 1)
-        .and_then(|date| date.and_hms_opt(0, 0, 0))
-        .map_or(0, |date_time| date_time.and_utc().timestamp())
-}
-
-fn days_in_month(year: i32, month: u32) -> u32 {
-    let (year, month) = if month == 12 {
-        (year.saturating_add(1), 1)
-    } else {
-        (year, month + 1)
-    };
-
-    NaiveDate::from_ymd_opt(year, month, 1)
-        .and_then(|date| date.pred_opt())
-        .map_or(31, |date| date.day())
+    i16::try_from(year)
+        .ok()
+        .and_then(|year| civil::DateTime::new(year, 1, 1, 0, 0, 0, 0).ok())
+        .map_or(0, utc_timestamp)
 }
 
 fn weekday_of(weekday: Weekday) -> ICalendarWeekday {
     match weekday {
-        Weekday::Mon => ICalendarWeekday::Monday,
-        Weekday::Tue => ICalendarWeekday::Tuesday,
-        Weekday::Wed => ICalendarWeekday::Wednesday,
-        Weekday::Thu => ICalendarWeekday::Thursday,
-        Weekday::Fri => ICalendarWeekday::Friday,
-        Weekday::Sat => ICalendarWeekday::Saturday,
-        Weekday::Sun => ICalendarWeekday::Sunday,
+        Weekday::Monday => ICalendarWeekday::Monday,
+        Weekday::Tuesday => ICalendarWeekday::Tuesday,
+        Weekday::Wednesday => ICalendarWeekday::Wednesday,
+        Weekday::Thursday => ICalendarWeekday::Thursday,
+        Weekday::Friday => ICalendarWeekday::Friday,
+        Weekday::Saturday => ICalendarWeekday::Saturday,
+        Weekday::Sunday => ICalendarWeekday::Sunday,
     }
 }

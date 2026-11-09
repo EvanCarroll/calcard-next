@@ -6,7 +6,7 @@
 
 use super::*;
 use crate::common::{ArchivedPartialDateTime, timezone::Tz};
-use chrono::DateTime;
+use jiff::Zoned;
 
 impl ArchivedICalendar {
     pub fn uids(&self) -> impl Iterator<Item = &str> {
@@ -285,7 +285,7 @@ impl ArchivedUri {
 }
 
 impl ArchivedICalendarPeriod {
-    pub fn time_range(&self, tz: Tz) -> Option<(DateTime<Tz>, DateTime<Tz>)> {
+    pub fn time_range(&self, tz: Tz) -> Option<(Zoned, Zoned)> {
         match self {
             ArchivedICalendarPeriod::Range { start, end } => {
                 if let (Some(start), Some(end)) = (
@@ -303,16 +303,16 @@ impl ArchivedICalendarPeriod {
             ArchivedICalendarPeriod::Duration { start, duration } => start
                 .to_date_time()
                 .and_then(|start| start.to_date_time_with_tz(tz))
-                .zip(duration.to_time_delta())
+                .zip(duration.to_duration())
                 .and_then(|(start, duration)| {
-                    start.checked_add_signed(duration).map(|end| (start, end))
+                    start.checked_add(duration).ok().map(|end| (start, end))
                 }),
         }
     }
 }
 
 impl ArchivedPartialDateTime {
-    pub fn to_date_time_with_tz(&self, tz: Tz) -> Option<DateTime<Tz>> {
+    pub fn to_date_time_with_tz(&self, tz: Tz) -> Option<Zoned> {
         self.to_date_time()
             .and_then(|dt| dt.to_date_time_with_tz(tz))
     }
@@ -339,8 +339,8 @@ impl ArchivedPartialDateTime {
 }
 
 impl ArchivedICalendarDuration {
-    pub fn to_time_delta(&self) -> Option<chrono::TimeDelta> {
-        chrono::TimeDelta::new(self.as_seconds(), 0)
+    pub fn to_duration(&self) -> Option<jiff::SignedDuration> {
+        Some(jiff::SignedDuration::from_secs(self.as_seconds()))
     }
 
     pub fn as_seconds(&self) -> i64 {

@@ -5,6 +5,7 @@
  */
 
 use super::*;
+use crate::common::timezone::fixed_offset;
 
 impl IanaString for CalendarScale {
     fn as_str(&self) -> &'static str {
@@ -46,95 +47,83 @@ impl IanaString for ArchivedCalendarScale {
 
 impl IanaParse for CalendarScale {
     fn parse(value: &[u8]) -> Option<Self> {
-        hashify::tiny_map_ignore_case!(value,
-            "gregorian" => CalendarScale::Gregorian,
-            "chinese" => CalendarScale::Chinese,
-            "islamic-civil" => CalendarScale::IslamicCivil,
-            "hebrew" => CalendarScale::Hebrew,
-            "ethiopic" => CalendarScale::Ethiopic,
+        hashify::fnc_map_ignore_case!(value,
+            "gregorian" => Some(CalendarScale::Gregorian),
+            "chinese" => Some(CalendarScale::Chinese),
+            "islamic-civil" => Some(CalendarScale::IslamicCivil),
+            "hebrew" => Some(CalendarScale::Hebrew),
+            "ethiopic" => Some(CalendarScale::Ethiopic),
+            _ => None,
         )
     }
 }
 
 impl Encoding {
     pub fn parse(value: &[u8]) -> Option<Self> {
-        hashify::tiny_map_ignore_case!(value,
-            b"QUOTED-PRINTABLE" => Encoding::QuotedPrintable,
-            b"BASE64" => Encoding::Base64,
-            b"Q" => Encoding::QuotedPrintable,
-            b"B" => Encoding::Base64,
+        hashify::fnc_map_ignore_case!(value,
+            b"QUOTED-PRINTABLE" => Some(Encoding::QuotedPrintable),
+            b"BASE64" => Some(Encoding::Base64),
+            b"Q" => Some(Encoding::QuotedPrintable),
+            b"B" => Some(Encoding::Base64),
+            _ => None,
         )
     }
 }
 
 impl PartialDateTime {
     pub fn now() -> Self {
-        Self::from_utc_timestamp(chrono::Utc::now().timestamp())
+        Self::from_utc_timestamp(jiff::Timestamp::now().as_second())
     }
 
     pub fn from_utc_timestamp(value: i64) -> Self {
-        let dt = DateTime::from_timestamp(value);
-
         PartialDateTime {
-            year: dt.year.into(),
-            month: dt.month.into(),
-            day: dt.day.into(),
-            hour: dt.hour.into(),
-            minute: dt.minute.into(),
-            second: dt.second.into(),
-            tz_hour: dt.tz_hour.into(),
-            tz_minute: dt.tz_minute.into(),
+            tz_hour: Some(0),
+            tz_minute: Some(0),
             tz_minus: false,
+            ..Self::from_naive_timestamp(value)
         }
     }
 
     pub fn from_date_timestamp(value: i64) -> Self {
-        let dt = DateTime::from_timestamp(value);
+        let dt = utc_date_time(value);
 
         PartialDateTime {
-            year: dt.year.into(),
-            month: dt.month.into(),
-            day: dt.day.into(),
+            year: u16::try_from(dt.year()).ok(),
+            month: Some(dt.month() as u8),
+            day: Some(dt.day() as u8),
             ..Default::default()
         }
     }
 
     pub fn from_naive_timestamp(value: i64) -> Self {
-        let dt = DateTime::from_timestamp(value);
+        let dt = utc_date_time(value);
 
         PartialDateTime {
-            year: dt.year.into(),
-            month: dt.month.into(),
-            day: dt.day.into(),
-            hour: dt.hour.into(),
-            minute: dt.minute.into(),
-            second: dt.second.into(),
+            year: u16::try_from(dt.year()).ok(),
+            month: Some(dt.month() as u8),
+            day: Some(dt.day() as u8),
+            hour: Some(dt.hour() as u8),
+            minute: Some(dt.minute() as u8),
+            second: Some(dt.second() as u8),
             ..Default::default()
         }
     }
 
     pub fn to_date_time(&self) -> Option<DateTimeResult> {
         let mut dt = DateTimeResult {
-            date_time: NaiveDate::from_ymd_opt(
-                self.year? as i32,
-                self.month? as u32,
-                self.day? as u32,
-            )?
-            .and_hms_opt(
-                self.hour.unwrap_or(0) as u32,
-                self.minute.unwrap_or(0) as u32,
-                self.second.unwrap_or(0) as u32,
+            date_time: civil_date_time(
+                self.year?,
+                self.month?,
+                self.day?,
+                self.hour.unwrap_or(0),
+                self.minute.unwrap_or(0),
+                self.second.unwrap_or(0),
             )?,
             offset: None,
         };
         if let Some(tz_hour) = self.tz_hour {
             let secs = (tz_hour as i32 * 3600) + (self.tz_minute.unwrap_or(0) as i32 * 60);
-            dt.offset = if self.tz_minus {
-                FixedOffset::west_opt(secs)?
-            } else {
-                FixedOffset::east_opt(secs)?
-            }
-            .into();
+            dt.offset = fixed_offset(if self.tz_minus { -secs } else { secs })?.into();
         }
         Some(dt)
     }
@@ -144,26 +133,19 @@ impl PartialDateTime {
 impl ArchivedPartialDateTime {
     pub fn to_date_time(&self) -> Option<DateTimeResult> {
         let mut dt = DateTimeResult {
-            date_time: NaiveDate::from_ymd_opt(
-                self.year.as_ref()?.to_native() as i32,
-                *self.month.as_ref()? as u32,
-                *self.day.as_ref()? as u32,
-            )?
-            .and_hms_opt(
-                self.hour.unwrap_or(0) as u32,
-                self.minute.unwrap_or(0) as u32,
-                self.second.unwrap_or(0) as u32,
+            date_time: civil_date_time(
+                self.year.as_ref()?.to_native(),
+                *self.month.as_ref()?,
+                *self.day.as_ref()?,
+                self.hour.unwrap_or(0),
+                self.minute.unwrap_or(0),
+                self.second.unwrap_or(0),
             )?,
             offset: None,
         };
         if let Some(tz_hour) = self.tz_hour.as_ref() {
             let secs = (*tz_hour as i32 * 3600) + (self.tz_minute.unwrap_or(0) as i32 * 60);
-            dt.offset = if self.tz_minus {
-                FixedOffset::west_opt(secs)?
-            } else {
-                FixedOffset::east_opt(secs)?
-            }
-            .into();
+            dt.offset = fixed_offset(if self.tz_minus { -secs } else { secs })?.into();
         }
         Some(dt)
     }
