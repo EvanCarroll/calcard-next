@@ -12,12 +12,14 @@ use crate::{
     icalendar::*,
     jscalendar::{
         export::{ConvertedComponent, State},
-        *,
+        patch, *,
     },
 };
-use ahash::{AHashMap, AHashSet};
+use ahash::AHashSet;
 use jiff::SignedDuration;
-use jmap_tools::{JsonPointer, JsonPointerHandler, JsonPointerItem, Key, Map, Value};
+use jmap_tools::{JsonPointer, Key, Map, Value};
+
+type JSMap<'x, I, B> = Map<'x, JSCalendarProperty<I>, JSCalendarValue<I, B>>;
 use std::str::FromStr;
 
 impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
@@ -73,6 +75,16 @@ impl ICalendar {
         let mut is_show_without_time = false;
         let mut has_time_component = false;
         let mut has_time_zone = false;
+
+        // The main object, which every recurrence override inherits from
+        // (RFC 8984, Section 4.3.5). Taken before the entries are consumed.
+        let override_base = (matches!(
+            state.default_component_type,
+            ICalendarComponentType::VEvent | ICalendarComponentType::VTodo
+        ) && state
+            .entries
+            .contains_key(&Key::Property(JSCalendarProperty::RecurrenceOverrides)))
+        .then(|| override_base(&state.entries));
 
         for (key, value) in state.entries.as_mut_vec() {
             match (key, value) {
@@ -202,54 +214,6 @@ impl ICalendar {
                 });
                 if obj.is_empty() && patch_count > 0 {
                     *value = Value::Null;
-                    continue;
-                }
-
-                let mut patched_obj = None;
-
-                for (key, value) in obj.as_mut_vec() {
-                    if let Key::Property(JSCalendarProperty::Pointer(ptr)) = key {
-                        patched_obj
-                            .get_or_insert_with(|| Value::Object(state.entries.clone()))
-                            .patch_jptr(ptr.iter(), std::mem::take(value));
-                    }
-                }
-
-                if let Some(patched_obj) = patched_obj {
-                    let mut patched_props: AHashMap<
-                        Key<'static, JSCalendarProperty<I>>,
-                        Vec<Key<'static, JSCalendarProperty<I>>>,
-                    > = AHashMap::new();
-
-                    for (key, value) in std::mem::take(obj.as_mut_vec()) {
-                        if let Key::Property(JSCalendarProperty::Pointer(ptr)) = key {
-                            let mut ptr = ptr.into_iter();
-                            if let (
-                                Some(JsonPointerItem::Key(key)),
-                                Some(JsonPointerItem::Key(subkey)),
-                            ) = (ptr.next(), ptr.next())
-                            {
-                                patched_props.entry(key).or_default().push(subkey);
-                            }
-                        } else {
-                            obj.insert_unchecked(key, value);
-                        }
-                    }
-
-                    for (key, patched_value) in patched_obj.into_expanded_object() {
-                        if let Some(keys) = patched_props.get(&key) {
-                            let Value::Object(obj) =
-                                obj.insert_or_get_mut(key, Value::Object(Map::default()))
-                            else {
-                                continue;
-                            };
-                            for (key, value) in patched_value.into_expanded_object() {
-                                if keys.contains(&key) {
-                                    obj.insert_unchecked(key, value);
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -1914,6 +1878,23 @@ impl ICalendar {
                         &Key::Property(JSCalendarProperty::Excluded),
                         &Value::Bool(true),
                     ) {
+                        if let Some(base) = &override_base {
+                            let (instance, error) = patch::occurrence(base, Some(jsdt), Some(&obj));
+                            if error.is_some() {
+                                // The occurrence is converted without the invalid patch,
+                                // which is kept as is so that it survives a round trip.
+                                component.insert_jsprop(
+                                    &[
+                                        JSCalendarProperty::<I>::RecurrenceOverrides
+                                            .to_string()
+                                            .as_ref(),
+                                        jsdt.to_rfc3339().as_str(),
+                                    ],
+                                    Value::Object(obj),
+                                );
+                            }
+                            obj = instance;
+                        }
                         if let Some(privacy) = privacy {
                             obj.insert_unchecked(
                                 Key::Property(JSCalendarProperty::Privacy),
@@ -2362,6 +2343,23 @@ impl ICalendarComponent {
                 .with_value(serde_json::to_string(&value).unwrap_or_default()),
         );
     }
+}
+
+/// The main object as the base of its recurrence overrides: everything except
+/// the properties that cannot be patched in an override (jscalendarbis,
+/// Section 3.3.4) and the 1.0 recurrence rules.
+fn override_base<'x, I: JSCalendarId, B: JSCalendarId>(
+    entries: &JSMap<'x, I, B>,
+) -> JSMap<'x, I, B> {
+    let mut base = entries.clone();
+    base.as_mut_vec().retain(|(key, _)| match key {
+        Key::Property(property) => !property.is_forbidden_override_patch(),
+        key => !matches!(
+            key.to_string().as_ref(),
+            "recurrenceRules" | "excludedRecurrenceRules"
+        ),
+    });
+    base
 }
 
 fn parse_geo(text: Cow<'_, str>) -> Vec<ICalendarValue> {

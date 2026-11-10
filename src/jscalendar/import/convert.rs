@@ -9,7 +9,7 @@ use crate::{
     icalendar::{timezone::TzResolver, *},
     jscalendar::{
         import::{ConversionOptions, EntryState, State, params::ExtractParams},
-        *,
+        patch, *,
     },
 };
 use jiff::Zoned;
@@ -175,6 +175,8 @@ impl ICalendar {
 
                 if component.uid.is_some() && component.recurrence_id.is_none() {
                     let mut privacy = component.privacy();
+                    let mut recurrences = Vec::new();
+                    let preserved = component.take_override_patches();
 
                     while let Some(mut recurrence) = group_components
                         .next_if(|r| r.uid == component.uid && r.recurrence_id.is_some())
@@ -190,19 +192,46 @@ impl ICalendar {
                         privacy = privacy.max(recurrence.privacy());
                         recurrence.set_is_recurrence_instance();
                         recurrence.remove_forbidden_override_patches();
-
-                        component
-                            .get_mut_object_or_insert(JSCalendarProperty::RecurrenceOverrides)
-                            .insert(
-                                Key::Property(JSCalendarProperty::DateTime(
-                                    JSCalendarDateTime::new(recurrence_id, true),
-                                )),
-                                recurrence.into_object(),
-                            );
+                        recurrences.push((recurrence_id, recurrence));
                     }
 
                     if let Some(privacy) = privacy {
                         component.raise_privacy(privacy);
+                    }
+
+                    /*
+                     The PatchObject "transforms the converted main component into the
+                     converted recurrence override" (draft-ietf-calext-jscalendar-icalendar,
+                     Section 2.1.2), so each override is stored as its difference from the
+                     converted main component.
+                    */
+                    if !recurrences.is_empty() || !preserved.is_empty() {
+                        let component_type = component.component_type.clone();
+                        let mut main = component.into_object().into_object().unwrap_or_default();
+                        let base = override_base(&main);
+                        let overrides = main
+                            .insert_or_get_mut(
+                                Key::Property(JSCalendarProperty::RecurrenceOverrides),
+                                Value::Object(Map::from(Vec::new())),
+                            )
+                            .as_object_mut()
+                            .expect("recurrenceOverrides is an object");
+                        for (recurrence_id, recurrence) in recurrences {
+                            let recurrence_id = JSCalendarDateTime::new(recurrence_id, true);
+                            let instance =
+                                recurrence.into_object().into_object().unwrap_or_default();
+                            let (base, _) = patch::occurrence(&base, Some(recurrence_id), None);
+                            overrides.insert(
+                                Key::Property(JSCalendarProperty::DateTime(recurrence_id)),
+                                Value::Object(patch::diff(&base, &instance)),
+                            );
+                        }
+                        // A patch kept verbatim because it could not be applied when
+                        // converting to iCalendar takes precedence over the difference.
+                        for (key, patch) in preserved {
+                            overrides.insert(key, patch);
+                        }
+                        component = State::from_object(component_type, main);
                     }
                 } else if component.uid.is_some() {
                     while let Some(instance) =
@@ -2043,4 +2072,17 @@ fn period_to_date_time(value: &ICalendarValue, tz: Tz) -> Option<(Zoned, ICalend
         )),
         _ => None,
     }
+}
+
+/// The converted main component as the base of its recurrence overrides.
+/// Properties an override cannot patch (jscalendarbis, Section 3.3.4) are left
+/// out, so they don't appear as removed in the patch.
+fn override_base<I: JSCalendarId, B: JSCalendarId>(
+    main: &Map<'static, JSCalendarProperty<I>, JSCalendarValue<I, B>>,
+) -> Map<'static, JSCalendarProperty<I>, JSCalendarValue<I, B>> {
+    let mut base = main.clone();
+    base.as_mut_vec().retain(|(key, _)| {
+        !matches!(key, Key::Property(property) if property.is_forbidden_override_patch())
+    });
+    base
 }

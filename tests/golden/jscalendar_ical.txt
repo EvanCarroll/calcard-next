@@ -848,14 +848,20 @@ UID:ee42e41e-1046-4489-9760-c0b85f0dc176
 END:VEVENT
 BEGIN:VEVENT
 ATTENDEE;CN="Tom Tool";EMAIL="tom@foobar.example.com";JSID=dG9tQGZvb2Jhci5xlLmNvbQ;PARTSTAT=DECLINED:mailto:tom@calendar.example.com
+ATTENDEE;CN="Zoe Zelda";JSID=em9lQGZvb2GFtcGxlLmNvbQ;PARTSTAT=ACCEPTED;ROLE=OWNER,CHAIR:mailto:zoe@foobar.example.com
+CONFERENCE;JSID=0;LABEL="ChatMe meeting room":https://chatme.example.com?id=1234567&pw=a8a24627b63d
+DTSTART;TZID=Africa/Johannesburg:20200304T090000
+DURATION:PT1H
 JSPROP;JSPTR=participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee:true
+JSPROP;JSPTR=participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee:true
 RECURRENCE-ID;TZID=Africa/Johannesburg:20200304T090000
+SUMMARY:FooBar team meeting
 UID:ee42e41e-1046-4489-9760-c0b85f0dc176
 END:VEVENT
 VERSION:2.0
 END:VCALENDAR
 
-  #1 1583305200 +7200 2020-03-04T09:00:00 [Africa/Johannesburg] | delta 86400s | ts 1583305200..1583391600 | resolved 1583391600 +7200 2020-03-05T09:00:00 [Africa/Johannesburg]
+  #1 1583305200 +7200 2020-03-04T09:00:00 [Africa/Johannesburg] | delta 3600s | ts 1583305200..1583308800 | resolved 1583308800 +7200 2020-03-04T10:00:00 [Africa/Johannesburg]
   #2 1578466800 +7200 2020-01-08T09:00:00 [Africa/Johannesburg] | delta 3600s | ts 1578466800..1578470400 | resolved 1578470400 +7200 2020-01-08T10:00:00 [Africa/Johannesburg]
   #2 1579071600 +7200 2020-01-15T09:00:00 [Africa/Johannesburg] | delta 3600s | ts 1579071600..1579075200 | resolved 1579075200 +7200 2020-01-15T10:00:00 [Africa/Johannesburg]
   #2 1579676400 +7200 2020-01-22T09:00:00 [Africa/Johannesburg] | delta 3600s | ts 1579676400..1579680000 | resolved 1579680000 +7200 2020-01-22T10:00:00 [Africa/Johannesburg]
@@ -1085,15 +1091,7 @@ END:VCALENDAR
       },
       "recurrenceOverrides": {
         "2020-03-04T09:00:00": {
-          "participants": {
-            "dG9tQGZvb2Jhci5xlLmNvbQ": {
-              "@type": "Participant",
-              "calendarAddress": "mailto:tom@calendar.example.com",
-              "email": "tom@foobar.example.com",
-              "name": "Tom Tool",
-              "participationStatus": "declined"
-            }
-          }
+          "participants/dG9tQGZvb2Jhci5xlLmNvbQ/participationStatus": "declined"
         }
       },
       "recurrenceRule": {
@@ -1144,6 +1142,18 @@ DESCRIPTION:Math Lab I\, Department of Mathematics
 JSID:mlab
 NAME:Math lab room 1
 END:VLOCATION
+DTSTART;TZID=Europe/London:20200107T140000
+DURATION:PT1H30M
+RECURRENCE-ID;TZID=Europe/London:20200107T140000
+SUMMARY:Introduction to Calculus I (optional)
+UID:ee42e41e-1046-4489-9760-c0b85f0dc176
+END:VEVENT
+BEGIN:VEVENT
+BEGIN:VLOCATION
+DESCRIPTION:Math Lab I\, Department of Mathematics
+JSID:mlab
+NAME:Math lab room 1
+END:VLOCATION
 DTSTART;TZID=Europe/London:20200108T090000
 DURATION:PT1H30M
 EXDATE;TZID=Europe/London:20200401T090000
@@ -1151,39 +1161,34 @@ RRULE:FREQ=WEEKLY;UNTIL=20200624T080000Z
 SUMMARY:Calculus I
 UID:ee42e41e-1046-4489-9760-c0b85f0dc176
 END:VEVENT
-BEGIN:VEVENT
-RECURRENCE-ID;TZID=Europe/London:20200107T140000
-SUMMARY:Introduction to Calculus I (optional)
-UID:ee42e41e-1046-4489-9760-c0b85f0dc176
-END:VEVENT
 VERSION:2.0
 END:VCALENDAR
 
-  #2 1578405600 +0 2020-01-07T14:00:00 [Europe/London] | delta 86400s | ts 1578405600..1578492000 | resolved 1578492000 +0 2020-01-08T14:00:00 [Europe/London]
-  #4 1593075600 +3600 2020-06-25T10:00:00 [Europe/London] | delta 7200s | ts 1593075600..1593082800 | resolved 1593082800 +3600 2020-06-25T12:00:00 [Europe/London]
-  #5 1578474000 +0 2020-01-08T09:00:00 [Europe/London] | delta 5400s | ts 1578474000..1578479400 | resolved 1578479400 +0 2020-01-08T10:30:00 [Europe/London]
-  #5 1579078800 +0 2020-01-15T09:00:00 [Europe/London] | delta 5400s | ts 1579078800..1579084200 | resolved 1579084200 +0 2020-01-15T10:30:00 [Europe/London]
-  #5 1579683600 +0 2020-01-22T09:00:00 [Europe/London] | delta 5400s | ts 1579683600..1579689000 | resolved 1579689000 +0 2020-01-22T10:30:00 [Europe/London]
-  #5 1580288400 +0 2020-01-29T09:00:00 [Europe/London] | delta 5400s | ts 1580288400..1580293800 | resolved 1580293800 +0 2020-01-29T10:30:00 [Europe/London]
-  #5 1580893200 +0 2020-02-05T09:00:00 [Europe/London] | delta 5400s | ts 1580893200..1580898600 | resolved 1580898600 +0 2020-02-05T10:30:00 [Europe/London]
-  #5 1581498000 +0 2020-02-12T09:00:00 [Europe/London] | delta 5400s | ts 1581498000..1581503400 | resolved 1581503400 +0 2020-02-12T10:30:00 [Europe/London]
-  #5 1582102800 +0 2020-02-19T09:00:00 [Europe/London] | delta 5400s | ts 1582102800..1582108200 | resolved 1582108200 +0 2020-02-19T10:30:00 [Europe/London]
-  #5 1582707600 +0 2020-02-26T09:00:00 [Europe/London] | delta 5400s | ts 1582707600..1582713000 | resolved 1582713000 +0 2020-02-26T10:30:00 [Europe/London]
-  #5 1583312400 +0 2020-03-04T09:00:00 [Europe/London] | delta 5400s | ts 1583312400..1583317800 | resolved 1583317800 +0 2020-03-04T10:30:00 [Europe/London]
-  #5 1583917200 +0 2020-03-11T09:00:00 [Europe/London] | delta 5400s | ts 1583917200..1583922600 | resolved 1583922600 +0 2020-03-11T10:30:00 [Europe/London]
-  #5 1584522000 +0 2020-03-18T09:00:00 [Europe/London] | delta 5400s | ts 1584522000..1584527400 | resolved 1584527400 +0 2020-03-18T10:30:00 [Europe/London]
-  #5 1585126800 +0 2020-03-25T09:00:00 [Europe/London] | delta 5400s | ts 1585126800..1585132200 | resolved 1585132200 +0 2020-03-25T10:30:00 [Europe/London]
-  #5 1586332800 +3600 2020-04-08T09:00:00 [Europe/London] | delta 5400s | ts 1586332800..1586338200 | resolved 1586338200 +3600 2020-04-08T10:30:00 [Europe/London]
-  #5 1586937600 +3600 2020-04-15T09:00:00 [Europe/London] | delta 5400s | ts 1586937600..1586943000 | resolved 1586943000 +3600 2020-04-15T10:30:00 [Europe/London]
-  #5 1587542400 +3600 2020-04-22T09:00:00 [Europe/London] | delta 5400s | ts 1587542400..1587547800 | resolved 1587547800 +3600 2020-04-22T10:30:00 [Europe/London]
-  #5 1588147200 +3600 2020-04-29T09:00:00 [Europe/London] | delta 5400s | ts 1588147200..1588152600 | resolved 1588152600 +3600 2020-04-29T10:30:00 [Europe/London]
-  #5 1588752000 +3600 2020-05-06T09:00:00 [Europe/London] | delta 5400s | ts 1588752000..1588757400 | resolved 1588757400 +3600 2020-05-06T10:30:00 [Europe/London]
-  #5 1589356800 +3600 2020-05-13T09:00:00 [Europe/London] | delta 5400s | ts 1589356800..1589362200 | resolved 1589362200 +3600 2020-05-13T10:30:00 [Europe/London]
-  #5 1589961600 +3600 2020-05-20T09:00:00 [Europe/London] | delta 5400s | ts 1589961600..1589967000 | resolved 1589967000 +3600 2020-05-20T10:30:00 [Europe/London]
-  #5 1590566400 +3600 2020-05-27T09:00:00 [Europe/London] | delta 5400s | ts 1590566400..1590571800 | resolved 1590571800 +3600 2020-05-27T10:30:00 [Europe/London]
-  #5 1591171200 +3600 2020-06-03T09:00:00 [Europe/London] | delta 5400s | ts 1591171200..1591176600 | resolved 1591176600 +3600 2020-06-03T10:30:00 [Europe/London]
-  #5 1591776000 +3600 2020-06-10T09:00:00 [Europe/London] | delta 5400s | ts 1591776000..1591781400 | resolved 1591781400 +3600 2020-06-10T10:30:00 [Europe/London]
-  #5 1592380800 +3600 2020-06-17T09:00:00 [Europe/London] | delta 5400s | ts 1592380800..1592386200 | resolved 1592386200 +3600 2020-06-17T10:30:00 [Europe/London]
+  #3 1578405600 +0 2020-01-07T14:00:00 [Europe/London] | delta 5400s | ts 1578405600..1578411000 | resolved 1578411000 +0 2020-01-07T15:30:00 [Europe/London]
+  #5 1593075600 +3600 2020-06-25T10:00:00 [Europe/London] | delta 7200s | ts 1593075600..1593082800 | resolved 1593082800 +3600 2020-06-25T12:00:00 [Europe/London]
+  #6 1578474000 +0 2020-01-08T09:00:00 [Europe/London] | delta 5400s | ts 1578474000..1578479400 | resolved 1578479400 +0 2020-01-08T10:30:00 [Europe/London]
+  #6 1579078800 +0 2020-01-15T09:00:00 [Europe/London] | delta 5400s | ts 1579078800..1579084200 | resolved 1579084200 +0 2020-01-15T10:30:00 [Europe/London]
+  #6 1579683600 +0 2020-01-22T09:00:00 [Europe/London] | delta 5400s | ts 1579683600..1579689000 | resolved 1579689000 +0 2020-01-22T10:30:00 [Europe/London]
+  #6 1580288400 +0 2020-01-29T09:00:00 [Europe/London] | delta 5400s | ts 1580288400..1580293800 | resolved 1580293800 +0 2020-01-29T10:30:00 [Europe/London]
+  #6 1580893200 +0 2020-02-05T09:00:00 [Europe/London] | delta 5400s | ts 1580893200..1580898600 | resolved 1580898600 +0 2020-02-05T10:30:00 [Europe/London]
+  #6 1581498000 +0 2020-02-12T09:00:00 [Europe/London] | delta 5400s | ts 1581498000..1581503400 | resolved 1581503400 +0 2020-02-12T10:30:00 [Europe/London]
+  #6 1582102800 +0 2020-02-19T09:00:00 [Europe/London] | delta 5400s | ts 1582102800..1582108200 | resolved 1582108200 +0 2020-02-19T10:30:00 [Europe/London]
+  #6 1582707600 +0 2020-02-26T09:00:00 [Europe/London] | delta 5400s | ts 1582707600..1582713000 | resolved 1582713000 +0 2020-02-26T10:30:00 [Europe/London]
+  #6 1583312400 +0 2020-03-04T09:00:00 [Europe/London] | delta 5400s | ts 1583312400..1583317800 | resolved 1583317800 +0 2020-03-04T10:30:00 [Europe/London]
+  #6 1583917200 +0 2020-03-11T09:00:00 [Europe/London] | delta 5400s | ts 1583917200..1583922600 | resolved 1583922600 +0 2020-03-11T10:30:00 [Europe/London]
+  #6 1584522000 +0 2020-03-18T09:00:00 [Europe/London] | delta 5400s | ts 1584522000..1584527400 | resolved 1584527400 +0 2020-03-18T10:30:00 [Europe/London]
+  #6 1585126800 +0 2020-03-25T09:00:00 [Europe/London] | delta 5400s | ts 1585126800..1585132200 | resolved 1585132200 +0 2020-03-25T10:30:00 [Europe/London]
+  #6 1586332800 +3600 2020-04-08T09:00:00 [Europe/London] | delta 5400s | ts 1586332800..1586338200 | resolved 1586338200 +3600 2020-04-08T10:30:00 [Europe/London]
+  #6 1586937600 +3600 2020-04-15T09:00:00 [Europe/London] | delta 5400s | ts 1586937600..1586943000 | resolved 1586943000 +3600 2020-04-15T10:30:00 [Europe/London]
+  #6 1587542400 +3600 2020-04-22T09:00:00 [Europe/London] | delta 5400s | ts 1587542400..1587547800 | resolved 1587547800 +3600 2020-04-22T10:30:00 [Europe/London]
+  #6 1588147200 +3600 2020-04-29T09:00:00 [Europe/London] | delta 5400s | ts 1588147200..1588152600 | resolved 1588152600 +3600 2020-04-29T10:30:00 [Europe/London]
+  #6 1588752000 +3600 2020-05-06T09:00:00 [Europe/London] | delta 5400s | ts 1588752000..1588757400 | resolved 1588757400 +3600 2020-05-06T10:30:00 [Europe/London]
+  #6 1589356800 +3600 2020-05-13T09:00:00 [Europe/London] | delta 5400s | ts 1589356800..1589362200 | resolved 1589362200 +3600 2020-05-13T10:30:00 [Europe/London]
+  #6 1589961600 +3600 2020-05-20T09:00:00 [Europe/London] | delta 5400s | ts 1589961600..1589967000 | resolved 1589967000 +3600 2020-05-20T10:30:00 [Europe/London]
+  #6 1590566400 +3600 2020-05-27T09:00:00 [Europe/London] | delta 5400s | ts 1590566400..1590571800 | resolved 1590571800 +3600 2020-05-27T10:30:00 [Europe/London]
+  #6 1591171200 +3600 2020-06-03T09:00:00 [Europe/London] | delta 5400s | ts 1591171200..1591176600 | resolved 1591176600 +3600 2020-06-03T10:30:00 [Europe/London]
+  #6 1591776000 +3600 2020-06-10T09:00:00 [Europe/London] | delta 5400s | ts 1591776000..1591781400 | resolved 1591781400 +3600 2020-06-10T10:30:00 [Europe/London]
+  #6 1592380800 +3600 2020-06-17T09:00:00 [Europe/London] | delta 5400s | ts 1592380800..1592386200 | resolved 1592386200 +3600 2020-06-17T10:30:00 [Europe/London]
 --
 {
   "@type": "Group",

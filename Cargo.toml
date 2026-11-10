@@ -24,6 +24,7 @@ uuid = { version = "1.29.2", default-features = false, features = ["v5"], option
 rkyv = { version = "0.8.18", optional = true }
 serde = { version = "1.0.229", features = ["derive"], optional = true }
 serde_json = { version = "1.0.154", optional = true }
+thiserror = "2.0.21"
 
 [features]
 default = ["jmap", "legacy-charsets"]

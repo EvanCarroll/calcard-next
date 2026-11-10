@@ -25,6 +25,12 @@ use ahash::AHashMap;
 use jmap_tools::{JsonPointer, JsonPointerHandler, JsonPointerItem, Key, Map, Property, Value};
 use std::{borrow::Cow, collections::hash_map::Entry, str::FromStr};
 
+/// A recurrence id key and its PatchObject.
+pub(super) type OverridePatch<I, B> = (
+    Key<'static, JSCalendarProperty<I>>,
+    Value<'static, JSCalendarProperty<I>, JSCalendarValue<I, B>>,
+);
+
 impl<I: JSCalendarId, B: JSCalendarId> State<I, B> {
     pub(super) fn map_named_entry(
         &mut self,
@@ -232,9 +238,9 @@ impl<I: JSCalendarId, B: JSCalendarId> State<I, B> {
              in JSCalendar.
             */
 
-            if !self.is_recurrence_instance
-                && let Some(tz) = self.tz_start.and_then(|tz| tz.name())
-            {
+            // A recurrence instance keeps its own time zone, so that a patch can
+            // record an override whose DTSTART is in another zone.
+            if let Some(tz) = self.tz_start.and_then(|tz| tz.name()) {
                 self.entries
                     .insert(Key::Property(JSCalendarProperty::TimeZone), Value::Str(tz));
             }
@@ -295,6 +301,44 @@ impl<I: JSCalendarId, B: JSCalendarId> State<I, B> {
         }
 
         obj
+    }
+
+    /// Removes and returns the JSPROP patches of this main component that set a
+    /// whole recurrence override (`recurrenceOverrides/<recurrence id>`).
+    pub(super) fn take_override_patches(&mut self) -> Vec<OverridePatch<I, B>> {
+        let mut taken = Vec::new();
+        self.patch_objects.retain_mut(|(pointer, value)| {
+            let mut items = pointer
+                .iter()
+                .filter(|item| !matches!(item, JsonPointerItem::Root));
+            match (items.next(), items.next(), items.next()) {
+                (
+                    Some(JsonPointerItem::Key(Key::Property(
+                        JSCalendarProperty::RecurrenceOverrides,
+                    ))),
+                    Some(JsonPointerItem::Key(key)),
+                    None,
+                ) if matches!(value, Value::Object(_)) => {
+                    taken.push((key.clone(), std::mem::take(value)));
+                    false
+                }
+                _ => true,
+            }
+        });
+        taken
+    }
+
+    /// A state holding an already converted object, so that converting it
+    /// again returns the same object.
+    pub(super) fn from_object(
+        component_type: crate::icalendar::ICalendarComponentType,
+        object: Map<'static, JSCalendarProperty<I>, JSCalendarValue<I, B>>,
+    ) -> Self {
+        State {
+            component_type,
+            entries: object.into_vec().into_iter().collect(),
+            ..Default::default()
+        }
     }
 
     pub(super) fn set_map_component(&mut self) {

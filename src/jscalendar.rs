@@ -7,6 +7,7 @@
 pub mod export;
 pub mod import;
 pub mod parser;
+pub mod patch;
 pub mod types;
 
 use crate::{
