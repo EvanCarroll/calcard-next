@@ -211,3 +211,216 @@ fn entries_with_the_same_uid() {
         .collect::<Vec<_>>();
     assert_eq!(found, [(0, "A".to_string()), (1, "B".to_string())]);
 }
+
+type Row = (usize, Option<String>, i64, i64);
+
+/// The reference expansion: convert to iCalendar, expand there, and map each
+/// instance back to its entry. The native expansion must agree with it.
+fn reference(json: &Value, tz: Tz, start: Timestamp, end: Timestamp) -> Option<Vec<Row>> {
+    use calcard_next::common::timezone::TzTimestamp;
+    let mut tagged = json.clone();
+    let entries = match tagged.get_mut("entries") {
+        Some(Value::Array(entries)) => entries.iter_mut().collect::<Vec<_>>(),
+        _ => vec![&mut tagged],
+    };
+    // Each entry's time zone: JSCalendar recurrence ids are local date-times
+    // in it.
+    let mut zones = Vec::new();
+    for (index, entry) in entries.into_iter().enumerate() {
+        zones.push(
+            entry
+                .get("timeZone")
+                .and_then(Value::as_str)
+                .and_then(|name| Tz::from_str(name).ok())
+                .unwrap_or(tz),
+        );
+        if let Some(entry) = entry.as_object_mut() {
+            entry.insert("uid".into(), json!(format!("ref-{index}")));
+        }
+    }
+    let text = tagged.to_string();
+    let ical = JSCalendar::<String, String>::parse(&text)
+        .ok()?
+        .into_icalendar()?;
+    let expand = ical.expand_dates_between(tz, start, end, 100_000);
+    let mut rows = Vec::new();
+    for event in &expand.events {
+        let comp = &ical.components[event.series_comp_id.unwrap_or(event.comp_id) as usize];
+        let uid = comp
+            .property(&calcard_next::icalendar::ICalendarProperty::Uid)?
+            .values
+            .first()?
+            .as_text()?;
+        let index: usize = uid.strip_prefix("ref-")?.parse().ok()?;
+        let times = event.clone().try_into_date_time()?;
+        let (s, e) = (
+            times.start.timestamp().as_second(),
+            times.end.timestamp().as_second(),
+        );
+        let rid = event.recurrence_id.as_ref().map(|rid| {
+            // A rule instance at a local time that does not exist is left
+            // floating by both expansions; its local time is the id.
+            let local = if rid.time_zone().is_unknown() {
+                rid.to_naive_timestamp()
+            } else {
+                rid.with_time_zone(zones[index].to_time_zone())
+                    .to_naive_timestamp()
+            };
+            calcard_next::jscalendar::JSCalendarDateTime::new(local, true).to_rfc3339()
+        });
+        rows.push((index, rid, s, e));
+    }
+    rows.sort();
+    Some(rows)
+}
+
+fn native(json: &Value, tz: Tz, start: Timestamp, end: Timestamp) -> Option<Vec<Row>> {
+    let text = json.to_string();
+    let calendar = JSCalendar::<String, String>::parse(&text).ok()?;
+    let expand = calendar.expand_between(tz, start, end, 100_000);
+    let mut rows = expand
+        .instances
+        .iter()
+        .map(|i| {
+            (
+                i.entry,
+                i.recurrence_id.map(|rid| rid.to_rfc3339()),
+                i.start.timestamp().as_second(),
+                i.end.timestamp().as_second(),
+            )
+        })
+        .collect::<Vec<_>>();
+    rows.sort();
+    Some(rows)
+}
+
+/// Every JSCalendar object in the corpus, including the iCalendar corpus
+/// converted to JSCalendar.
+fn corpus() -> Vec<(String, Value)> {
+    let mut found = Vec::new();
+    let mut files = std::fs::read_dir("tests/resources/jscalendar")
+        .unwrap()
+        .chain(std::fs::read_dir("tests/resources/ical").unwrap())
+        .map(|entry| entry.unwrap().path())
+        .collect::<Vec<_>>();
+    files.push("tests/resources/fixtures/improving_houston_meetups_v1.jscal.json".into());
+    files.sort();
+    for path in files {
+        let name = path.display().to_string();
+        let Ok(text) = std::fs::read_to_string(&path) else {
+            continue;
+        };
+        let json = if name.ends_with(".json") {
+            serde_json::from_str::<Value>(text.trim()).ok()
+        } else {
+            calcard_next::icalendar::ICalendar::parse(&text)
+                .ok()
+                .map(|ical| ical.into_jscalendar::<String, String>().to_string_pretty())
+                .and_then(|json| serde_json::from_str(&json).ok())
+        };
+        if let Some(json) = json {
+            found.push((name, json));
+        }
+    }
+    found
+}
+
+/// The native expansion gives the same instances as converting to iCalendar
+/// and expanding there, for every object in the corpus.
+#[test]
+fn native_expansion_matches_the_icalendar_path() {
+    let tz = Tz::from_str("America/Chicago").unwrap();
+    let windows = [
+        (ts("1990-01-01T00:00:00Z"), ts("2030-01-01T00:00:00Z")),
+        (ts("2024-03-01T00:00:00Z"), ts("2024-04-01T00:00:00Z")),
+        (ts("2026-07-01T00:00:00Z"), ts("2026-07-08T00:00:00Z")),
+    ];
+    let mut mismatches = Vec::new();
+    let mut compared = 0;
+    for (name, json) in corpus() {
+        // THISANDFUTURE survives in JSCalendar only as iCalendar metadata
+        // (`iCalendar/convertedProperties/recurrenceId`); JSCalendar moves just
+        // that occurrence. See `this_and_future_is_icalendar_only`.
+        if json.to_string().contains(r#""range""#) {
+            continue;
+        }
+        let timeless_tasks = timeless_tasks(&json);
+        for (start, end) in windows {
+            let (Some(mut expected), Some(found)) = (
+                reference(&json, tz, start, end),
+                native(&json, tz, start, end),
+            ) else {
+                continue;
+            };
+            compared += 1;
+            // A Task with neither start nor due has no occurrence time in
+            // JSCalendar. The iCalendar path places it through the RFC 4791
+            // time-range rules for CREATED and COMPLETED.
+            expected.retain(|(entry, ..)| !timeless_tasks.contains(entry));
+            if expected != found {
+                let missing = expected
+                    .iter()
+                    .filter(|r| !found.contains(r))
+                    .collect::<Vec<_>>();
+                let extra = found
+                    .iter()
+                    .filter(|r| !expected.contains(r))
+                    .collect::<Vec<_>>();
+                mismatches.push(format!(
+                    "{name} [{start}, {end}): missing {missing:?}, extra {extra:?}"
+                ));
+            }
+        }
+    }
+    assert!(compared > 100, "only {compared} comparisons");
+    assert!(mismatches.is_empty(), "{}", mismatches.join("\n"));
+}
+
+/// The entries that are Tasks with neither `start` nor `due`.
+fn timeless_tasks(json: &Value) -> Vec<usize> {
+    let entries = match json.get("entries") {
+        Some(Value::Array(entries)) => entries.iter().collect::<Vec<_>>(),
+        _ => vec![json],
+    };
+    entries
+        .iter()
+        .enumerate()
+        .filter(|(_, entry)| {
+            entry["@type"] == "Task" && entry.get("start").is_none() && entry.get("due").is_none()
+        })
+        .map(|(index, _)| index)
+        .collect()
+}
+
+/// iCalendar's RANGE=THISANDFUTURE has no JSCalendar equivalent. Converted to
+/// JSCalendar, the override patches its own occurrence only, so the native
+/// expansion moves that occurrence and leaves the later ones in place.
+#[test]
+fn this_and_future_is_icalendar_only() {
+    let ics = std::fs::read_to_string("tests/resources/ical/case_overrides.ics").unwrap();
+    let json = calcard_next::icalendar::ICalendar::parse(&ics)
+        .unwrap()
+        .into_jscalendar::<String, String>()
+        .to_string_pretty();
+    let calendar = JSCalendar::<String, String>::parse(&json).unwrap();
+    let found = calendar
+        .expand_between(
+            Tz::UTC,
+            ts("2024-04-01T00:00:00Z"),
+            ts("2024-05-01T00:00:00Z"),
+            100,
+        )
+        .instances
+        .iter()
+        .map(|i| i.start.datetime().to_string())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        found,
+        [
+            "2024-04-03T09:00:00",
+            "2024-04-10T11:00:00",
+            "2024-04-17T09:00:00",
+            "2024-04-24T09:00:00"
+        ]
+    );
+}

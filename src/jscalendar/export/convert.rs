@@ -83,9 +83,6 @@ impl ICalendar {
         let mut component_type = None;
         let mut description_content_type = None;
         let mut overrides = None;
-        let mut is_show_without_time = false;
-        let mut has_time_component = false;
-        let mut has_time_zone = false;
 
         // The main object, which every recurrence override inherits from
         // (RFC 8984, Section 4.3.5). Taken before the entries are consumed.
@@ -96,6 +93,14 @@ impl ICalendar {
             .entries
             .contains_key(&Key::Property(JSCalendarProperty::RecurrenceOverrides)))
         .then(|| override_base(&state.entries));
+
+        state.is_date |= is_date_only(
+            &state.entries,
+            matches!(
+                state.default_component_type,
+                ICalendarComponentType::VEvent | ICalendarComponentType::VTodo
+            ),
+        );
 
         for (key, value) in state.entries.as_mut_vec() {
             match (key, value) {
@@ -108,7 +113,6 @@ impl ICalendar {
                 }
                 (Key::Property(JSCalendarProperty::TimeZone), Value::Str(text)) => {
                     state.tz = Tz::from_str(text.as_ref()).ok();
-                    has_time_zone = true;
                 }
                 (Key::Property(JSCalendarProperty::EndTimeZone), Value::Str(text)) => {
                     state.tz_end = Tz::from_str(text.as_ref()).ok();
@@ -148,33 +152,7 @@ impl ICalendar {
                     ICalendarComponentType::VEvent | ICalendarComponentType::VTodo
                 ) =>
                 {
-                    has_time_component |= !dt.is_start_of_day();
                     start = dt.to_naive_date_time();
-                }
-                (
-                    Key::Property(JSCalendarProperty::Due | JSCalendarProperty::RecurrenceId),
-                    Value::Element(JSCalendarValue::DateTime(dt)),
-                ) => {
-                    has_time_component |= !dt.is_start_of_day();
-                }
-                (
-                    Key::Property(
-                        JSCalendarProperty::Duration | JSCalendarProperty::EstimatedDuration,
-                    ),
-                    Value::Element(JSCalendarValue::Duration(duration)),
-                ) => {
-                    has_time_component |=
-                        duration.hours != 0 || duration.minutes != 0 || duration.seconds != 0;
-                }
-                (Key::Property(JSCalendarProperty::ShowWithoutTime), Value::Bool(value)) => {
-                    is_show_without_time = *value;
-                }
-                (Key::Property(JSCalendarProperty::RecurrenceRule), Value::Object(obj)) => {
-                    if let Some(Value::Element(JSCalendarValue::DateTime(dt))) =
-                        obj.get(&Key::Property(JSCalendarProperty::Until))
-                    {
-                        has_time_component |= !dt.is_start_of_day();
-                    }
                 }
                 (
                     Key::Property(JSCalendarProperty::Type),
@@ -188,10 +166,6 @@ impl ICalendar {
                         ICalendarComponentType::VEvent | ICalendarComponentType::VTodo
                     ) =>
                 {
-                    has_time_component |= obj.iter().any(|(key, _)| {
-                        matches!(key, Key::Property(JSCalendarProperty::DateTime(dt))
-                            if !dt.is_start_of_day())
-                    });
                     overrides = Some(std::mem::take(obj));
                 }
                 _ => (),
@@ -228,18 +202,6 @@ impl ICalendar {
                 }
             }
         }
-
-        /*
-         In the iCalendar component, the value data types of the DTSTART, DUE and
-         RECURRENCE-ID properties all MUST be of the same form, either DATE, or DATE WITH
-         LOCAL TIME, or DATE WITH UTC TIME. It MUST be DATE if the "showWithoutTime"
-         property value is "true", the "timeZone" property value is not set, and the time
-         component is zero in the values of the "start", "due", "duration",
-         "estimatedDuration", "recurrenceId" properties, and the RecurrenceRule object's
-         "until" property, and in any key of the "recurrenceOverrides" property value.
-        */
-
-        state.is_date |= is_show_without_time && !has_time_zone && !has_time_component;
 
         // Build component
         let mut component =
@@ -1335,155 +1297,16 @@ impl ICalendar {
                     Value::Object(obj),
                     ICalendarComponentType::VEvent | ICalendarComponentType::VTodo,
                 ) => {
-                    let mut rrule = ICalendarRecurrenceRule::default();
-
-                    for (key, value) in obj.into_vec() {
-                        let Key::Property(key) = key else {
-                            continue;
-                        };
-                        match (key, value) {
-                            (
-                                JSCalendarProperty::Frequency,
-                                Value::Element(JSCalendarValue::Frequency(value)),
-                            ) => {
-                                rrule.freq = value;
-                            }
-                            (
-                                JSCalendarProperty::Until,
-                                Value::Element(JSCalendarValue::DateTime(value)),
-                            ) => {
-                                rrule.until = value
-                                    .to_naive_date_time()
-                                    .and_then(|dt| {
-                                        state.tz.unwrap_or_default().from_local_datetime(dt)
-                                    })
-                                    .map(|dt| {
-                                        if state.is_date {
-                                            PartialDateTime::from_date_timestamp(
-                                                dt.to_naive_timestamp(),
-                                            )
-                                        } else {
-                                            PartialDateTime::from_utc_timestamp(
-                                                dt.timestamp().as_second(),
-                                            )
-                                        }
-                                    });
-                            }
-                            (JSCalendarProperty::Count, Value::Number(value)) => {
-                                rrule.count = Some(value.cast_to_u64() as u32);
-                            }
-                            (JSCalendarProperty::Interval, Value::Number(value)) => {
-                                rrule.interval = Some(value.cast_to_u64() as u16);
-                            }
-                            (JSCalendarProperty::BySecond, Value::Array(value)) => {
-                                rrule.bysecond = value
-                                    .into_iter()
-                                    .filter_map(|v| v.as_i64().and_then(|n| u8::try_from(n).ok()))
-                                    .collect();
-                            }
-                            (JSCalendarProperty::ByMinute, Value::Array(value)) => {
-                                rrule.byminute = value
-                                    .into_iter()
-                                    .filter_map(|v| v.as_i64().and_then(|n| u8::try_from(n).ok()))
-                                    .collect();
-                            }
-                            (JSCalendarProperty::ByHour, Value::Array(value)) => {
-                                rrule.byhour = value
-                                    .into_iter()
-                                    .filter_map(|v| v.as_i64().and_then(|n| u8::try_from(n).ok()))
-                                    .collect();
-                            }
-                            (JSCalendarProperty::ByDay, Value::Array(value)) => {
-                                for item in value {
-                                    let mut weekday = None;
-                                    let mut ordwk = None;
-
-                                    for (key, value) in item.into_expanded_object() {
-                                        match (key, value) {
-                                            (
-                                                Key::Property(JSCalendarProperty::Day),
-                                                Value::Element(JSCalendarValue::Weekday(value)),
-                                            ) => {
-                                                weekday = Some(value);
-                                            }
-                                            (
-                                                Key::Property(JSCalendarProperty::NthOfPeriod),
-                                                Value::Number(value),
-                                            ) => {
-                                                ordwk = i16::try_from(value.cast_to_i64()).ok();
-                                            }
-                                            _ => {}
-                                        }
-                                    }
-
-                                    if let Some(weekday) = weekday {
-                                        rrule.byday.push(ICalendarDay { weekday, ordwk });
-                                    }
-                                }
-                            }
-                            (JSCalendarProperty::ByMonthDay, Value::Array(value)) => {
-                                rrule.bymonthday = value
-                                    .into_iter()
-                                    .filter_map(|v| v.as_i64().and_then(|n| i8::try_from(n).ok()))
-                                    .collect();
-                            }
-                            (JSCalendarProperty::ByYearDay, Value::Array(value)) => {
-                                rrule.byyearday = value
-                                    .into_iter()
-                                    .filter_map(|v| v.as_i64().and_then(|n| i16::try_from(n).ok()))
-                                    .collect();
-                            }
-                            (JSCalendarProperty::ByWeekNo, Value::Array(value)) => {
-                                rrule.byweekno = value
-                                    .into_iter()
-                                    .filter_map(|v| v.as_i64().and_then(|n| i8::try_from(n).ok()))
-                                    .collect();
-                            }
-                            (JSCalendarProperty::ByMonth, Value::Array(value)) => {
-                                rrule.bymonth = value
-                                    .into_iter()
-                                    .filter_map(|v| {
-                                        v.as_str().and_then(|v| ICalendarMonth::parse(v.as_bytes()))
-                                    })
-                                    .collect();
-                            }
-                            (JSCalendarProperty::BySetPosition, Value::Array(value)) => {
-                                rrule.bysetpos = value
-                                    .into_iter()
-                                    .filter_map(|v| v.as_i64().and_then(|n| i32::try_from(n).ok()))
-                                    .collect();
-                            }
-                            (
-                                JSCalendarProperty::FirstDayOfWeek,
-                                Value::Element(JSCalendarValue::Weekday(value)),
-                            ) => {
-                                rrule.wkst = Some(value);
-                            }
-                            (
-                                JSCalendarProperty::Rscale,
-                                Value::Element(JSCalendarValue::CalendarScale(value)),
-                            ) => {
-                                rrule.rscale = Some(value);
-                            }
-                            (
-                                JSCalendarProperty::Skip,
-                                Value::Element(JSCalendarValue::Skip(value)),
-                            ) => {
-                                rrule.skip = Some(value);
-                            }
-                            (JSCalendarProperty::Type | JSCalendarProperty::ICalendar, _) => {}
-                            (key, value) => {
-                                component.insert_jsprop(
-                                    &[
-                                        JSCalendarProperty::RecurrenceRule::<I>
-                                            .to_string()
-                                            .as_ref(),
-                                        key.to_string().as_ref(),
-                                    ],
-                                    value,
-                                );
-                            }
-                        }
+                    let (rrule, unknown) =
+                        recurrence_rule(&obj, state.tz.unwrap_or_default(), state.is_date);
+                    for (key, value) in unknown {
+                        component.insert_jsprop(
+                            &[
+                                JSCalendarProperty::RecurrenceRule::<I>.to_string().as_ref(),
+                                key.to_string().as_ref(),
+                            ],
+                            value,
+                        );
                     }
 
                     component.entries.push(
@@ -2354,6 +2177,209 @@ impl ICalendarComponent {
                 .with_value(serde_json::to_string(&value).unwrap_or_default()),
         );
     }
+}
+
+/// A RecurrenceRule property without an iCalendar form, and its value.
+pub(crate) type UnknownRuleProperty<'x, I, B> = (
+    JSCalendarProperty<I>,
+    Value<'x, JSCalendarProperty<I>, JSCalendarValue<I, B>>,
+);
+
+/// The iCalendar form of a JSCalendar RecurrenceRule, whose `until` is a
+/// local date-time in `tz`, and the properties it has no iCalendar form for.
+pub(crate) fn recurrence_rule<'x, I: JSCalendarId, B: JSCalendarId>(
+    obj: &JSMap<'x, I, B>,
+    tz: Tz,
+    is_date: bool,
+) -> (ICalendarRecurrenceRule, Vec<UnknownRuleProperty<'x, I, B>>) {
+    let mut rrule = ICalendarRecurrenceRule::default();
+    let mut unknown = Vec::new();
+
+    for (key, value) in obj.iter() {
+        let Key::Property(key) = key else {
+            continue;
+        };
+        match (key, value) {
+            (JSCalendarProperty::Frequency, Value::Element(JSCalendarValue::Frequency(value))) => {
+                rrule.freq = *value;
+            }
+            (JSCalendarProperty::Until, Value::Element(JSCalendarValue::DateTime(value))) => {
+                rrule.until = value
+                    .to_naive_date_time()
+                    .and_then(|dt| tz.from_local_datetime(dt))
+                    .map(|dt| {
+                        if is_date {
+                            PartialDateTime::from_date_timestamp(dt.to_naive_timestamp())
+                        } else {
+                            PartialDateTime::from_utc_timestamp(dt.timestamp().as_second())
+                        }
+                    });
+            }
+            (JSCalendarProperty::Count, Value::Number(value)) => {
+                rrule.count = Some(value.cast_to_u64() as u32);
+            }
+            (JSCalendarProperty::Interval, Value::Number(value)) => {
+                rrule.interval = Some(value.cast_to_u64() as u16);
+            }
+            (JSCalendarProperty::BySecond, Value::Array(value)) => {
+                rrule.bysecond = value
+                    .iter()
+                    .filter_map(|v| v.as_i64().and_then(|n| u8::try_from(n).ok()))
+                    .collect();
+            }
+            (JSCalendarProperty::ByMinute, Value::Array(value)) => {
+                rrule.byminute = value
+                    .iter()
+                    .filter_map(|v| v.as_i64().and_then(|n| u8::try_from(n).ok()))
+                    .collect();
+            }
+            (JSCalendarProperty::ByHour, Value::Array(value)) => {
+                rrule.byhour = value
+                    .iter()
+                    .filter_map(|v| v.as_i64().and_then(|n| u8::try_from(n).ok()))
+                    .collect();
+            }
+            (JSCalendarProperty::ByDay, Value::Array(value)) => {
+                for item in value {
+                    let mut weekday = None;
+                    let mut ordwk = None;
+                    let Value::Object(item) = item else {
+                        continue;
+                    };
+
+                    for (key, value) in item.iter() {
+                        match (key, value) {
+                            (
+                                Key::Property(JSCalendarProperty::Day),
+                                Value::Element(JSCalendarValue::Weekday(value)),
+                            ) => {
+                                weekday = Some(*value);
+                            }
+                            (
+                                Key::Property(JSCalendarProperty::NthOfPeriod),
+                                Value::Number(value),
+                            ) => {
+                                ordwk = i16::try_from(value.cast_to_i64()).ok();
+                            }
+                            _ => {}
+                        }
+                    }
+
+                    if let Some(weekday) = weekday {
+                        rrule.byday.push(ICalendarDay { weekday, ordwk });
+                    }
+                }
+            }
+            (JSCalendarProperty::ByMonthDay, Value::Array(value)) => {
+                rrule.bymonthday = value
+                    .iter()
+                    .filter_map(|v| v.as_i64().and_then(|n| i8::try_from(n).ok()))
+                    .collect();
+            }
+            (JSCalendarProperty::ByYearDay, Value::Array(value)) => {
+                rrule.byyearday = value
+                    .iter()
+                    .filter_map(|v| v.as_i64().and_then(|n| i16::try_from(n).ok()))
+                    .collect();
+            }
+            (JSCalendarProperty::ByWeekNo, Value::Array(value)) => {
+                rrule.byweekno = value
+                    .iter()
+                    .filter_map(|v| v.as_i64().and_then(|n| i8::try_from(n).ok()))
+                    .collect();
+            }
+            (JSCalendarProperty::ByMonth, Value::Array(value)) => {
+                rrule.bymonth = value
+                    .iter()
+                    .filter_map(|v| v.as_str().and_then(|v| ICalendarMonth::parse(v.as_bytes())))
+                    .collect();
+            }
+            (JSCalendarProperty::BySetPosition, Value::Array(value)) => {
+                rrule.bysetpos = value
+                    .iter()
+                    .filter_map(|v| v.as_i64().and_then(|n| i32::try_from(n).ok()))
+                    .collect();
+            }
+            (
+                JSCalendarProperty::FirstDayOfWeek,
+                Value::Element(JSCalendarValue::Weekday(value)),
+            ) => {
+                rrule.wkst = Some(*value);
+            }
+            (JSCalendarProperty::Rscale, Value::Element(JSCalendarValue::CalendarScale(value))) => {
+                rrule.rscale = Some(value.clone());
+            }
+            (JSCalendarProperty::Skip, Value::Element(JSCalendarValue::Skip(value))) => {
+                rrule.skip = Some(*value);
+            }
+            (JSCalendarProperty::Type | JSCalendarProperty::ICalendar, _) => {}
+            (key, value) => {
+                unknown.push((key.clone(), value.clone()));
+            }
+        }
+    }
+    (rrule, unknown)
+}
+
+/// Whether the object's date-times convert to iCalendar DATE values.
+///
+/// In the iCalendar component, the value data types of the DTSTART, DUE and
+/// RECURRENCE-ID properties all MUST be of the same form, either DATE, or DATE WITH
+/// LOCAL TIME, or DATE WITH UTC TIME. It MUST be DATE if the "showWithoutTime"
+/// property value is "true", the "timeZone" property value is not set, and the time
+/// component is zero in the values of the "start", "due", "duration",
+/// "estimatedDuration", "recurrenceId" properties, and the RecurrenceRule object's
+/// "until" property, and in any key of the "recurrenceOverrides" property value.
+pub(crate) fn is_date_only<I: JSCalendarId, B: JSCalendarId>(
+    entries: &JSMap<'_, I, B>,
+    is_event_or_task: bool,
+) -> bool {
+    let mut show_without_time = false;
+    let mut has_time_zone = false;
+    let mut has_time = false;
+    for (key, value) in entries.iter() {
+        let Key::Property(property) = key else {
+            continue;
+        };
+        match (property, value) {
+            (JSCalendarProperty::TimeZone, Value::Str(_)) => has_time_zone = true,
+            (JSCalendarProperty::ShowWithoutTime, Value::Bool(value)) => {
+                show_without_time = *value;
+            }
+            (JSCalendarProperty::Start, Value::Element(JSCalendarValue::DateTime(dt)))
+                if is_event_or_task =>
+            {
+                has_time |= !dt.is_start_of_day();
+            }
+            (
+                JSCalendarProperty::Due | JSCalendarProperty::RecurrenceId,
+                Value::Element(JSCalendarValue::DateTime(dt)),
+            ) => has_time |= !dt.is_start_of_day(),
+            (
+                JSCalendarProperty::Duration | JSCalendarProperty::EstimatedDuration,
+                Value::Element(JSCalendarValue::Duration(duration)),
+            ) => {
+                has_time |= duration.hours != 0 || duration.minutes != 0 || duration.seconds != 0;
+            }
+            (JSCalendarProperty::RecurrenceRule, Value::Object(rule)) => {
+                if let Some(Value::Element(JSCalendarValue::DateTime(dt))) =
+                    rule.get(&Key::Property(JSCalendarProperty::Until))
+                {
+                    has_time |= !dt.is_start_of_day();
+                }
+            }
+            (JSCalendarProperty::RecurrenceOverrides, Value::Object(overrides))
+                if is_event_or_task =>
+            {
+                has_time |= overrides.iter().any(|(key, _)| {
+                    matches!(key, Key::Property(JSCalendarProperty::DateTime(dt))
+                        if !dt.is_start_of_day())
+                });
+            }
+            _ => {}
+        }
+    }
+    show_without_time && !has_time_zone && !has_time
 }
 
 /// A lone Event or Task as the only entry of a Group. Calendar components

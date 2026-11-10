@@ -15,20 +15,27 @@
 
 use super::{
     JSCalendar, JSCalendarDateTime, JSCalendarId, JSCalendarProperty, JSCalendarType,
-    JSCalendarValue, patch,
+    JSCalendarValue,
+    export::convert::{is_date_only, recurrence_rule},
+    patch,
 };
 use crate::{
     common::timezone::{Tz, TzTimestamp},
+    datecalc::rrule::RRule,
     error::ExpandError,
-    icalendar::{ICalendarProperty, ICalendarValue},
+    icalendar::dates::{
+        CalendarErrorType, CalendarEvent, Candidate, Merge, Overlap, TimeOrDelta, Window,
+        rule_instances,
+    },
 };
-use ahash::AHashMap;
-use jiff::{Timestamp, Zoned};
+use ahash::{AHashMap, AHashSet};
+use jiff::{SignedDuration, Timestamp, Zoned, civil};
 use jmap_tools::{Key, Map, Value};
+use std::{borrow::Cow, str::FromStr};
 
 type JSMap<'x, I, B> = Map<'x, JSCalendarProperty<I>, JSCalendarValue<I, B>>;
 
-const UID_PREFIX: &str = "calcard-next-expand-";
+const ONE_DAY: SignedDuration = SignedDuration::from_hours(24);
 
 /// The result of [`JSCalendar::expand_between`].
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -70,10 +77,16 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
     /// Expands every Event and Task into its instances that overlap the time
     /// range from `start` (inclusive) to `end` (exclusive).
     ///
-    /// Each instance is the entry with its start (or due) shifted to the
-    /// recurrence id and the matching `recurrenceOverrides` patch applied
-    /// (RFC 8984, Section 4.3.5). The time-range and `limit` rules are those
-    /// of [`ICalendar::expand_dates_between`](crate::icalendar::ICalendar::expand_dates_between),
+    /// The recurrence set of an entry is the instances of its
+    /// `recurrenceRule` (or its start alone), and every key of
+    /// `recurrenceOverrides`, minus the keys whose patch is `excluded`. Each
+    /// instance is the entry with its start (or due) shifted to the recurrence
+    /// id and the matching patch applied (RFC 8984, Section 4.3.5); the
+    /// patched start and length decide whether it is in the range. Objects
+    /// are built only for instances in the range.
+    ///
+    /// The time-range and `limit` rules are those of
+    /// [`ICalendar::expand_dates_between`](crate::icalendar::ICalendar::expand_dates_between),
     /// and `default_tz` is the time zone of entries without `timeZone`.
     /// JSCalendar 1.0 data is upgraded first (see [`JSCalendar::upgrade`]).
     pub fn expand_between(
@@ -81,77 +94,37 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
         default_tz: impl Into<Tz>,
         start: Timestamp,
         end: Timestamp,
-        limit: usize,
+        mut limit: usize,
     ) -> JSCalendarExpand<'x, I, B> {
-        let mut upgraded = self.clone();
-        upgraded.upgrade();
-        let entries = entries(&upgraded);
-
-        // Convert a copy in which every entry has its own UID, so that each
-        // iCalendar component maps back to the entry it came from.
-        let mut tagged = upgraded.clone();
-        for (index, entry) in entries_mut(&mut tagged) {
-            entry.insert(
-                Key::Property(JSCalendarProperty::Uid),
-                Value::Str(format!("{UID_PREFIX}{index}").into()),
-            );
-        }
+        let calendar = if needs_upgrade(self) {
+            let mut upgraded = self.clone();
+            upgraded.upgrade();
+            Cow::Owned(upgraded)
+        } else {
+            Cow::Borrowed(self)
+        };
+        let default_tz = default_tz.into();
+        let window = Window { start, end };
         let mut result = JSCalendarExpand {
             instances: Vec::new(),
             errors: Vec::new(),
         };
-        let Some(ical) = tagged.into_icalendar() else {
-            return result;
-        };
 
-        let entry_of = |comp_id: u32| -> Option<usize> {
-            ical.components
-                .get(comp_id as usize)?
-                .property(&ICalendarProperty::Uid)?
-                .values
-                .first()
-                .and_then(ICalendarValue::as_text)?
-                .strip_prefix(UID_PREFIX)?
-                .parse()
-                .ok()
-        };
-
-        let expand = ical.expand_dates_between(default_tz, start, end, limit);
-        for error in expand.errors {
-            result.errors.push(JSCalendarExpandError {
-                entry: entry_of(error.comp_id),
-                error: error.error.into(),
-            });
-        }
-
-        for event in expand.events {
-            let Some(index) = entry_of(event.series_comp_id.unwrap_or(event.comp_id)) else {
-                continue;
-            };
-            let Some(entry) = entries.get(&index) else {
-                continue;
-            };
-            let recurrence_id = event
-                .recurrence_id
-                .as_ref()
-                .map(|rid| JSCalendarDateTime::new(rid.to_naive_timestamp(), true));
-            let (object, error) = instance_object(entry, recurrence_id);
-            if let Some(error) = error {
+        for (index, entry) in entries(&calendar) {
+            if let Err(error) = expand_entry(
+                index,
+                entry,
+                default_tz,
+                window,
+                &mut limit,
+                &mut result.instances,
+                &mut result.errors,
+            ) {
                 result.errors.push(JSCalendarExpandError {
                     entry: Some(index),
                     error: error.into(),
                 });
             }
-            let Some(times) = event.try_into_date_time() else {
-                continue;
-            };
-            result.instances.push(JSCalendarInstance {
-                entry: index,
-                recurrence_id,
-                object: JSCalendar(Value::Object(object)),
-                start: times.start,
-                end: times.end,
-            });
         }
 
         result
@@ -161,40 +134,29 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
     }
 }
 
-/// The Event and Task entries, by index.
-fn entries<'x, I: JSCalendarId, B: JSCalendarId>(
-    calendar: &JSCalendar<'x, I, B>,
-) -> AHashMap<usize, JSMap<'x, I, B>> {
+/// Whether [`JSCalendar::upgrade`] could change the object.
+fn needs_upgrade<I: JSCalendarId, B: JSCalendarId>(calendar: &JSCalendar<'_, I, B>) -> bool {
+    match &calendar.0 {
+        Value::Object(root) => match root.get(&Key::Property(JSCalendarProperty::Version)) {
+            None => true,
+            Some(Value::Str(version)) => version == "1.0",
+            Some(_) => false,
+        },
+        _ => false,
+    }
+}
+
+/// The Event and Task entries, with their index.
+fn entries<'a, 'x, I: JSCalendarId, B: JSCalendarId>(
+    calendar: &'a JSCalendar<'x, I, B>,
+) -> Vec<(usize, &'a JSMap<'x, I, B>)> {
     let Value::Object(root) = &calendar.0 else {
-        return AHashMap::new();
+        return Vec::new();
     };
     if object_type(root) == Some(JSCalendarType::Group) {
         match root.get(&Key::Property(JSCalendarProperty::Entries)) {
             Some(Value::Array(entries)) => entries
                 .iter()
-                .enumerate()
-                .filter_map(|(index, entry)| match entry {
-                    Value::Object(entry) => Some((index, entry.clone())),
-                    _ => None,
-                })
-                .collect(),
-            _ => AHashMap::new(),
-        }
-    } else {
-        AHashMap::from_iter([(0, root.clone())])
-    }
-}
-
-fn entries_mut<'a, 'x, I: JSCalendarId, B: JSCalendarId>(
-    calendar: &'a mut JSCalendar<'x, I, B>,
-) -> Vec<(usize, &'a mut JSMap<'x, I, B>)> {
-    let Value::Object(root) = &mut calendar.0 else {
-        return Vec::new();
-    };
-    if object_type(root) == Some(JSCalendarType::Group) {
-        match root.get_mut(&Key::Property(JSCalendarProperty::Entries)) {
-            Some(Value::Array(entries)) => entries
-                .iter_mut()
                 .enumerate()
                 .filter_map(|(index, entry)| match entry {
                     Value::Object(entry) => Some((index, entry)),
@@ -215,22 +177,305 @@ fn object_type<I: JSCalendarId, B: JSCalendarId>(obj: &JSMap<'_, I, B>) -> Optio
     }
 }
 
-/// The entry as the instance at `recurrence_id`, and the error applying its
-/// patch, if any.
-fn instance_object<'x, I: JSCalendarId, B: JSCalendarId>(
-    entry: &JSMap<'x, I, B>,
-    recurrence_id: Option<JSCalendarDateTime>,
-) -> (JSMap<'x, I, B>, Option<crate::error::PatchError>) {
-    let patch = recurrence_id.and_then(|recurrence_id| {
-        match entry.get(&Key::Property(JSCalendarProperty::RecurrenceOverrides))? {
-            Value::Object(overrides) => {
-                match overrides.get(&Key::Property(JSCalendarProperty::DateTime(recurrence_id)))? {
-                    Value::Object(patch) => Some(patch),
-                    _ => None,
-                }
-            }
-            _ => None,
+fn local<I: JSCalendarId, B: JSCalendarId>(
+    obj: &JSMap<'_, I, B>,
+    property: JSCalendarProperty<I>,
+) -> Option<civil::DateTime> {
+    match obj.get(&Key::Property(property))? {
+        Value::Element(JSCalendarValue::DateTime(dt)) => dt.to_naive_date_time(),
+        _ => None,
+    }
+}
+
+fn time_zone<I: JSCalendarId, B: JSCalendarId>(obj: &JSMap<'_, I, B>) -> Option<Tz> {
+    match obj.get(&Key::Property(JSCalendarProperty::TimeZone))? {
+        Value::Str(name) => Tz::from_str(name).ok(),
+        _ => None,
+    }
+}
+
+/// How an entry's instances are placed: the date-time the recurrence set is
+/// anchored at (`start`, or `due` for a Task without `start`), and how long
+/// each instance lasts.
+struct Anchor {
+    local: civil::DateTime,
+    tz: Tz,
+    /// The length of an instance: from `duration`, from `start` to `due`, or
+    /// the default for a start without an end (RFC 5545, Section 3.6.1;
+    /// RFC 4791, Section 9.9).
+    length: SignedDuration,
+    /// The length of an instance without `duration` or `due`: 1 day for a
+    /// date, 0 for a date-time.
+    default_length: SignedDuration,
+    /// For a Task with `start` and `due`: the local `due`.
+    due: Option<civil::DateTime>,
+    is_date: bool,
+    overlap: Overlap,
+}
+
+impl Anchor {
+    /// The length from `start` to `due`: "the same exact duration" for
+    /// date-times (RFC 5545, Section 3.8.5.3), nominal days between dates.
+    fn between(
+        tz: Tz,
+        is_date: bool,
+        start: civil::DateTime,
+        due: civil::DateTime,
+    ) -> SignedDuration {
+        if !is_date
+            && let (Some(start), Some(due)) =
+                (tz.from_local_datetime(start), tz.from_local_datetime(due))
+        {
+            start.duration_until(&due)
+        } else {
+            start.duration_until(due)
         }
-    });
-    patch::occurrence(entry, recurrence_id, patch)
+    }
+}
+
+impl Anchor {
+    /// The anchor of an Event or Task, as the iCalendar conversion and
+    /// expansion would place it.
+    fn of<I: JSCalendarId, B: JSCalendarId>(
+        entry: &JSMap<'_, I, B>,
+        is_task: bool,
+        default_tz: Tz,
+    ) -> Result<Option<Self>, CalendarErrorType> {
+        let tz = time_zone(entry).unwrap_or(default_tz);
+        let is_date = is_date_only(entry, true);
+        let start = local(entry, JSCalendarProperty::Start);
+        let due = local(entry, JSCalendarProperty::Due).filter(|_| is_task);
+        let default_length = if is_date {
+            ONE_DAY
+        } else {
+            SignedDuration::ZERO
+        };
+        Ok(Some(match (start, due) {
+            (Some(start), Some(due)) => Anchor {
+                local: start,
+                tz,
+                length: Anchor::between(tz, is_date, start, due),
+                default_length,
+                due: Some(due),
+                is_date,
+                overlap: Overlap::Interval,
+            },
+            (Some(start), None) => Anchor {
+                local: start,
+                tz,
+                length: duration(entry).unwrap_or(default_length),
+                default_length,
+                due: None,
+                is_date,
+                overlap: Overlap::Interval,
+            },
+            // A Task with only `due` is the instant of its due date-time.
+            (None, Some(due)) => Anchor {
+                local: due,
+                tz,
+                length: SignedDuration::ZERO,
+                default_length,
+                due: None,
+                is_date,
+                overlap: Overlap::TodoDue,
+            },
+            (None, None) if is_task => return Ok(None),
+            (None, None) => return Err(CalendarErrorType::MissingDtStart),
+        }))
+    }
+}
+
+fn duration<I: JSCalendarId, B: JSCalendarId>(obj: &JSMap<'_, I, B>) -> Option<SignedDuration> {
+    match obj.get(&Key::Property(JSCalendarProperty::Duration))? {
+        Value::Element(JSCalendarValue::Duration(duration)) => duration.to_duration(),
+        _ => None,
+    }
+}
+
+/// Expands one entry into `instances`. An error that stops the whole entry is
+/// returned; others are pushed to `errors`.
+fn expand_entry<'x, I: JSCalendarId, B: JSCalendarId>(
+    index: usize,
+    entry: &JSMap<'x, I, B>,
+    default_tz: Tz,
+    window: Window,
+    limit: &mut usize,
+    instances: &mut Vec<JSCalendarInstance<'x, I, B>>,
+    errors: &mut Vec<JSCalendarExpandError>,
+) -> Result<(), CalendarErrorType> {
+    let is_task = match object_type(entry) {
+        Some(JSCalendarType::Event) => false,
+        Some(JSCalendarType::Task) => true,
+        _ => return Ok(()),
+    };
+    let Some(anchor) = Anchor::of(entry, is_task, default_tz)? else {
+        return Ok(());
+    };
+    let first = anchor
+        .tz
+        .from_local_datetime(anchor.local)
+        .ok_or(CalendarErrorType::InvalidDtStart)?;
+
+    // recurrenceOverrides, by the local recurrence id. A key whose patch is
+    // `excluded` removes that instance; every other key is an instance.
+    let mut patches = AHashMap::new();
+    let mut excluded = AHashSet::new();
+    let mut extra = Vec::new();
+    if let Some(Value::Object(overrides)) =
+        entry.get(&Key::Property(JSCalendarProperty::RecurrenceOverrides))
+    {
+        for (key, patch) in overrides.iter() {
+            let (Key::Property(JSCalendarProperty::DateTime(rid)), Value::Object(patch)) =
+                (key, patch)
+            else {
+                continue;
+            };
+            if matches!(
+                patch.get(&Key::Property(JSCalendarProperty::Excluded)),
+                Some(Value::Bool(true))
+            ) {
+                excluded.insert(rid.timestamp);
+                continue;
+            }
+            patches.insert(rid.timestamp, patch);
+            if let Some(start) = rid
+                .to_naive_date_time()
+                .and_then(|rid| anchor.tz.from_local_datetime(rid))
+            {
+                extra.push((start, None));
+            }
+        }
+    }
+    extra.sort_by_key(|(start, _): &Candidate| start.timestamp());
+
+    let rule = match entry.get(&Key::Property(JSCalendarProperty::RecurrenceRule)) {
+        Some(Value::Object(rule)) => RRule::from_floating_ical(
+            &recurrence_rule(rule, anchor.tz, is_date_only(entry, true)).0,
+        ),
+        _ => None,
+    };
+    let recurs = rule.is_some() || !patches.is_empty() || !excluded.is_empty();
+    let rule = match rule.map(|rule| rule_instances(rule, anchor.local, anchor.tz)) {
+        Some(Ok(rule)) => Some(rule),
+        Some(Err(error)) => {
+            // The rule is unusable; the start and the overrides still define
+            // instances.
+            errors.push(JSCalendarExpandError {
+                entry: Some(index),
+                error: error.into(),
+            });
+            None
+        }
+        None => None,
+    };
+    let rule: Box<dyn Iterator<Item = Candidate>> = match rule {
+        Some(rule) => Box::new(rule.map(|start| (start, None))),
+        None => Box::new(std::iter::once((first, None))),
+    };
+    let candidates = Merge {
+        a: rule.peekable(),
+        b: extra.into_iter().peekable(),
+    };
+
+    // A patched start can move an instance from after the range into it, so
+    // iteration continues until no patch could.
+    let lookahead = patches
+        .iter()
+        .filter_map(|(rid, patch)| {
+            let start = local(patch, JSCalendarProperty::Start)?;
+            let rid = JSCalendarDateTime::new(*rid, true).to_naive_date_time()?;
+            Some(rid.duration_until(start).abs())
+        })
+        .max()
+        .unwrap_or(SignedDuration::ZERO);
+    let stop = window.end.checked_add(lookahead).unwrap_or(Timestamp::MAX);
+
+    for (original, _) in candidates {
+        if (recurs && *limit == 0) || original.timestamp() >= stop {
+            break;
+        }
+        let rid = original.to_naive_timestamp();
+        if excluded.contains(&rid) {
+            continue;
+        }
+        let patch = patches.get(&rid).copied();
+        let Some((start, end)) = placement(&anchor, &original, patch) else {
+            continue;
+        };
+        let event = CalendarEvent::new(0, start, TimeOrDelta::Delta(end));
+        if !window.contains(&event, anchor.overlap) {
+            continue;
+        }
+        // As in iCalendar expansion, `limit` caps the instances of recurring
+        // entries.
+        if recurs {
+            *limit -= 1;
+        }
+
+        let recurrence_id = recurs.then(|| JSCalendarDateTime::new(rid, true));
+        let (object, error) = patch::occurrence(entry, recurrence_id, patch);
+        if let Some(error) = error {
+            errors.push(JSCalendarExpandError {
+                entry: Some(index),
+                error: error.into(),
+            });
+        }
+        let Some(event) = event.try_into_date_time() else {
+            continue;
+        };
+        instances.push(JSCalendarInstance {
+            entry: index,
+            recurrence_id,
+            object: JSCalendar(Value::Object(object)),
+            start: event.start,
+            end: event.end,
+        });
+    }
+    Ok(())
+}
+
+/// The start and length of the occurrence at `original`, read from its patch
+/// without building the occurrence: a patched `start` (in a patched
+/// `timeZone`), and a patched `duration` or `due`.
+fn placement<I: JSCalendarId, B: JSCalendarId>(
+    anchor: &Anchor,
+    original: &Zoned,
+    patch: Option<&JSMap<'_, I, B>>,
+) -> Option<(Zoned, SignedDuration)> {
+    let Some(patch) = patch else {
+        return Some((original.clone(), anchor.length));
+    };
+    let rid = original.datetime();
+    let tz = time_zone(patch).unwrap_or(anchor.tz);
+    let start_property = if anchor.overlap == Overlap::TodoDue {
+        JSCalendarProperty::Due
+    } else {
+        JSCalendarProperty::Start
+    };
+    let start_local = local(patch, start_property).unwrap_or(rid);
+    let start = if start_local == rid && tz == anchor.tz {
+        original.clone()
+    } else {
+        tz.from_local_datetime(start_local)?
+    };
+
+    let length = if anchor.overlap == Overlap::TodoDue {
+        SignedDuration::ZERO
+    } else if let Some(due) = anchor.due {
+        // The due date-time shifts with the recurrence id unless patched.
+        let due = local(patch, JSCalendarProperty::Due).unwrap_or_else(|| {
+            due.checked_add(anchor.local.duration_until(rid))
+                .unwrap_or(due)
+        });
+        Anchor::between(tz, anchor.is_date, start_local, due)
+    } else {
+        match patch.get(&Key::Property(JSCalendarProperty::Duration)) {
+            Some(Value::Element(JSCalendarValue::Duration(duration))) => {
+                duration.to_duration().unwrap_or(anchor.length)
+            }
+            Some(Value::Null) => anchor.default_length,
+            _ => anchor.length,
+        }
+    };
+    Some((start, length))
 }
