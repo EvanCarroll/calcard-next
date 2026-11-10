@@ -7,6 +7,7 @@
 
 use calcard_next::{
     error::{ConvertError, ParseError, TypeError},
+    icalendar::ICalendar,
     jscalendar::JSCalendar,
     jscontact::JSContact,
 };
@@ -321,4 +322,30 @@ fn jscalendar_1_0_input_still_converts() {
         .into_icalendar()
         .unwrap();
     assert!(ical.to_string().contains("RRULE:FREQ=DAILY;COUNT=2"));
+}
+
+#[test]
+fn unknown_trigger_is_preserved() {
+    let trigger = json!({ "@type": "VendorTrigger", "when": "x", "foo": 1 });
+    let calendar = event(json!({
+        "alerts": { "a1": { "@type": "Alert", "trigger": trigger.clone() } }
+    }));
+    let ical = JSCalendar::<String, String>::parse(&calendar.to_string())
+        .unwrap()
+        .into_icalendar()
+        .unwrap();
+    let text = ical.to_string();
+    assert!(text.contains("JSPROP;JSPTR=trigger:"), "{text}");
+
+    let back: Value = serde_json::from_str(
+        &ICalendar::parse(&text)
+            .unwrap()
+            .into_jscalendar::<String, String>()
+            .to_string_pretty(),
+    )
+    .unwrap();
+    assert_eq!(
+        back["entries"][0]["alerts"]["a1"]["trigger"], trigger,
+        "{back:#}"
+    );
 }

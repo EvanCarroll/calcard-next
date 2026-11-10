@@ -66,6 +66,19 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
     }
 }
 
+/// Whether an alert trigger is an UnknownTrigger: its "@type" is set to
+/// something other than "OffsetTrigger" or "AbsoluteTrigger"
+/// (draft-ietf-calext-jscalendarbis, Section 3.5.1).
+fn is_unknown_trigger<I: JSCalendarId, B: JSCalendarId>(trigger: &JSMap<'_, I, B>) -> bool {
+    match trigger.get(&Key::Property(JSCalendarProperty::Type)) {
+        None => false,
+        Some(Value::Element(JSCalendarValue::Type(
+            JSCalendarType::OffsetTrigger | JSCalendarType::AbsoluteTrigger,
+        ))) => false,
+        Some(_) => true,
+    }
+}
+
 impl ICalendar {
     #[allow(clippy::wrong_self_convention)]
     pub(super) fn from_jscalendar<I: JSCalendarId, B: JSCalendarId>(
@@ -748,6 +761,19 @@ impl ICalendar {
                                 ) => {
                                     has_related_to = true;
                                     alert.import_relations(obj, &mut item_conversions);
+                                }
+                                (
+                                    Key::Property(JSCalendarProperty::Trigger),
+                                    Value::Object(obj),
+                                ) if is_unknown_trigger(&obj) => {
+                                    // An UnknownTrigger, which implementations
+                                    // "MUST preserve" (draft-ietf-calext-
+                                    // jscalendarbis, Section 3.5.1), has no
+                                    // TRIGGER. Keep it whole, with its "@type".
+                                    alert.insert_jsprop(
+                                        &[JSCalendarProperty::Trigger::<I>.to_string().as_ref()],
+                                        Value::Object(obj),
+                                    );
                                 }
                                 (
                                     Key::Property(JSCalendarProperty::Trigger),
