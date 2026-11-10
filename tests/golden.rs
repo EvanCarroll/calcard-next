@@ -293,6 +293,26 @@ fn golden_jscalendar_ical_roundtrip() {
     check_golden("jscalendar_ical.txt", &out);
 }
 
+/// JSCalendar 1.0 input (the RFC 8984, Section 6 examples): the upgraded 2.0
+/// form, the iCalendar it converts to, its expansion and the JSCalendar that
+/// iCalendar converts back to.
+#[test]
+fn golden_jscalendar_v1() {
+    let mut out = String::new();
+    for (name, input) in corpus("jscalendar_v1") {
+        let mut jscal = JSCalendar::<String, String>::parse(input.trim()).unwrap();
+        let ical = jscal.clone().into_icalendar().unwrap();
+        jscal.upgrade();
+        let upgraded = canon_json(&jscal.to_string_pretty());
+        let ics = canon_text(&ical.to_string());
+        writeln!(out, "== {name}\n{upgraded}\n--\n{ics}").unwrap();
+        render_events(&mut out, &ical, Tz::Floating);
+        let back = canon_json(&ical.into_jscalendar::<String, String>().to_string_pretty());
+        writeln!(out, "--\n{back}").unwrap();
+    }
+    check_golden("jscalendar_v1.txt", &out);
+}
+
 #[test]
 fn golden_vcard_jscontact_roundtrip() {
     let mut out = String::new();

@@ -57,7 +57,7 @@
   #6 1709287200 +0 2024-03-01T10:00:00 [Floating] | end 1709287200 +0 2024-03-01T10:00:00 [Floating] | ts 1709287200..1709287200 | resolved 1709287200 +0 2024-03-01T10:00:00 [Floating] | series #6 rid 1709287200 +0 2024-03-01T10:00:00 [Floating]
   #6 1709892000 +0 2024-03-08T10:00:00 [Floating] | end 1709892000 +0 2024-03-08T10:00:00 [Floating] | ts 1709892000..1709892000 | resolved 1709892000 +0 2024-03-08T10:00:00 [Floating] | series #6 rid 1709892000 +0 2024-03-08T10:00:00 [Floating]
   #6 1710496800 +0 2024-03-15T10:00:00 [Floating] | end 1710496800 +0 2024-03-15T10:00:00 [Floating] | ts 1710496800..1710496800 | resolved 1710496800 +0 2024-03-15T10:00:00 [Floating] | series #6 rid 1710496800 +0 2024-03-15T10:00:00 [Floating]
-  error #1: RRule error: Until date `2024-02-01T00:00:00+00:00` is before the start date `2024-03-01T10:00:00+00:00`
+  error #1: RRule error: Until date `2024-01-31T19:00:00` is before the start date `2024-03-01T10:00:00`
   error #4: Missing DTSTART property
   error #5: RRule error: Invalid value `400` for field `BYSETPOS`, frequency `MONTHLY`, start index `-31` and end index `31`
 == case_invalid.ics (America/Chicago)
@@ -79,7 +79,7 @@
   #6 1709308800 -21600 2024-03-01T10:00:00 [America/Chicago] | end 1709308800 -21600 2024-03-01T10:00:00 [America/Chicago] | ts 1709308800..1709308800 | resolved 1709308800 -21600 2024-03-01T10:00:00 [America/Chicago] | series #6 rid 1709308800 -21600 2024-03-01T10:00:00 [America/Chicago]
   #6 1709913600 -21600 2024-03-08T10:00:00 [America/Chicago] | end 1709913600 -21600 2024-03-08T10:00:00 [America/Chicago] | ts 1709913600..1709913600 | resolved 1709913600 -21600 2024-03-08T10:00:00 [America/Chicago] | series #6 rid 1709913600 -21600 2024-03-08T10:00:00 [America/Chicago]
   #6 1710514800 -18000 2024-03-15T10:00:00 [America/Chicago] | end 1710514800 -18000 2024-03-15T10:00:00 [America/Chicago] | ts 1710514800..1710514800 | resolved 1710514800 -18000 2024-03-15T10:00:00 [America/Chicago] | series #6 rid 1710514800 -18000 2024-03-15T10:00:00 [America/Chicago]
-  error #1: RRule error: Until date `2024-02-01T00:00:00+00:00` is before the start date `2024-03-01T10:00:00+00:00`
+  error #1: RRule error: Until date `2024-01-31T19:00:00` is before the start date `2024-03-01T10:00:00`
   error #4: Missing DTSTART property
   error #5: RRule error: Invalid value `400` for field `BYSETPOS`, frequency `MONTHLY`, start index `-31` and end index `31`
 == case_missing_tz.ics (floating)
@@ -316,8 +316,10 @@
   error #9: Missing DTSTART property
 == ical_001.ics (floating)
   #4 1606212000 +3600 2020-11-24T11:00:00 [Europe/Berlin] | end 1606213800 +3600 2020-11-24T11:30:00 [Europe/Berlin] | ts 1606212000..1606213800 | resolved 1606213800 +3600 2020-11-24T11:30:00 [Europe/Berlin] | series #4 rid 1606212000 +3600 2020-11-24T11:00:00 [Europe/Berlin]
+  #4 1606384800 +3600 2020-11-26T11:00:00 [Europe/Berlin] | end 1606386600 +3600 2020-11-26T11:30:00 [Europe/Berlin] | ts 1606384800..1606386600 | resolved 1606386600 +3600 2020-11-26T11:30:00 [Europe/Berlin] | series #4 rid 1606384800 +3600 2020-11-26T11:00:00 [Europe/Berlin]
 == ical_001.ics (America/Chicago)
   #4 1606212000 +3600 2020-11-24T11:00:00 [Europe/Berlin] | end 1606213800 +3600 2020-11-24T11:30:00 [Europe/Berlin] | ts 1606212000..1606213800 | resolved 1606213800 +3600 2020-11-24T11:30:00 [Europe/Berlin] | series #4 rid 1606212000 +3600 2020-11-24T11:00:00 [Europe/Berlin]
+  #4 1606384800 +3600 2020-11-26T11:00:00 [Europe/Berlin] | end 1606386600 +3600 2020-11-26T11:30:00 [Europe/Berlin] | ts 1606384800..1606386600 | resolved 1606386600 +3600 2020-11-26T11:30:00 [Europe/Berlin] | series #4 rid 1606384800 +3600 2020-11-26T11:00:00 [Europe/Berlin]
 == ical_002.ics (floating)
   #4 1236614400 -25200 2009-03-09T09:00:00 [America/Vancouver] | end 1236643200 -25200 2009-03-09T17:00:00 [America/Vancouver] | ts 1236614400..1236643200 | resolved 1236643200 -25200 2009-03-09T17:00:00 [America/Vancouver] | series #4 rid 1236614400 -25200 2009-03-09T09:00:00 [America/Vancouver]
   #4 1237219200 -25200 2009-03-16T09:00:00 [America/Vancouver] | end 1237248000 -25200 2009-03-16T17:00:00 [America/Vancouver] | ts 1237219200..1237248000 | resolved 1237248000 -25200 2009-03-16T17:00:00 [America/Vancouver] | series #4 rid 1237219200 -25200 2009-03-16T09:00:00 [America/Vancouver]
@@ -2058,10 +2060,10 @@
   #1 1730708100 -21600 2024-11-04T02:15:00 [America/Chicago] | end 1730713500 -21600 2024-11-04T03:45:00 [America/Chicago] | ts 1730708100..1730713500 | resolved 1730713500 -21600 2024-11-04T03:45:00 [America/Chicago] | series #1 rid 1730708100 -21600 2024-11-04T02:15:00 [America/Chicago]
 == rrule_floating_1_10.ics (floating)
   #1 1730424600 +0 2024-11-01T01:30:00 [Floating] | end 1730430000 +0 2024-11-01T03:00:00 [Floating] | ts 1730424600..1730430000 | resolved 1730430000 +0 2024-11-01T03:00:00 [Floating] | series #1 rid 1730424600 +0 2024-11-01T01:30:00 [Floating]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T12:00:00` is before the start date `2024-11-01T01:30:00`
 == rrule_floating_1_10.ics (America/Chicago)
   #1 1730442600 -18000 2024-11-01T01:30:00 [America/Chicago] | end 1730448000 -18000 2024-11-01T03:00:00 [America/Chicago] | ts 1730442600..1730448000 | resolved 1730448000 -18000 2024-11-01T03:00:00 [America/Chicago] | series #1 rid 1730442600 -18000 2024-11-01T01:30:00 [America/Chicago]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T12:00:00` is before the start date `2024-11-01T01:30:00`
 == rrule_floating_1_11.ics (floating)
   #1 1731202200 +0 2024-11-10T01:30:00 [Floating] | end 1731207600 +0 2024-11-10T03:00:00 [Floating] | ts 1731202200..1731207600 | resolved 1731207600 +0 2024-11-10T03:00:00 [Floating] | series #1 rid 1731202200 +0 2024-11-10T01:30:00 [Floating]
   #1 1731375000 +0 2024-11-12T01:30:00 [Floating] | end 1731380400 +0 2024-11-12T03:00:00 [Floating] | ts 1731375000..1731380400 | resolved 1731380400 +0 2024-11-12T03:00:00 [Floating] | series #1 rid 1731375000 +0 2024-11-12T01:30:00 [Floating]
@@ -5376,10 +5378,10 @@
   #1 1730686500 +0 2024-11-04T02:15:00 [Europe/London] | end 1730691900 +0 2024-11-04T03:45:00 [Europe/London] | ts 1730686500..1730691900 | resolved 1730691900 +0 2024-11-04T03:45:00 [Europe/London] | series #1 rid 1730686500 +0 2024-11-04T02:15:00 [Europe/London]
 == rrule_london_1_10.ics (floating)
   #1 1730424600 +0 2024-11-01T01:30:00 [Europe/London] | end 1730430000 +0 2024-11-01T03:00:00 [Europe/London] | ts 1730424600..1730430000 | resolved 1730430000 +0 2024-11-01T03:00:00 [Europe/London] | series #1 rid 1730424600 +0 2024-11-01T01:30:00 [Europe/London]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T13:00:00` is before the start date `2024-11-01T01:30:00`
 == rrule_london_1_10.ics (America/Chicago)
   #1 1730424600 +0 2024-11-01T01:30:00 [Europe/London] | end 1730430000 +0 2024-11-01T03:00:00 [Europe/London] | ts 1730424600..1730430000 | resolved 1730430000 +0 2024-11-01T03:00:00 [Europe/London] | series #1 rid 1730424600 +0 2024-11-01T01:30:00 [Europe/London]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T13:00:00` is before the start date `2024-11-01T01:30:00`
 == rrule_london_1_11.ics (floating)
   #1 1731202200 +0 2024-11-10T01:30:00 [Europe/London] | end 1731207600 +0 2024-11-10T03:00:00 [Europe/London] | ts 1731202200..1731207600 | resolved 1731207600 +0 2024-11-10T03:00:00 [Europe/London] | series #1 rid 1731202200 +0 2024-11-10T01:30:00 [Europe/London]
   #1 1731375000 +0 2024-11-12T01:30:00 [Europe/London] | end 1731380400 +0 2024-11-12T03:00:00 [Europe/London] | ts 1731375000..1731380400 | resolved 1731380400 +0 2024-11-12T03:00:00 [Europe/London] | series #1 rid 1731375000 +0 2024-11-12T01:30:00 [Europe/London]
@@ -7048,10 +7050,10 @@
   #1 1798727400 +39600 2027-01-01T01:30:00 [Australia/Lord_Howe] | end 1798732800 +39600 2027-01-01T03:00:00 [Australia/Lord_Howe] | ts 1798727400..1798732800 | resolved 1798732800 +39600 2027-01-01T03:00:00 [Australia/Lord_Howe] | series #1 rid 1798727400 +39600 2027-01-01T01:30:00 [Australia/Lord_Howe]
 == rrule_lordhowe_1_10.ics (floating)
   #1 1730385000 +39600 2024-11-01T01:30:00 [Australia/Lord_Howe] | end 1730390400 +39600 2024-11-01T03:00:00 [Australia/Lord_Howe] | ts 1730385000..1730390400 | resolved 1730390400 +39600 2024-11-01T03:00:00 [Australia/Lord_Howe] | series #1 rid 1730385000 +39600 2024-11-01T01:30:00 [Australia/Lord_Howe]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T22:30:00` is before the start date `2024-11-01T01:30:00`
 == rrule_lordhowe_1_10.ics (America/Chicago)
   #1 1730385000 +39600 2024-11-01T01:30:00 [Australia/Lord_Howe] | end 1730390400 +39600 2024-11-01T03:00:00 [Australia/Lord_Howe] | ts 1730385000..1730390400 | resolved 1730390400 +39600 2024-11-01T03:00:00 [Australia/Lord_Howe] | series #1 rid 1730385000 +39600 2024-11-01T01:30:00 [Australia/Lord_Howe]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T22:30:00` is before the start date `2024-11-01T01:30:00`
 == rrule_lordhowe_1_13.ics (floating)
   #1 1730385000 +39600 2024-11-01T01:30:00 [Australia/Lord_Howe] | end 1730390400 +39600 2024-11-01T03:00:00 [Australia/Lord_Howe] | ts 1730385000..1730390400 | resolved 1730390400 +39600 2024-11-01T03:00:00 [Australia/Lord_Howe] | series #1 rid 1730385000 +39600 2024-11-01T01:30:00 [Australia/Lord_Howe]
   #1 1730388600 +39600 2024-11-01T02:30:00 [Australia/Lord_Howe] | end 1730394000 +39600 2024-11-01T04:00:00 [Australia/Lord_Howe] | ts 1730388600..1730394000 | resolved 1730394000 +39600 2024-11-01T04:00:00 [Australia/Lord_Howe] | series #1 rid 1730388600 +39600 2024-11-01T02:30:00 [Australia/Lord_Howe]
@@ -8428,10 +8430,10 @@
   #1 1730704500 -18000 2024-11-04T02:15:00 [America/New_York] | end 1730709900 -18000 2024-11-04T03:45:00 [America/New_York] | ts 1730704500..1730709900 | resolved 1730709900 -18000 2024-11-04T03:45:00 [America/New_York] | series #1 rid 1730704500 -18000 2024-11-04T02:15:00 [America/New_York]
 == rrule_ny_1_10.ics (floating)
   #1 1730439000 -14400 2024-11-01T01:30:00 [America/New_York] | end 1730444400 -14400 2024-11-01T03:00:00 [America/New_York] | ts 1730439000..1730444400 | resolved 1730444400 -14400 2024-11-01T03:00:00 [America/New_York] | series #1 rid 1730439000 -14400 2024-11-01T01:30:00 [America/New_York]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T08:00:00` is before the start date `2024-11-01T01:30:00`
 == rrule_ny_1_10.ics (America/Chicago)
   #1 1730439000 -14400 2024-11-01T01:30:00 [America/New_York] | end 1730444400 -14400 2024-11-01T03:00:00 [America/New_York] | ts 1730439000..1730444400 | resolved 1730444400 -14400 2024-11-01T03:00:00 [America/New_York] | series #1 rid 1730439000 -14400 2024-11-01T01:30:00 [America/New_York]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T08:00:00` is before the start date `2024-11-01T01:30:00`
 == rrule_ny_1_11.ics (floating)
   #1 1731220200 -18000 2024-11-10T01:30:00 [America/New_York] | end 1731225600 -18000 2024-11-10T03:00:00 [America/New_York] | ts 1731220200..1731225600 | resolved 1731225600 -18000 2024-11-10T03:00:00 [America/New_York] | series #1 rid 1731220200 -18000 2024-11-10T01:30:00 [America/New_York]
   #1 1731393000 -18000 2024-11-12T01:30:00 [America/New_York] | end 1731398400 -18000 2024-11-12T03:00:00 [America/New_York] | ts 1731393000..1731398400 | resolved 1731398400 -18000 2024-11-12T03:00:00 [America/New_York] | series #1 rid 1731393000 -18000 2024-11-12T01:30:00 [America/New_York]
@@ -9597,7 +9599,6 @@
   #1 1713358800 -14400 2024-04-17T09:00:00 [America/New_York] | end 1713364200 -14400 2024-04-17T10:30:00 [America/New_York] | ts 1713358800..1713364200 | resolved 1713364200 -14400 2024-04-17T10:30:00 [America/New_York] | series #1 rid 1713358800 -14400 2024-04-17T09:00:00 [America/New_York]
   #1 1713445200 -14400 2024-04-18T09:00:00 [America/New_York] | end 1713450600 -14400 2024-04-18T10:30:00 [America/New_York] | ts 1713445200..1713450600 | resolved 1713450600 -14400 2024-04-18T10:30:00 [America/New_York] | series #1 rid 1713445200 -14400 2024-04-18T09:00:00 [America/New_York]
   #1 1713531600 -14400 2024-04-19T09:00:00 [America/New_York] | end 1713537000 -14400 2024-04-19T10:30:00 [America/New_York] | ts 1713531600..1713537000 | resolved 1713537000 -14400 2024-04-19T10:30:00 [America/New_York] | series #1 rid 1713531600 -14400 2024-04-19T09:00:00 [America/New_York]
-  #1 1713618000 -14400 2024-04-20T09:00:00 [America/New_York] | end 1713623400 -14400 2024-04-20T10:30:00 [America/New_York] | ts 1713618000..1713623400 | resolved 1713623400 -14400 2024-04-20T10:30:00 [America/New_York] | series #1 rid 1713618000 -14400 2024-04-20T09:00:00 [America/New_York]
 == rrule_ny_3_10.ics (America/Chicago)
   #1 1706709600 -18000 2024-01-31T09:00:00 [America/New_York] | end 1706715000 -18000 2024-01-31T10:30:00 [America/New_York] | ts 1706709600..1706715000 | resolved 1706715000 -18000 2024-01-31T10:30:00 [America/New_York] | series #1 rid 1706709600 -18000 2024-01-31T09:00:00 [America/New_York]
   #1 1706796000 -18000 2024-02-01T09:00:00 [America/New_York] | end 1706801400 -18000 2024-02-01T10:30:00 [America/New_York] | ts 1706796000..1706801400 | resolved 1706801400 -18000 2024-02-01T10:30:00 [America/New_York] | series #1 rid 1706796000 -18000 2024-02-01T09:00:00 [America/New_York]
@@ -9679,7 +9680,6 @@
   #1 1713358800 -14400 2024-04-17T09:00:00 [America/New_York] | end 1713364200 -14400 2024-04-17T10:30:00 [America/New_York] | ts 1713358800..1713364200 | resolved 1713364200 -14400 2024-04-17T10:30:00 [America/New_York] | series #1 rid 1713358800 -14400 2024-04-17T09:00:00 [America/New_York]
   #1 1713445200 -14400 2024-04-18T09:00:00 [America/New_York] | end 1713450600 -14400 2024-04-18T10:30:00 [America/New_York] | ts 1713445200..1713450600 | resolved 1713450600 -14400 2024-04-18T10:30:00 [America/New_York] | series #1 rid 1713445200 -14400 2024-04-18T09:00:00 [America/New_York]
   #1 1713531600 -14400 2024-04-19T09:00:00 [America/New_York] | end 1713537000 -14400 2024-04-19T10:30:00 [America/New_York] | ts 1713531600..1713537000 | resolved 1713537000 -14400 2024-04-19T10:30:00 [America/New_York] | series #1 rid 1713531600 -14400 2024-04-19T09:00:00 [America/New_York]
-  #1 1713618000 -14400 2024-04-20T09:00:00 [America/New_York] | end 1713623400 -14400 2024-04-20T10:30:00 [America/New_York] | ts 1713618000..1713623400 | resolved 1713623400 -14400 2024-04-20T10:30:00 [America/New_York] | series #1 rid 1713618000 -14400 2024-04-20T09:00:00 [America/New_York]
 == rrule_ny_3_11.ics (floating)
   #1 1707660000 -18000 2024-02-11T09:00:00 [America/New_York] | end 1707665400 -18000 2024-02-11T10:30:00 [America/New_York] | ts 1707660000..1707665400 | resolved 1707665400 -18000 2024-02-11T10:30:00 [America/New_York] | series #1 rid 1707660000 -18000 2024-02-11T09:00:00 [America/New_York]
   #1 1707832800 -18000 2024-02-13T09:00:00 [America/New_York] | end 1707838200 -18000 2024-02-13T10:30:00 [America/New_York] | ts 1707832800..1707838200 | resolved 1707838200 -18000 2024-02-13T10:30:00 [America/New_York] | series #1 rid 1707832800 -18000 2024-02-13T09:00:00 [America/New_York]
@@ -10862,10 +10862,10 @@
   #1 1798767000 +0 2027-01-01T01:30:00 [Etc/UTC] | end 1798772400 +0 2027-01-01T03:00:00 [Etc/UTC] | ts 1798767000..1798772400 | resolved 1798772400 +0 2027-01-01T03:00:00 [Etc/UTC] | series #1 rid 1798767000 +0 2027-01-01T01:30:00 [Etc/UTC]
 == rrule_utc_1_10.ics (floating)
   #1 1730424600 +0 2024-11-01T01:30:00 [Etc/UTC] | end 1730430000 +0 2024-11-01T03:00:00 [Etc/UTC] | ts 1730424600..1730430000 | resolved 1730430000 +0 2024-11-01T03:00:00 [Etc/UTC] | series #1 rid 1730424600 +0 2024-11-01T01:30:00 [Etc/UTC]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T12:00:00` is before the start date `2024-11-01T01:30:00`
 == rrule_utc_1_10.ics (America/Chicago)
   #1 1730424600 +0 2024-11-01T01:30:00 [Etc/UTC] | end 1730430000 +0 2024-11-01T03:00:00 [Etc/UTC] | ts 1730424600..1730430000 | resolved 1730430000 +0 2024-11-01T03:00:00 [Etc/UTC] | series #1 rid 1730424600 +0 2024-11-01T01:30:00 [Etc/UTC]
-  error #1: RRule error: Until date `2024-04-20T12:00:00+00:00` is before the start date `2024-11-01T01:30:00+00:00`
+  error #1: RRule error: Until date `2024-04-20T12:00:00` is before the start date `2024-11-01T01:30:00`
 == rrule_utc_1_13.ics (floating)
   #1 1730424600 +0 2024-11-01T01:30:00 [Etc/UTC] | end 1730430000 +0 2024-11-01T03:00:00 [Etc/UTC] | ts 1730424600..1730430000 | resolved 1730430000 +0 2024-11-01T03:00:00 [Etc/UTC] | series #1 rid 1730424600 +0 2024-11-01T01:30:00 [Etc/UTC]
   #1 1730428200 +0 2024-11-01T02:30:00 [Etc/UTC] | end 1730433600 +0 2024-11-01T04:00:00 [Etc/UTC] | ts 1730428200..1730433600 | resolved 1730433600 +0 2024-11-01T04:00:00 [Etc/UTC] | series #1 rid 1730428200 +0 2024-11-01T02:30:00 [Etc/UTC]

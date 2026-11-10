@@ -1,0 +1,34 @@
+{
+  "@type": "Event",
+  "uid": "rfc8984-6.8@example.com",
+  "updated": "2020-01-01T00:00:00Z",
+  "title": "Live from Music Bowl: The Band",
+  "description": "Go see the biggest music event ever!",
+  "locale": "en",
+  "start": "2020-07-04T17:00:00",
+  "timeZone": "America/New_York",
+  "duration": "PT3H",
+  "locations": {
+    "c0503d30-8c50-4372-87b5-7657e8e0fedd": {
+      "@type": "Location",
+      "name": "The Music Bowl",
+      "description": "Music Bowl, Central Park, New York",
+      "coordinates": "geo:40.7829,-73.9654"
+    }
+  },
+  "virtualLocations": {
+    "vloc1": {
+      "@type": "VirtualLocation",
+      "name": "Free live Stream from Music Bowl",
+      "uri": "https://stream.example.com/the_band_2020"
+    }
+  },
+  "localizations": {
+    "de": {
+      "title": "Live von der Music Bowl: The Band!",
+      "description": "Schau dir das größte Musikereignis an!",
+      "virtualLocations/vloc1/name":
+        "Gratis Live-Stream aus der Music Bowl"
+    }
+  }
+}

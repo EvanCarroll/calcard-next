@@ -331,7 +331,13 @@ fn validate_not_equal_for_vec<T: PartialEq<T> + ToString>(
     Ok(())
 }
 
-/// Formats a date-time as RFC 3339 with a numeric UTC offset.
+/// Formats a date-time as RFC 3339 with a numeric UTC offset, or without one
+/// for a floating (local) date-time, which has no offset. Rules are
+/// validated on the local date-times of the series.
 fn to_rfc3339(dt: &Zoned) -> String {
-    dt.strftime("%Y-%m-%dT%H:%M:%S%:z").to_string()
+    if dt.time_zone().is_unknown() {
+        dt.strftime("%Y-%m-%dT%H:%M:%S").to_string()
+    } else {
+        dt.strftime("%Y-%m-%dT%H:%M:%S%:z").to_string()
+    }
 }

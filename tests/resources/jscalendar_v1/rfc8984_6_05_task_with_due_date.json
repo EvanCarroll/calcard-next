@@ -1,0 +1,9 @@
+{
+  "@type": "Task",
+  "uid": "rfc8984-6.5@example.com",
+  "updated": "2020-01-01T00:00:00Z",
+  "title": "Buy groceries",
+  "due": "2020-01-19T18:00:00",
+  "timeZone": "Europe/Vienna",
+  "estimatedDuration": "PT1H"
+}

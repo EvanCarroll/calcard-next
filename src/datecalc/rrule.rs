@@ -75,6 +75,23 @@ impl RRule {
             by_easter: None,
         })
     }
+
+    /// Reads an UNTIL in UTC (or with an offset) as its UTC wall-clock time,
+    /// for a rule whose DTSTART is floating. Such a rule "MUST" have a
+    /// floating UNTIL (RFC 5545, Section 3.3.10); this is how the conversion
+    /// to JSCalendar reads one that does not, so both expansions agree.
+    pub(crate) fn float_until(&mut self) {
+        if let Some(until) = &self.until
+            && !until.time_zone().is_unknown()
+        {
+            self.until = Tz::Floating.from_local_datetime(
+                until
+                    .timestamp()
+                    .to_zoned(jiff::tz::TimeZone::UTC)
+                    .datetime(),
+            );
+        }
+    }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]

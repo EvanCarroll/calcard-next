@@ -226,7 +226,10 @@ impl ICalendar {
             let mut comp_id = series_comp_id;
             let first = event.event.take();
             let rule = match event.rrule.take() {
-                Some(rrule) => {
+                Some(mut rrule) => {
+                    if event.dt_start.offset.is_none() && event.dt_start_tzid.is_none() {
+                        rrule.float_until();
+                    }
                     match rule_instances(rrule, event.dt_start.date_time, event.start_tz) {
                         Ok(instances) => Some(instances),
                         Err(error) => {
@@ -389,12 +392,42 @@ pub(crate) fn rule_instances(
     let floating_start = Tz::Floating
         .from_local_datetime(dt_start)
         .ok_or(CalendarErrorType::InvalidDtStart)?;
-    let rrule = rrule
+    // The rule is evaluated on local date-times, but an UNTIL in UTC (or with
+    // an offset) is an instant. It is validated and iterated as its wall-clock
+    // time in the series' time zone, and the resolved instances are compared
+    // with the instant itself: "If the value specified by UNTIL is
+    // synchronized with the specified recurrence, this DATE or DATE-TIME
+    // becomes the last instance of the recurrence" (RFC 5545, Section
+    // 3.3.10). A floating UNTIL is already a local date-time.
+    let mut rrule = rrule;
+    let mut until = None;
+    if let Some(instant) = rrule
+        .until
+        .as_ref()
+        .filter(|until| !until.time_zone().is_unknown())
+        .map(Zoned::timestamp)
+        && let Some(local) =
+            Tz::Floating.from_local_datetime(instant.to_zoned(start_tz.to_time_zone()).datetime())
+    {
+        rrule.until = Some(local);
+        until = Some(instant);
+    }
+    let mut rrule = rrule
         .validate(floating_start.clone())
         .map_err(CalendarErrorType::RRule)?;
-    // The rule is evaluated on local date-times, which are then placed in
-    // the series' time zone. A local time in a gap or a fold resolves as an
-    // explicit date-time would (RFC 5545, Section 3.3.5; erratum 4271).
+    if until.is_some()
+        && let Some(local) = &rrule.until
+        && let Ok(widened) = local.checked_add(SignedDuration::from_hours(48))
+    {
+        // A local time in a gap resolves to a later instant, and one in a
+        // fold to an earlier one, so the local bound is widened by more than
+        // any UTC offset change (Samoa skipped a whole day in 2011); the
+        // instants decide.
+        rrule.until = Some(widened);
+    }
+    // The local date-times are placed in the series' time zone. A local time
+    // in a gap or a fold resolves as an explicit date-time would (RFC 5545,
+    // Section 3.3.5; erratum 4271).
     let resolved = RRuleIter::new(&rrule, &floating_start, true).filter_map(move |date| {
         let local = date.datetime();
         let start = if date.time_zone().is_unknown() {
@@ -402,6 +435,9 @@ pub(crate) fn rule_instances(
         } else {
             date
         };
+        if until.is_some_and(|until| start.timestamp() > until) {
+            return None;
+        }
         Some(Candidate {
             start,
             local: Some(local),

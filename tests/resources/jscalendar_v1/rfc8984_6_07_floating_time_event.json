@@ -1,0 +1,12 @@
+{
+  "@type": "Event",
+  "uid": "rfc8984-6.7@example.com",
+  "updated": "2020-01-01T00:00:00Z",
+  "title": "Yoga",
+  "start": "2020-01-01T07:00:00",
+  "duration": "PT30M",
+  "recurrenceRules": [{
+    "@type": "RecurrenceRule",
+    "frequency": "daily"
+  }]
+}
