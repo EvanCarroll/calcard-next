@@ -114,8 +114,9 @@ where
                 .push(VCardEntry::new(VCardProperty::Language).with_value(lang));
         }
 
-        // Move entries without a language to the top
-        vcard.entries.sort_unstable_by_key(|entry| {
+        // Move entries without a language to the top. The sort is stable, so
+        // entries of the same weight keep the order of the vCard.
+        vcard.entries.sort_by_key(|entry| {
             let lang = entry.language();
             let weight = u32::from(lang.is_some() && default_language.as_deref() != lang);
 
