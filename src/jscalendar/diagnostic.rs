@@ -33,10 +33,16 @@ impl<I: JSCalendarId, B: JSCalendarId> PropertySchema for CalendarSchema<I, B> {
         let shape = match (parent, key) {
             (_, P::ICalendar) => Shape::Any,
 
-            // Common to Event, Task and Group (Sections 3.1, 3.2).
+            // Common to Event, Task and Group (Sections 3.1, 3.2, 4.3).
             (
                 T::Event | T::Task | T::Group,
-                P::Uid | P::ProdId | P::Title | P::Color | P::Locale,
+                P::Uid
+                | P::ProdId
+                | P::Title
+                | P::Description
+                | P::DescriptionContentType
+                | P::Color
+                | P::Locale,
             ) => Shape::STRING,
             (T::Event | T::Task | T::Group, P::Version) => Shape::STRING,
             (T::Event | T::Task | T::Group, P::Created | P::Updated) => Shape::PARSED,
@@ -49,9 +55,7 @@ impl<I: JSCalendarId, B: JSCalendarId> PropertySchema for CalendarSchema<I, B> {
             (T::Event | T::Task, P::Method) => Shape::TOKEN,
             (
                 T::Event | T::Task,
-                P::Description
-                | P::DescriptionContentType
-                | P::MainLocationId
+                P::MainLocationId
                 | P::RecurrenceIdTimeZone
                 | P::OrganizerCalendarAddress
                 | P::SentBy
