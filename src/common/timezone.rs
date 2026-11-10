@@ -89,25 +89,37 @@ impl Tz {
         } else {
             let offset = (id & 0x7FFF) as i16 - 1440;
             debug_assert!((-1440..=1440).contains(&offset));
-            fixed_offset(offset as i32 * 60).map(Self::Fixed)
+            // A zero offset is UTC, which has its own id (`as_id` never gives a
+            // fixed offset of zero).
+            fixed_offset(offset as i32 * 60).map(Self::from)
         }
     }
 
+    /// The IANA name of this time zone. A fixed offset has one only when it
+    /// is a whole number of hours from UTC-12 to UTC+14 (`Etc/GMT±N`, or
+    /// `Etc/UTC` for 0); a floating time has none.
     pub fn name(&self) -> Option<Cow<'static, str>> {
         match self {
             Self::Tz(IanaTz::UTC) => Some(Cow::Borrowed("Etc/UTC")),
             Self::Tz(tz) => Some(Cow::Borrowed(tz.name())),
+            // An `Etc/GMT±N` zone is a fixed whole-hour offset, with the sign
+            // inverted, from UTC-12 to UTC+14. An offset such as +05:30 has no
+            // exact IANA name; truncating it to `Etc/GMT-5` would move every
+            // date-time in it by 30 minutes.
             Self::Fixed(offset) => {
-                let hour = offset.seconds() / 3600;
-                Some(if hour != 0 {
-                    Cow::Owned(format!(
+                let seconds = offset.seconds();
+                let hour = seconds / 3600;
+                if seconds == 0 {
+                    Some(Cow::Borrowed("Etc/UTC"))
+                } else if seconds % 3600 == 0 && (-12..=14).contains(&hour) {
+                    Some(Cow::Owned(format!(
                         "Etc/GMT{}{}",
                         if hour < 0 { "+" } else { "-" },
                         hour.abs()
-                    ))
+                    )))
                 } else {
-                    Cow::Borrowed("Etc/UTC")
-                })
+                    None
+                }
             }
             Self::Floating => None,
         }

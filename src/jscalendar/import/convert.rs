@@ -1086,7 +1086,9 @@ impl ICalendar {
                                     &dt,
                                     written,
                                     state.tz_start,
-                                    state.tz_start.unwrap_or_else(|| dt.tz()),
+                                    state.tz_start.unwrap_or_else(|| {
+                                        named_or_utc(dt.tz()).unwrap_or_default()
+                                    }),
                                 )
                             },
                         );
@@ -1117,7 +1119,7 @@ impl ICalendar {
                             .to_string()
                             .as_ref()]);
                         if state.tz_start.is_none() {
-                            state.tz_start = dt.tz().to_resolved();
+                            state.tz_start = named_or_utc(dt.tz());
                         }
                         start_date = Some(dt);
                     } else {
@@ -1194,7 +1196,7 @@ impl ICalendar {
                         entry.set_map_name();
 
                         if state.tz_end.is_none() {
-                            state.tz_end = dt.tz().to_resolved();
+                            state.tz_end = named_or_utc(dt.tz());
                         }
                         if state.tz_start.is_none() {
                             state.tz_start = state.tz_end;
@@ -1232,7 +1234,7 @@ impl ICalendar {
 
                         state.has_dates = true;
                         if state.tz_start.is_none() {
-                            state.tz_start = dt.tz().to_resolved();
+                            state.tz_start = named_or_utc(dt.tz());
                         }
 
                         let due = written.as_ref().map_or_else(
@@ -1349,7 +1351,7 @@ impl ICalendar {
                             .as_ref()]);
 
                         if state.tz_start.is_none() {
-                            state.tz_start = dt_tz.to_resolved();
+                            state.tz_start = named_or_utc(dt_tz);
                         }
                     } else {
                         entry.entry.values = [ICalendarValue::PartialDateTime(value)]
@@ -1394,7 +1396,7 @@ impl ICalendar {
                     {
                         state.has_dates = true;
                         if state.tz_start.is_none() {
-                            state.tz_start = start.tz().to_resolved();
+                            state.tz_start = named_or_utc(start.tz());
                         }
 
                         let tz_start = state.tz_start.unwrap_or_default();
@@ -1477,7 +1479,7 @@ impl ICalendar {
                         }
 
                         if state.tz_start.is_none() {
-                            state.tz_start = dt.tz().to_resolved();
+                            state.tz_start = named_or_utc(dt.tz());
                         }
 
                         let overrides = state
@@ -2162,5 +2164,16 @@ fn local_timestamp(
         local.as_second()
     } else {
         instant.with_tz(zone).to_naive_timestamp()
+    }
+}
+
+/// The zone a value's own time zone becomes in JSCalendar, whose `timeZone`
+/// is an IANA name. A fixed offset without one, such as +05:30 (which no
+/// `Etc/GMT±N` zone is), becomes UTC, the only exact form; a floating time
+/// stays floating.
+fn named_or_utc(tz: Tz) -> Option<Tz> {
+    match tz.to_resolved() {
+        Some(tz) if tz.name().is_none() => Some(Tz::UTC),
+        other => other,
     }
 }

@@ -421,7 +421,10 @@ impl ICalendarEntry {
         if has_tz_id {
             self.values
                 .push(PartialDateTime::from_naive_timestamp(dt.to_naive_timestamp()).into());
-        } else if tz.is_utc() {
+        } else if tz.is_utc() || (!tz.is_floating() && tz.name().is_none()) {
+            // A zone without a name (a fixed offset such as +05:30) cannot be
+            // written as a TZID, and without one the value would be floating;
+            // UTC is the exact form.
             self.values
                 .push(PartialDateTime::from_utc_timestamp(dt.timestamp().as_second()).into());
         } else {

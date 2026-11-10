@@ -201,12 +201,18 @@ fn expand(expanded: CalendarExpand) -> Vec<Occurrence> {
             from: format!(
                 "{} ({})",
                 event.start.strftime("%a %b %-d, %Y %-I:%M%P"),
-                event.start.tz().name().unwrap_or(Cow::Borrowed("Floating"))
+                {
+                    let tz = event.start.tz();
+                    tz.name().unwrap_or_else(|| Cow::Owned(tz.to_string()))
+                }
             ),
             to: format!(
                 "{} ({})",
                 event.end.strftime("%a %b %-d, %Y %-I:%M%P"),
-                event.end.tz().name().unwrap_or(Cow::Borrowed("Floating"))
+                {
+                    let tz = event.end.tz();
+                    tz.name().unwrap_or_else(|| Cow::Owned(tz.to_string()))
+                }
             ),
         })
         .collect()

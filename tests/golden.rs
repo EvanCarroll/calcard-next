@@ -41,9 +41,12 @@ fn fmt_dt(dt: &Zoned) -> String {
         dt.timestamp().as_second(),
         dt.offset().seconds(),
         dt.datetime().strftime("%Y-%m-%dT%H:%M:%S"),
-        Tz::from(dt.time_zone())
-            .name()
-            .unwrap_or(Cow::Borrowed("Floating"))
+        {
+            // A zone without a name (a fixed offset such as +05:30) shows its
+            // offset.
+            let tz = Tz::from(dt.time_zone());
+            tz.name().unwrap_or_else(|| Cow::Owned(tz.to_string()))
+        }
     )
 }
 
@@ -392,6 +395,12 @@ fn golden_tz_table() {
                 tz.is_floating()
             )
             .unwrap();
+        }
+    }
+    // Whole hours: only UTC-12 to UTC+14 have an `Etc/GMT±N` name.
+    for id in (0x8000u16 + 60..=0x8000 + 2880).step_by(60) {
+        if let Some(tz) = Tz::from_id(id) {
+            writeln!(out, "{id} {} {:?}", tz.as_id(), tz.name()).unwrap();
         }
     }
     for id in (0x8000u16 + 1..=0x8000 + 2880).step_by(15) {

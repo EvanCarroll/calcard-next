@@ -467,6 +467,28 @@ impl PartialDateTime {
         out: &mut impl Write,
         fmt: &ICalendarValueType,
     ) -> std::fmt::Result {
+        // A date-time with a UTC offset other than "Z" (for example
+        // "20240301T100000+0530") is not valid iCalendar (RFC 5545, Section
+        // 3.3.5) but is accepted when parsing. It is written as the same
+        // instant in UTC.
+        if matches!(fmt, ICalendarValueType::DateTime)
+            && let Some(dt) = self.to_date_time()
+            && dt.offset.is_some_and(|offset| offset.seconds() != 0)
+            && let Some(utc) = dt.to_date_time_with_tz(crate::common::timezone::Tz::UTC)
+        {
+            let utc = jiff::tz::TimeZone::UTC.to_datetime(utc.timestamp());
+            return write!(
+                out,
+                "{:04}{:02}{:02}T{:02}{:02}{:02}Z",
+                utc.year(),
+                utc.month(),
+                utc.day(),
+                utc.hour(),
+                utc.minute(),
+                utc.second()
+            );
+        }
+
         if matches!(fmt, ICalendarValueType::Date | ICalendarValueType::DateTime) {
             write!(
                 out,

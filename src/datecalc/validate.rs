@@ -50,6 +50,12 @@ pub(crate) fn validate_rrule_forced(
 // Until:
 // - Timezones are correctly synced as specified in the RFC
 // - Value should be later than `dt_start`.
+/// A time zone as shown in an error: its name, or else its offset (such as
+/// +05:30) or "Floating".
+fn zone_label(tz: Tz) -> Cow<'static, str> {
+    tz.name().unwrap_or_else(|| Cow::Owned(tz.to_string()))
+}
+
 fn validate_until(rrule: &RRule, dt_start: &Zoned) -> Result<(), ValidationError> {
     match &rrule.until {
         Some(until) => {
@@ -59,8 +65,8 @@ fn validate_until(rrule: &RRule, dt_start: &Zoned) -> Result<(), ValidationError
                 Tz::Tz(_) => {
                     if until_tz != Tz::UTC {
                         return Err(ValidationError::DtStartUntilMismatchTimezone {
-                            dt_start_tz: dt_start_tz.name().unwrap_or(Cow::Borrowed("Floating")),
-                            until_tz: until_tz.name().unwrap_or(Cow::Borrowed("Floating")),
+                            dt_start_tz: zone_label(dt_start_tz),
+                            until_tz: zone_label(until_tz),
                             expected: vec!["UTC".into()],
                         });
                     }
@@ -69,12 +75,9 @@ fn validate_until(rrule: &RRule, dt_start: &Zoned) -> Result<(), ValidationError
                     let allowed_timezones = vec![v, Tz::UTC];
                     if !allowed_timezones.contains(&until_tz) {
                         return Err(ValidationError::DtStartUntilMismatchTimezone {
-                            dt_start_tz: dt_start_tz.name().unwrap_or(Cow::Borrowed("Floating")),
-                            until_tz: until_tz.name().unwrap_or(Cow::Borrowed("Floating")),
-                            expected: allowed_timezones
-                                .into_iter()
-                                .map(|tz| tz.name().unwrap_or(Cow::Borrowed("Floating")))
-                                .collect(),
+                            dt_start_tz: zone_label(dt_start_tz),
+                            until_tz: zone_label(until_tz),
+                            expected: allowed_timezones.into_iter().map(zone_label).collect(),
                         });
                     }
                 }
