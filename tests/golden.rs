@@ -204,14 +204,21 @@ fn render_events(out: &mut String, ical: &ICalendar, default_tz: Tz) {
             .try_into_date_time()
             .map(|CalendarEvent { end, .. }| fmt_dt(&end))
             .unwrap_or_else(|| "unresolved".to_string());
+        let series = match (&event.series_comp_id, &event.recurrence_id) {
+            (Some(series), Some(rid)) => format!(" | series #{series} rid {}", fmt_dt(rid)),
+            (None, Some(rid)) => format!(" | series - rid {}", fmt_dt(rid)),
+            (Some(series), None) => format!(" | series #{series}"),
+            (None, None) => String::new(),
+        };
         lines.push(format!(
-            "  #{} {} | {} | ts {}..{} | resolved {}",
+            "  #{} {} | {} | ts {}..{} | resolved {}{}",
             event.comp_id,
             fmt_dt(&event.start),
             end,
             start_ts,
             end_ts,
-            resolved
+            resolved,
+            series
         ));
     }
     for error in &expand.errors {
