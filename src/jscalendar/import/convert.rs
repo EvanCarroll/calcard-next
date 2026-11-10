@@ -6,6 +6,7 @@
 
 use crate::{
     common::timezone::{Tz, TzTimestamp, ZonedTz},
+    diagnostic::{Diagnostic, DiagnosticKind, Location},
     icalendar::{timezone::TzResolver, *},
     jscalendar::{
         import::{ConversionOptions, EntryState, State, params::ExtractParams},
@@ -24,6 +25,7 @@ impl ICalendar {
                 &self.build_owned_tz_resolver(),
                 0,
                 &ConversionOptions::default(),
+                &mut None,
             )
             .into_object(),
         )
@@ -34,9 +36,34 @@ impl ICalendar {
         options: ConversionOptions,
     ) -> JSCalendar<'static, I, B> {
         JSCalendar(
-            self.to_jscalendar(&self.build_owned_tz_resolver(), 0, &options)
+            self.to_jscalendar(&self.build_owned_tz_resolver(), 0, &options, &mut None)
                 .into_object(),
         )
+    }
+
+    /// Converts to JSCalendar as [`ICalendar::into_jscalendar_with_opt`]
+    /// does, and reports each property and component the conversion did not
+    /// map: what it carries in `iCalendar/properties` and
+    /// `iCalendar/components`, or drops when `include_ical_components` is
+    /// off, as [`DiagnosticKind::NotConverted`]
+    /// at its location in this calendar. A property is located by its entry
+    /// in the component, and a component by itself. `VERSION`, which
+    /// describes the iCalendar format rather than the calendar, is not
+    /// reported.
+    ///
+    /// [`ICalendar::diagnostics`] reports what the parser kept but did not
+    /// interpret; call it before converting, since the conversion consumes
+    /// the calendar.
+    pub fn into_jscalendar_with_report<I: JSCalendarId, B: JSCalendarId>(
+        mut self,
+        options: ConversionOptions,
+    ) -> (JSCalendar<'static, I, B>, Vec<Diagnostic>) {
+        let mut report = Some(Vec::new());
+        let calendar = JSCalendar(
+            self.to_jscalendar(&self.build_owned_tz_resolver(), 0, &options, &mut report)
+                .into_object(),
+        );
+        (calendar, report.unwrap_or_default())
     }
 }
 
@@ -47,6 +74,7 @@ impl ICalendar {
         tz_resolver: &TzResolver<String>,
         component_id: u32,
         options: &ConversionOptions,
+        report: &mut Option<Vec<Diagnostic>>,
     ) -> State<I, B> {
         let mut state = State {
             include_ical_components: options.include_ical_components,
@@ -76,7 +104,12 @@ impl ICalendar {
                     ICalendarComponentType::VCalendar,
                     ICalendarComponentType::VEvent | ICalendarComponentType::VTodo,
                 ) => {
-                    group_components.push(self.to_jscalendar(tz_resolver, component_id, options));
+                    group_components.push(self.to_jscalendar(
+                        tz_resolver,
+                        component_id,
+                        options,
+                        report,
+                    ));
                 }
                 (
                     ICalendarComponentType::VEvent | ICalendarComponentType::VTodo,
@@ -92,7 +125,7 @@ impl ICalendar {
                         _ => unreachable!(),
                     });
                     let mut subcomponent_state =
-                        self.to_jscalendar(tz_resolver, component_id, options);
+                        self.to_jscalendar(tz_resolver, component_id, options, report);
                     let jsid = subcomponent_state.jsid.take();
                     let subcomponent = subcomponent_state.into_object();
                     entries.insert_named(jsid, subcomponent);
@@ -125,6 +158,16 @@ impl ICalendar {
                     alarm_component_ids.push((component_id, jsid));
                 }
                 _ => {
+                    if let Some(report) = report {
+                        report.push(Diagnostic::new(
+                            Location::ICalendar {
+                                component: component_id,
+                                entry: None,
+                            },
+                            component.component_type.as_str(),
+                            DiagnosticKind::NotConverted,
+                        ));
+                    }
                     unsupported_component_ids.push(component_id);
                 }
             }
@@ -151,7 +194,7 @@ impl ICalendar {
                     .get_mut_object_or_insert(JSCalendarProperty::Alerts)
                     .insert_unchecked(
                         Key::from(jsid),
-                        self.to_jscalendar(tz_resolver, component_id, options)
+                        self.to_jscalendar(tz_resolver, component_id, options, report)
                             .into_object(),
                     );
             }
@@ -329,7 +372,7 @@ impl ICalendar {
 
         let mut main_location_id = None;
 
-        entries.sort_by_key(|entry| match &entry.name {
+        let order = |entry: &ICalendarEntry| match &entry.name {
             ICalendarProperty::Dtstart | ICalendarProperty::Jsid => 0,
             ICalendarProperty::RecurrenceId => 1,
             ICalendarProperty::Dtend
@@ -338,11 +381,19 @@ impl ICalendar {
             | ICalendarProperty::Name
             | ICalendarProperty::Attendee => 2,
             _ => 3,
+        };
+        // The index of each entry in the component, for a report. Both sorts
+        // are stable on the same keys, so they order entries the same way.
+        let indices = report.is_some().then(|| {
+            let mut indices = (0..entries.len() as u32).collect::<Vec<_>>();
+            indices.sort_by_key(|&index| order(&entries[index as usize]));
+            indices
         });
+        entries.sort_by_key(order);
         let mut start_date = None;
         let mut has_owner = false;
 
-        for entry in entries {
+        for (position, entry) in entries.into_iter().enumerate() {
             let mut entry = EntryState::new(entry);
             let mut values = std::mem::take(&mut entry.entry.values).into_iter();
 
@@ -2106,6 +2157,20 @@ impl ICalendar {
                 }
             }
 
+            // VERSION describes the iCalendar format rather than the calendar.
+            if let (Some(report), Some(indices)) = (report.as_mut(), &indices)
+                && entry.converted_to.is_none()
+                && entry.entry.name != ICalendarProperty::Version
+            {
+                report.push(Diagnostic::new(
+                    Location::ICalendar {
+                        component: component_id,
+                        entry: Some(indices[position]),
+                    },
+                    entry.entry.name.as_str(),
+                    DiagnosticKind::NotConverted,
+                ));
+            }
             state.add_conversion_props(entry);
         }
 

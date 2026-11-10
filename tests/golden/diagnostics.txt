@@ -1,0 +1,540 @@
+== ical/case_allday.ics
+== ical/case_exdate_rdate.ics
+== ical/case_invalid.ics
+== ical/case_missing_tz.ics
+== ical/case_mixed_tz_end.ics
+== ical/case_overrides.ics
+== ical/case_todo.ics
+to jscalendar: component 2, entry 2: not converted "COMPLETED" at VCALENDAR/VTODO[1]/COMPLETED
+== ical/case_vtimezone_resolve.ics
+parsed: component 4, entry 1: extension "X-LIC-LOCATION" at VCALENDAR/VTIMEZONE[1]/X-LIC-LOCATION
+parsed: component 5, entry 1: extension "X-MICROSOFT-CDO-TZID" at VCALENDAR/VTIMEZONE[2]/X-MICROSOFT-CDO-TZID
+parsed: component 9, entry 2: invalid value "DTSTART" at VCALENDAR/VEVENT[3]/DTSTART
+to jscalendar: component 1: not converted "VTIMEZONE" at VCALENDAR/VTIMEZONE[0]
+to jscalendar: component 4: not converted "VTIMEZONE" at VCALENDAR/VTIMEZONE[1]
+to jscalendar: component 5: not converted "VTIMEZONE" at VCALENDAR/VTIMEZONE[2]
+to jscalendar: component 9, entry 2: not converted "DTSTART" at VCALENDAR/VEVENT[3]/DTSTART
+== ical/ical_001.ics
+to jscalendar: component 1: not converted "VTIMEZONE" at VCALENDAR/VTIMEZONE
+to jscalendar: component 5, entry 0: not converted "DESCRIPTION" at VCALENDAR/VEVENT/VALARM/DESCRIPTION
+to jscalendar: component 4, entry 14: not converted "LOCATION" at VCALENDAR/VEVENT/LOCATION
+== ical/ical_002.ics
+parsed: component 0, entry 1: extension "X-WR-TIMEZONE" at VCALENDAR/X-WR-TIMEZONE
+parsed: component 0, entry 4: extension "X-WR-CALNAME" at VCALENDAR/X-WR-CALNAME
+parsed: component 0, entry 6: extension "X-WR-RELCALID" at VCALENDAR/X-WR-RELCALID
+parsed: component 0, entry 7: extension "X-APPLE-CALENDAR-COLOR" at VCALENDAR/X-APPLE-CALENDAR-COLOR
+to jscalendar: component 1: not converted "VTIMEZONE" at VCALENDAR/VTIMEZONE
+to jscalendar: component 0, entry 1: not converted "X-WR-TIMEZONE" at VCALENDAR/X-WR-TIMEZONE
+to jscalendar: component 0, entry 3: not converted "CALSCALE" at VCALENDAR/CALSCALE
+to jscalendar: component 0, entry 4: not converted "X-WR-CALNAME" at VCALENDAR/X-WR-CALNAME
+to jscalendar: component 0, entry 6: not converted "X-WR-RELCALID" at VCALENDAR/X-WR-RELCALID
+to jscalendar: component 0, entry 7: not converted "X-APPLE-CALENDAR-COLOR" at VCALENDAR/X-APPLE-CALENDAR-COLOR
+== ical/ical_003.ics
+parsed: component 0, entry 4: extension "X-WR-CALNAME" at VCALENDAR/X-WR-CALNAME
+parsed: component 0, entry 5: extension "X-WR-TIMEZONE" at VCALENDAR/X-WR-TIMEZONE
+parsed: component 0, entry 6: extension "X-WR-CALDESC" at VCALENDAR/X-WR-CALDESC
+to jscalendar: component 1, entry 5: not converted "LAST-MODIFIED" at VCALENDAR/VEVENT[0]/LAST-MODIFIED
+to jscalendar: component 2, entry 7: not converted "LAST-MODIFIED" at VCALENDAR/VEVENT[1]/LAST-MODIFIED
+to jscalendar: component 0, entry 2: not converted "CALSCALE" at VCALENDAR/CALSCALE
+to jscalendar: component 0, entry 4: not converted "X-WR-CALNAME" at VCALENDAR/X-WR-CALNAME
+to jscalendar: component 0, entry 5: not converted "X-WR-TIMEZONE" at VCALENDAR/X-WR-TIMEZONE
+to jscalendar: component 0, entry 6: not converted "X-WR-CALDESC" at VCALENDAR/X-WR-CALDESC
+== ical/rrule_floating_0_00.ics
+== ical/rrule_floating_0_01.ics
+== ical/rrule_floating_0_02.ics
+== ical/rrule_floating_0_03.ics
+== ical/rrule_floating_0_04.ics
+== ical/rrule_floating_0_05.ics
+== ical/rrule_floating_0_06.ics
+== ical/rrule_floating_0_07.ics
+== ical/rrule_floating_0_08.ics
+== ical/rrule_floating_0_09.ics
+== ical/rrule_floating_0_10.ics
+== ical/rrule_floating_0_11.ics
+== ical/rrule_floating_0_12.ics
+== ical/rrule_floating_0_13.ics
+== ical/rrule_floating_0_14.ics
+== ical/rrule_floating_0_15.ics
+== ical/rrule_floating_0_16.ics
+== ical/rrule_floating_0_17.ics
+== ical/rrule_floating_1_00.ics
+== ical/rrule_floating_1_01.ics
+== ical/rrule_floating_1_02.ics
+== ical/rrule_floating_1_03.ics
+== ical/rrule_floating_1_04.ics
+== ical/rrule_floating_1_05.ics
+== ical/rrule_floating_1_06.ics
+== ical/rrule_floating_1_07.ics
+== ical/rrule_floating_1_08.ics
+== ical/rrule_floating_1_09.ics
+== ical/rrule_floating_1_10.ics
+== ical/rrule_floating_1_11.ics
+== ical/rrule_floating_1_12.ics
+== ical/rrule_floating_1_13.ics
+== ical/rrule_floating_1_14.ics
+== ical/rrule_floating_1_15.ics
+== ical/rrule_floating_1_16.ics
+== ical/rrule_floating_1_17.ics
+== ical/rrule_floating_2_00.ics
+== ical/rrule_floating_2_01.ics
+== ical/rrule_floating_2_02.ics
+== ical/rrule_floating_2_03.ics
+== ical/rrule_floating_2_04.ics
+== ical/rrule_floating_2_05.ics
+== ical/rrule_floating_2_06.ics
+== ical/rrule_floating_2_07.ics
+== ical/rrule_floating_2_08.ics
+== ical/rrule_floating_2_09.ics
+== ical/rrule_floating_2_10.ics
+== ical/rrule_floating_2_11.ics
+== ical/rrule_floating_2_12.ics
+== ical/rrule_floating_2_13.ics
+== ical/rrule_floating_2_14.ics
+== ical/rrule_floating_2_15.ics
+== ical/rrule_floating_2_16.ics
+== ical/rrule_floating_2_17.ics
+== ical/rrule_floating_3_00.ics
+== ical/rrule_floating_3_01.ics
+== ical/rrule_floating_3_02.ics
+== ical/rrule_floating_3_03.ics
+== ical/rrule_floating_3_04.ics
+== ical/rrule_floating_3_05.ics
+== ical/rrule_floating_3_06.ics
+== ical/rrule_floating_3_07.ics
+== ical/rrule_floating_3_08.ics
+== ical/rrule_floating_3_09.ics
+== ical/rrule_floating_3_10.ics
+== ical/rrule_floating_3_11.ics
+== ical/rrule_floating_3_12.ics
+== ical/rrule_floating_3_13.ics
+== ical/rrule_floating_3_14.ics
+== ical/rrule_floating_3_15.ics
+== ical/rrule_floating_3_16.ics
+== ical/rrule_floating_3_17.ics
+== ical/rrule_kolkata_0_01.ics
+== ical/rrule_kolkata_0_04.ics
+== ical/rrule_kolkata_0_07.ics
+== ical/rrule_kolkata_0_10.ics
+== ical/rrule_kolkata_0_13.ics
+== ical/rrule_kolkata_0_16.ics
+== ical/rrule_kolkata_1_00.ics
+== ical/rrule_kolkata_1_03.ics
+== ical/rrule_kolkata_1_06.ics
+== ical/rrule_kolkata_1_09.ics
+== ical/rrule_kolkata_1_12.ics
+== ical/rrule_kolkata_1_15.ics
+== ical/rrule_kolkata_2_02.ics
+== ical/rrule_kolkata_2_05.ics
+== ical/rrule_kolkata_2_08.ics
+== ical/rrule_kolkata_2_11.ics
+== ical/rrule_kolkata_2_14.ics
+== ical/rrule_kolkata_2_17.ics
+== ical/rrule_kolkata_3_01.ics
+== ical/rrule_kolkata_3_04.ics
+== ical/rrule_kolkata_3_07.ics
+== ical/rrule_kolkata_3_10.ics
+== ical/rrule_kolkata_3_13.ics
+== ical/rrule_kolkata_3_16.ics
+== ical/rrule_london_0_00.ics
+== ical/rrule_london_0_01.ics
+== ical/rrule_london_0_02.ics
+== ical/rrule_london_0_03.ics
+== ical/rrule_london_0_04.ics
+== ical/rrule_london_0_05.ics
+== ical/rrule_london_0_06.ics
+== ical/rrule_london_0_07.ics
+== ical/rrule_london_0_08.ics
+== ical/rrule_london_0_09.ics
+== ical/rrule_london_0_10.ics
+== ical/rrule_london_0_11.ics
+== ical/rrule_london_0_12.ics
+== ical/rrule_london_0_13.ics
+== ical/rrule_london_0_14.ics
+== ical/rrule_london_0_15.ics
+== ical/rrule_london_0_16.ics
+== ical/rrule_london_0_17.ics
+== ical/rrule_london_1_00.ics
+== ical/rrule_london_1_01.ics
+== ical/rrule_london_1_02.ics
+== ical/rrule_london_1_03.ics
+== ical/rrule_london_1_04.ics
+== ical/rrule_london_1_05.ics
+== ical/rrule_london_1_06.ics
+== ical/rrule_london_1_07.ics
+== ical/rrule_london_1_08.ics
+== ical/rrule_london_1_09.ics
+== ical/rrule_london_1_10.ics
+== ical/rrule_london_1_11.ics
+== ical/rrule_london_1_12.ics
+== ical/rrule_london_1_13.ics
+== ical/rrule_london_1_14.ics
+== ical/rrule_london_1_15.ics
+== ical/rrule_london_1_16.ics
+== ical/rrule_london_1_17.ics
+== ical/rrule_london_2_00.ics
+== ical/rrule_london_2_01.ics
+== ical/rrule_london_2_02.ics
+== ical/rrule_london_2_03.ics
+== ical/rrule_london_2_04.ics
+== ical/rrule_london_2_05.ics
+== ical/rrule_london_2_06.ics
+== ical/rrule_london_2_07.ics
+== ical/rrule_london_2_08.ics
+== ical/rrule_london_2_09.ics
+== ical/rrule_london_2_10.ics
+== ical/rrule_london_2_11.ics
+== ical/rrule_london_2_12.ics
+== ical/rrule_london_2_13.ics
+== ical/rrule_london_2_14.ics
+== ical/rrule_london_2_15.ics
+== ical/rrule_london_2_16.ics
+== ical/rrule_london_2_17.ics
+== ical/rrule_london_3_00.ics
+== ical/rrule_london_3_01.ics
+== ical/rrule_london_3_02.ics
+== ical/rrule_london_3_03.ics
+== ical/rrule_london_3_04.ics
+== ical/rrule_london_3_05.ics
+== ical/rrule_london_3_06.ics
+== ical/rrule_london_3_07.ics
+== ical/rrule_london_3_08.ics
+== ical/rrule_london_3_09.ics
+== ical/rrule_london_3_10.ics
+== ical/rrule_london_3_11.ics
+== ical/rrule_london_3_12.ics
+== ical/rrule_london_3_13.ics
+== ical/rrule_london_3_14.ics
+== ical/rrule_london_3_15.ics
+== ical/rrule_london_3_16.ics
+== ical/rrule_london_3_17.ics
+== ical/rrule_lordhowe_0_02.ics
+== ical/rrule_lordhowe_0_05.ics
+== ical/rrule_lordhowe_0_08.ics
+== ical/rrule_lordhowe_0_11.ics
+== ical/rrule_lordhowe_0_14.ics
+== ical/rrule_lordhowe_0_17.ics
+== ical/rrule_lordhowe_1_01.ics
+== ical/rrule_lordhowe_1_04.ics
+== ical/rrule_lordhowe_1_07.ics
+== ical/rrule_lordhowe_1_10.ics
+== ical/rrule_lordhowe_1_13.ics
+== ical/rrule_lordhowe_1_16.ics
+== ical/rrule_lordhowe_2_00.ics
+== ical/rrule_lordhowe_2_03.ics
+== ical/rrule_lordhowe_2_06.ics
+== ical/rrule_lordhowe_2_09.ics
+== ical/rrule_lordhowe_2_12.ics
+== ical/rrule_lordhowe_2_15.ics
+== ical/rrule_lordhowe_3_02.ics
+== ical/rrule_lordhowe_3_05.ics
+== ical/rrule_lordhowe_3_08.ics
+== ical/rrule_lordhowe_3_11.ics
+== ical/rrule_lordhowe_3_14.ics
+== ical/rrule_lordhowe_3_17.ics
+== ical/rrule_ny_0_00.ics
+== ical/rrule_ny_0_01.ics
+== ical/rrule_ny_0_02.ics
+== ical/rrule_ny_0_03.ics
+== ical/rrule_ny_0_04.ics
+== ical/rrule_ny_0_05.ics
+== ical/rrule_ny_0_06.ics
+== ical/rrule_ny_0_07.ics
+== ical/rrule_ny_0_08.ics
+== ical/rrule_ny_0_09.ics
+== ical/rrule_ny_0_10.ics
+== ical/rrule_ny_0_11.ics
+== ical/rrule_ny_0_12.ics
+== ical/rrule_ny_0_13.ics
+== ical/rrule_ny_0_14.ics
+== ical/rrule_ny_0_15.ics
+== ical/rrule_ny_0_16.ics
+== ical/rrule_ny_0_17.ics
+== ical/rrule_ny_1_00.ics
+== ical/rrule_ny_1_01.ics
+== ical/rrule_ny_1_02.ics
+== ical/rrule_ny_1_03.ics
+== ical/rrule_ny_1_04.ics
+== ical/rrule_ny_1_05.ics
+== ical/rrule_ny_1_06.ics
+== ical/rrule_ny_1_07.ics
+== ical/rrule_ny_1_08.ics
+== ical/rrule_ny_1_09.ics
+== ical/rrule_ny_1_10.ics
+== ical/rrule_ny_1_11.ics
+== ical/rrule_ny_1_12.ics
+== ical/rrule_ny_1_13.ics
+== ical/rrule_ny_1_14.ics
+== ical/rrule_ny_1_15.ics
+== ical/rrule_ny_1_16.ics
+== ical/rrule_ny_1_17.ics
+== ical/rrule_ny_2_00.ics
+== ical/rrule_ny_2_01.ics
+== ical/rrule_ny_2_02.ics
+== ical/rrule_ny_2_03.ics
+== ical/rrule_ny_2_04.ics
+== ical/rrule_ny_2_05.ics
+== ical/rrule_ny_2_06.ics
+== ical/rrule_ny_2_07.ics
+== ical/rrule_ny_2_08.ics
+== ical/rrule_ny_2_09.ics
+== ical/rrule_ny_2_10.ics
+== ical/rrule_ny_2_11.ics
+== ical/rrule_ny_2_12.ics
+== ical/rrule_ny_2_13.ics
+== ical/rrule_ny_2_14.ics
+== ical/rrule_ny_2_15.ics
+== ical/rrule_ny_2_16.ics
+== ical/rrule_ny_2_17.ics
+== ical/rrule_ny_3_00.ics
+== ical/rrule_ny_3_01.ics
+== ical/rrule_ny_3_02.ics
+== ical/rrule_ny_3_03.ics
+== ical/rrule_ny_3_04.ics
+== ical/rrule_ny_3_05.ics
+== ical/rrule_ny_3_06.ics
+== ical/rrule_ny_3_07.ics
+== ical/rrule_ny_3_08.ics
+== ical/rrule_ny_3_09.ics
+== ical/rrule_ny_3_10.ics
+== ical/rrule_ny_3_11.ics
+== ical/rrule_ny_3_12.ics
+== ical/rrule_ny_3_13.ics
+== ical/rrule_ny_3_14.ics
+== ical/rrule_ny_3_15.ics
+== ical/rrule_ny_3_16.ics
+== ical/rrule_ny_3_17.ics
+== ical/rrule_sydney_0_00.ics
+== ical/rrule_sydney_0_03.ics
+== ical/rrule_sydney_0_06.ics
+== ical/rrule_sydney_0_09.ics
+== ical/rrule_sydney_0_12.ics
+== ical/rrule_sydney_0_15.ics
+== ical/rrule_sydney_1_02.ics
+== ical/rrule_sydney_1_05.ics
+== ical/rrule_sydney_1_08.ics
+== ical/rrule_sydney_1_11.ics
+== ical/rrule_sydney_1_14.ics
+== ical/rrule_sydney_1_17.ics
+== ical/rrule_sydney_2_01.ics
+== ical/rrule_sydney_2_04.ics
+== ical/rrule_sydney_2_07.ics
+== ical/rrule_sydney_2_10.ics
+== ical/rrule_sydney_2_13.ics
+== ical/rrule_sydney_2_16.ics
+== ical/rrule_sydney_3_00.ics
+== ical/rrule_sydney_3_03.ics
+== ical/rrule_sydney_3_06.ics
+== ical/rrule_sydney_3_09.ics
+== ical/rrule_sydney_3_12.ics
+== ical/rrule_sydney_3_15.ics
+== ical/rrule_utc_0_02.ics
+== ical/rrule_utc_0_05.ics
+== ical/rrule_utc_0_08.ics
+== ical/rrule_utc_0_11.ics
+== ical/rrule_utc_0_14.ics
+== ical/rrule_utc_0_17.ics
+== ical/rrule_utc_1_01.ics
+== ical/rrule_utc_1_04.ics
+== ical/rrule_utc_1_07.ics
+== ical/rrule_utc_1_10.ics
+== ical/rrule_utc_1_13.ics
+== ical/rrule_utc_1_16.ics
+== ical/rrule_utc_2_00.ics
+== ical/rrule_utc_2_03.ics
+== ical/rrule_utc_2_06.ics
+== ical/rrule_utc_2_09.ics
+== ical/rrule_utc_2_12.ics
+== ical/rrule_utc_2_15.ics
+== ical/rrule_utc_3_02.ics
+== ical/rrule_utc_3_05.ics
+== ical/rrule_utc_3_08.ics
+== ical/rrule_utc_3_11.ics
+== ical/rrule_utc_3_14.ics
+== ical/rrule_utc_3_17.ics
+== jscalendar/date_basic.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_basic_fmt.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_date_only.json
+parsed: "entries/0/created": invalid value "created"
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+parsed: "entries/0/start": invalid value "start"
+parsed: "entries/0/updated": invalid value "updated"
+parsed: "updated": invalid value "updated"
+to icalendar: "entries/0/created": not converted "created"
+to icalendar: "entries/0/recurrenceRule/until": not converted "until"
+to icalendar: "entries/0/updated": not converted "updated"
+to icalendar: "updated": not converted "updated"
+upgraded: "entries/0/created": invalid value "created"
+upgraded: "entries/0/recurrenceRule/until": invalid value "until"
+upgraded: "entries/0/start": invalid value "start"
+upgraded: "entries/0/updated": invalid value "updated"
+upgraded: "updated": invalid value "updated"
+== jscalendar/date_feb30.json
+parsed: "entries/0/created": invalid value "created"
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+parsed: "entries/0/start": invalid value "start"
+parsed: "entries/0/updated": invalid value "updated"
+parsed: "updated": invalid value "updated"
+to icalendar: "entries/0/created": not converted "created"
+to icalendar: "entries/0/recurrenceRule/until": not converted "until"
+to icalendar: "entries/0/updated": not converted "updated"
+to icalendar: "updated": not converted "updated"
+upgraded: "entries/0/created": invalid value "created"
+upgraded: "entries/0/recurrenceRule/until": invalid value "until"
+upgraded: "entries/0/start": invalid value "start"
+upgraded: "entries/0/updated": invalid value "updated"
+upgraded: "updated": invalid value "updated"
+== jscalendar/date_fraction.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_hour25.json
+parsed: "entries/0/created": invalid value "created"
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+parsed: "entries/0/start": invalid value "start"
+parsed: "entries/0/updated": invalid value "updated"
+parsed: "updated": invalid value "updated"
+to icalendar: "entries/0/created": not converted "created"
+to icalendar: "entries/0/recurrenceRule/until": not converted "until"
+to icalendar: "entries/0/updated": not converted "updated"
+to icalendar: "updated": not converted "updated"
+upgraded: "entries/0/created": invalid value "created"
+upgraded: "entries/0/recurrenceRule/until": invalid value "until"
+upgraded: "entries/0/start": invalid value "start"
+upgraded: "entries/0/updated": invalid value "updated"
+upgraded: "updated": invalid value "updated"
+== jscalendar/date_leap.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_lower_t.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_negoffset.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_no_seconds.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_offset.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_short_fields.json
+parsed: "entries/0/created": invalid value "created"
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+parsed: "entries/0/start": invalid value "start"
+parsed: "entries/0/updated": invalid value "updated"
+parsed: "updated": invalid value "updated"
+to icalendar: "entries/0/created": not converted "created"
+to icalendar: "entries/0/recurrenceRule/until": not converted "until"
+to icalendar: "entries/0/updated": not converted "updated"
+to icalendar: "updated": not converted "updated"
+upgraded: "entries/0/created": invalid value "created"
+upgraded: "entries/0/recurrenceRule/until": invalid value "until"
+upgraded: "entries/0/start": invalid value "start"
+upgraded: "entries/0/updated": invalid value "updated"
+upgraded: "updated": invalid value "updated"
+== jscalendar/date_space.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_trailing.json
+parsed: "entries/0/created": invalid value "created"
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+parsed: "entries/0/start": invalid value "start"
+parsed: "entries/0/updated": invalid value "updated"
+parsed: "updated": invalid value "updated"
+to icalendar: "entries/0/created": not converted "created"
+to icalendar: "entries/0/recurrenceRule/until": not converted "until"
+to icalendar: "entries/0/updated": not converted "updated"
+to icalendar: "updated": not converted "updated"
+upgraded: "entries/0/created": invalid value "created"
+upgraded: "entries/0/recurrenceRule/until": invalid value "until"
+upgraded: "entries/0/start": invalid value "start"
+upgraded: "entries/0/updated": invalid value "updated"
+upgraded: "updated": invalid value "updated"
+== jscalendar/date_y1900.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/date_zulu.json
+parsed: "entries/0/recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar/jscal_001.json
+parsed: "entries/0/participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee": unknown value "roles"
+parsed: "entries/0/participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee": unknown value "roles"
+to icalendar: "entries/0/participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee": not converted "roles"
+to icalendar: "entries/0/participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee": not converted "roles"
+to icalendar: "entries/0/recurrenceOverrides/2020-03-04T09:00:00/participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee": not converted "recurrenceOverrides"
+to icalendar: "entries/0/recurrenceOverrides/2020-03-04T09:00:00/participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee": not converted "recurrenceOverrides"
+upgraded: "entries/0/participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee": unknown value "roles"
+upgraded: "entries/0/participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee": unknown value "roles"
+== jscalendar/jscal_002.json
+== jscalendar/jscal_003.json
+== jscalendar_v1/rfc8984_6_01_simple_event.json
+== jscalendar_v1/rfc8984_6_02_simple_task.json
+== jscalendar_v1/rfc8984_6_03_simple_group.json
+== jscalendar_v1/rfc8984_6_04_all_day_event.json
+parsed: "recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar_v1/rfc8984_6_05_task_with_due_date.json
+== jscalendar_v1/rfc8984_6_06_event_with_end_time_zone.json
+parsed: "locations/1/rel": misplaced property "rel"
+parsed: "locations/2/rel": misplaced property "rel"
+parsed: "locations/2/timeZone": obsolete property "timeZone"
+to icalendar: "locations/1/rel": not converted "rel"
+to icalendar: "locations/2/rel": not converted "rel"
+to icalendar: "locations/2/timeZone": not converted "timeZone"
+upgraded: "locations/1/rel": misplaced property "rel"
+upgraded: "locations/2/rel": misplaced property "rel"
+upgraded: "locations/2/timeZone": obsolete property "timeZone"
+== jscalendar_v1/rfc8984_6_07_floating_time_event.json
+parsed: "recurrenceRules": obsolete property "recurrenceRules"
+== jscalendar_v1/rfc8984_6_08_multiple_locations_and_localization.json
+parsed: "localizations": unknown property "localizations"
+to icalendar: "localizations": not converted "localizations"
+upgraded: "localizations": unknown property "localizations"
+== jscalendar_v1/rfc8984_6_09_recurring_event_with_overrides.json
+parsed: "locations/mlab/title": misplaced property "title"
+parsed: "recurrenceOverrides/2020-06-25T09:00:00/locations/auditorium/title": misplaced property "title"
+parsed: "recurrenceRules": obsolete property "recurrenceRules"
+to icalendar: "locations/mlab/title": not converted "title"
+to icalendar: "recurrenceOverrides/2020-01-07T14:00:00/locations/mlab/title": not converted "recurrenceOverrides"
+to icalendar: "recurrenceOverrides/2020-06-25T09:00:00/locations/auditorium/title": not converted "recurrenceOverrides"
+upgraded: "locations/mlab/title": misplaced property "title"
+upgraded: "recurrenceOverrides/2020-06-25T09:00:00/locations/auditorium/title": misplaced property "title"
+== jscalendar_v1/rfc8984_6_10_recurring_event_with_participants.json
+parsed: "participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee": unknown value "roles"
+parsed: "participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee": unknown value "roles"
+parsed: "recurrenceRules": obsolete property "recurrenceRules"
+to icalendar: "participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee": not converted "roles"
+to icalendar: "participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee": not converted "roles"
+to icalendar: "recurrenceOverrides/2020-03-04T09:00:00/participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee": not converted "recurrenceOverrides"
+to icalendar: "recurrenceOverrides/2020-03-04T09:00:00/participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee": not converted "recurrenceOverrides"
+upgraded: "participants/dG9tQGZvb2Jhci5xlLmNvbQ/roles/attendee": unknown value "roles"
+upgraded: "participants/em9lQGZvb2GFtcGxlLmNvbQ/roles/attendee": unknown value "roles"
+== vcard/codec_b64_30.vcf
+== vcard/codec_data_40.vcf
+== vcard/vcard_001.vcf
+to jscontact: entry 5: not converted "GENDER"
+== vcard/vcard_002.vcf
+to jscontact: entry 6: not converted "CLIENTPIDMAP"
+to jscontact: entry 10: not converted "GENDER"
+to jscontact: entry 31: not converted "XML"
+== vcard/vcard_003.vcf
+parsed: entry 12: obsolete property "LABEL"
+parsed: entry 17: obsolete property "MAILER"
+parsed: entry 32: obsolete property "SORT-STRING"
+parsed: entry 35: obsolete property "CLASS"
+parsed: entry 36: obsolete property "CLASS"
+parsed: entry 37: obsolete property "CLASS"
+to jscontact: entry 3: not converted "N"
+to jscontact: entry 12: not converted "LABEL"
+to jscontact: entry 17: not converted "MAILER"
+to jscontact: entry 31: not converted "REV"
+to jscontact: entry 32: not converted "SORT-STRING"
+to jscontact: entry 35: not converted "CLASS"
+to jscontact: entry 36: not converted "CLASS"
+to jscontact: entry 37: not converted "CLASS"
+converted: "addresses/k1/contexts/dom": unknown value "contexts"
+converted: "addresses/k1/contexts/parcel": unknown value "contexts"
+converted: "addresses/k1/contexts/postal": unknown value "contexts"
+converted: "emails/k1/contexts/internet": unknown value "contexts"
+converted: "emails/k2/contexts/internet": unknown value "contexts"
+converted: "emails/k3/contexts/internet": unknown value "contexts"
+converted: "emails/k3/contexts/pref": unknown value "contexts"
+converted: "phones/k1/contexts/msg": unknown value "contexts"
+converted: "phones/k1/contexts/pref": unknown value "contexts"
+== vcard/vcard_004.vcf
+to jscontact: entry 8: not converted "SOCIALPROFILE"
+== jscontact/jscontact_001.json
+== jscontact/jscontact_002.json
+== jscontact/jscontact_003.json
+to vcard: "onlineServices/s5": not converted "onlineServices"

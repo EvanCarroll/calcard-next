@@ -31,6 +31,9 @@ where
     I: JSContactId,
     B: JSContactId,
 {
+    /// The original index of each vCard entry, in the order they are
+    /// converted, when the conversion reports what it did not convert.
+    entry_order: Option<Vec<u32>>,
     entries: AHashMap<
         Key<'static, JSContactProperty<I>>,
         Value<'static, JSContactProperty<I>, JSContactValue<I, B>>,

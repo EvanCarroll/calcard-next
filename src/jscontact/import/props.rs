@@ -29,7 +29,10 @@ where
     I: JSContactId,
     B: JSContactId,
 {
-    pub(super) fn new(vcard: &mut VCard, include_vcard_converted: bool) -> Self {
+    /// Collects what the conversion of `vcard` needs and orders its entries.
+    /// With `track`, [`State::entry_order`] holds the original index of each
+    /// entry in the new order.
+    pub(super) fn new(vcard: &mut VCard, include_vcard_converted: bool, track: bool) -> Self {
         let mut entries = AHashMap::with_capacity(vcard.entries.len());
 
         entries.extend([
@@ -116,7 +119,7 @@ where
 
         // Move entries without a language to the top. The sort is stable, so
         // entries of the same weight keep the order of the vCard.
-        vcard.entries.sort_by_key(|entry| {
+        let weight = |entry: &VCardEntry| {
             let lang = entry.language();
             let weight = u32::from(lang.is_some() && default_language.as_deref() != lang);
 
@@ -127,10 +130,19 @@ where
                 VCardProperty::Other(name) if name.eq_ignore_ascii_case("X-ABLabel") => weight + 3,
                 _ => weight,
             }
+        };
+        // Both sorts are stable on the same keys, so they order entries the
+        // same way.
+        let entry_order = track.then(|| {
+            let mut order = (0..vcard.entries.len() as u32).collect::<Vec<_>>();
+            order.sort_by_key(|&index| weight(&vcard.entries[index as usize]));
+            order
         });
+        vcard.entries.sort_by_key(weight);
 
         Self {
             entries,
+            entry_order,
             default_language,
             localizations: Default::default(),
             prop_ids: Default::default(),

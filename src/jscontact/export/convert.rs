@@ -6,6 +6,7 @@
 
 use crate::{
     common::{Data, IanaParse, IanaType, jstype, timezone::Tz},
+    diagnostic::{Diagnostic, DiagnosticKind, Location},
     error::ConvertError,
     jscontact::{
         JSContact, JSContactId, JSContactKind, JSContactProperty, JSContactValue,
@@ -19,8 +20,9 @@ use crate::{
         validate::ContactSchema,
     },
     vcard::{
-        Jscomp, VCard, VCardEntry, VCardLevel, VCardParameter, VCardParameterValue, VCardPhonetic,
-        VCardProperty, VCardType, VCardValue, VCardValueType, ValueType,
+        Jscomp, VCard, VCardEntry, VCardLevel, VCardParameter, VCardParameterName,
+        VCardParameterValue, VCardPhonetic, VCardProperty, VCardType, VCardValue, VCardValueType,
+        ValueType,
     },
 };
 use jmap_tools::{JsonPointer, JsonPointerItem, Key, Map, Value};
@@ -37,7 +39,53 @@ where
     /// [`JSContact::validate`]). An `@type` implied by the object's position
     /// is not converted (RFC 9555, Appendix A lists it as "not applicable"),
     /// so it is not written as JSPROP.
-    pub fn into_vcard(mut self) -> Result<VCard, ConvertError> {
+    pub fn into_vcard(self) -> Result<VCard, ConvertError> {
+        self.convert()
+    }
+
+    /// Converts to vCard as [`JSContact::into_vcard`] does, and reports each
+    /// property the conversion carried in a `JSPROP` instead of converting
+    /// it, as [`DiagnosticKind::NotConverted`] at its JSON pointer in this
+    /// data. A property of a localization is reported at its pointer in
+    /// `localizations`.
+    ///
+    /// [`JSContact::diagnostics`] reports what the parsed data keeps but does
+    /// not interpret; call it before converting, since the conversion
+    /// consumes the data.
+    pub fn into_vcard_with_report(self) -> Result<(VCard, Vec<Diagnostic>), ConvertError> {
+        let vcard = self.convert()?;
+        // Each JSPROP's pointer is relative to the Card, which is the whole
+        // vCard (RFC 9555, Section 3.3.1).
+        let diagnostics = vcard
+            .entries
+            .iter()
+            .filter(|entry| entry.name == VCardProperty::Jsprop)
+            .filter_map(|entry| {
+                entry
+                    .params
+                    .iter()
+                    .find_map(|param| match (&param.name, &param.value) {
+                        (VCardParameterName::Jsptr, VCardParameterValue::Text(jsptr)) => {
+                            Some(jsptr)
+                        }
+                        _ => None,
+                    })
+            })
+            .map(|jsptr| {
+                Diagnostic::new(
+                    Location::Json(jsptr.clone()),
+                    jstype::property_name::<ContactSchema<I, B>>(
+                        crate::jscontact::JSContactType::Card,
+                        jsptr,
+                    ),
+                    DiagnosticKind::NotConverted,
+                )
+            })
+            .collect();
+        Ok((vcard, diagnostics))
+    }
+
+    fn convert(mut self) -> Result<VCard, ConvertError> {
         self.validate()?;
         jstype::strip_implied::<ContactSchema<I, B>>(&mut self.0);
 

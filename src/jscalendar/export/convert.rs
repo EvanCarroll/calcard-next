@@ -5,15 +5,20 @@
  */
 
 use crate::{
+    common::jstype,
     common::{
         IanaParse, PartialDateTime,
         timezone::{Tz, TzTimestamp, ZonedTz},
     },
+    diagnostic::{Diagnostic, DiagnosticKind, Location},
     error::ConvertError,
     icalendar::*,
     jscalendar::{
-        export::{ConvertedComponent, State},
-        patch, *,
+        export::{ConvertedComponent, Sources, State},
+        patch,
+        upgrade::V1_RECURRENCE_RULES,
+        validate::CalendarSchema,
+        *,
     },
 };
 use ahash::AHashSet;
@@ -27,21 +32,48 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
     /// Converts to iCalendar. JSCalendar 1.0 (RFC 8984) data is upgraded to
     /// 2.0 first (see [`JSCalendar::upgrade`]), and the `@type` of each object
     /// is checked (see [`JSCalendar::validate`]).
-    pub fn into_icalendar(mut self) -> Result<ICalendar, ConvertError> {
+    pub fn into_icalendar(self) -> Result<ICalendar, ConvertError> {
+        self.convert(&mut None).map(|(ical, _)| ical)
+    }
+
+    /// Converts to iCalendar as [`JSCalendar::into_icalendar`] does, and
+    /// reports each property the conversion carried in a `JSPROP` instead of
+    /// converting it, as
+    /// [`DiagnosticKind::NotConverted`]
+    /// at its JSON pointer in this data, after the upgrade to 2.0. For
+    /// example, a 1.0 `recurrenceRules` with more than one rule is reported
+    /// at `entries/0/recurrenceRules`.
+    ///
+    /// [`JSCalendar::diagnostics`] reports what the parsed data keeps but
+    /// does not interpret; call it before converting, since the conversion
+    /// consumes the data.
+    pub fn into_icalendar_with_report(self) -> Result<(ICalendar, Vec<Diagnostic>), ConvertError> {
+        let mut sources = Some(Vec::new());
+        let (ical, wrapped) = self.convert(&mut sources)?;
+        let diagnostics = not_converted::<I, B>(&ical, sources.unwrap_or_default(), wrapped);
+        Ok((ical, diagnostics))
+    }
+
+    /// Converts to iCalendar, recording the source of each component in
+    /// `sources`. Also returns whether a lone Event or Task was converted as
+    /// the only entry of a Group.
+    fn convert(mut self, sources: &mut Sources) -> Result<(ICalendar, bool), ConvertError> {
         self.upgrade();
         self.validate()?;
         let Value::Object(mut entries) = self.0 else {
             unreachable!("validate accepts only an object");
         };
-        if matches!(
+        let wrapped = matches!(
             entries.get(&Key::Property(JSCalendarProperty::Type)),
             Some(Value::Element(JSCalendarValue::Type(
                 JSCalendarType::Event | JSCalendarType::Task
             )))
-        ) {
+        );
+        if wrapped {
             entries = into_group(entries);
         }
         let mut ical = ICalendar::default();
+        let pointer = sources.is_some().then(String::new);
 
         ical.from_jscalendar(
             State {
@@ -54,11 +86,13 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
                 entries,
                 is_date: false,
                 default_component_type: ICalendarComponentType::VCalendar,
+                pointer,
             },
             None,
+            sources,
         );
 
-        Ok(ical)
+        Ok((ical, wrapped))
     }
 
     pub fn into_inner(self) -> Value<'x, JSCalendarProperty<I>, JSCalendarValue<I, B>> {
@@ -85,6 +119,7 @@ impl ICalendar {
         &mut self,
         mut state: State<'_, I, B>,
         mut parent_component: Option<&mut ICalendarComponent>,
+        sources: &mut Sources,
     ) {
         let mut root_conversions = None;
         let mut locale = None;
@@ -280,6 +315,12 @@ impl ICalendar {
                         let Value::Object(mut value) = value else {
                             continue;
                         };
+                        let pointer = state.pointer.as_deref().map(|base| {
+                            join_pointer::<I>(
+                                base,
+                                &[property.to_string().as_ref(), name.to_string().as_ref()],
+                            )
+                        });
 
                         let mut item_conversions = ConvertedComponent::build(&mut value);
                         let mut entry = ICalendarEntry::new(ICalendarProperty::Attendee);
@@ -677,9 +718,9 @@ impl ICalendar {
                             if let Some(item_conversions) = item_conversions {
                                 participant = item_conversions.apply_conversions(participant, self);
                             }
-                            component
-                                .component_ids
-                                .push(self.push_component(participant));
+                            let id = self.push_component(participant);
+                            record(sources, id, pointer);
+                            component.component_ids.push(id);
                         }
 
                         if !entry.values.is_empty() && !is_organizer_only {
@@ -708,6 +749,12 @@ impl ICalendar {
                         let Value::Object(mut value) = value else {
                             continue;
                         };
+                        let pointer = state.pointer.as_deref().map(|base| {
+                            join_pointer::<I>(
+                                base,
+                                &[property.to_string().as_ref(), name.to_string().as_ref()],
+                            )
+                        });
 
                         let mut item_conversions = ConvertedComponent::build(&mut value);
                         let mut alert = ICalendarComponent::new(ICalendarComponentType::VAlarm);
@@ -875,7 +922,7 @@ impl ICalendar {
                                 ICalendarEntry::new(ICalendarProperty::Jsid)
                                     .with_value(name.to_string().into_owned()),
                             );
-                            alerts.push(alert);
+                            alerts.push((alert, pointer));
                         }
                     }
 
@@ -884,12 +931,12 @@ impl ICalendar {
                     if has_related_to {
                         alert_mappings = alerts
                             .iter()
-                            .filter_map(|alert| {
+                            .filter_map(|(alert, _)| {
                                 Some((alert.jsid()?.to_string(), alert.uid()?.to_string()))
                             })
                             .collect();
                     }
-                    for mut alert in alerts {
+                    for (mut alert, pointer) in alerts {
                         if has_related_to {
                             for related_to in alert.properties_mut(&ICalendarProperty::RelatedTo) {
                                 if let Some(ICalendarValue::Text(related_to)) =
@@ -901,7 +948,9 @@ impl ICalendar {
                                 }
                             }
                         }
-                        component.component_ids.push(self.push_component(alert));
+                        let id = self.push_component(alert);
+                        record(sources, id, pointer);
+                        component.component_ids.push(id);
                     }
                 }
                 (
@@ -1093,6 +1142,12 @@ impl ICalendar {
                         let Value::Object(mut value) = value else {
                             continue;
                         };
+                        let pointer = state.pointer.as_deref().map(|base| {
+                            join_pointer::<I>(
+                                base,
+                                &[property.to_string().as_ref(), name.to_string().as_ref()],
+                            )
+                        });
                         let mut item_conversions = ConvertedComponent::build(&mut value);
                         let is_main_location = main_location_id
                             .as_ref()
@@ -1273,7 +1328,9 @@ impl ICalendar {
                             if let Some(item_conversions) = item_conversions {
                                 location = item_conversions.apply_conversions(location, self);
                             }
-                            component.component_ids.push(self.push_component(location));
+                            let id = self.push_component(location);
+                            record(sources, id, pointer);
+                            component.component_ids.push(id);
                         }
                     }
                 }
@@ -1637,8 +1694,17 @@ impl ICalendar {
                     Value::Array(items),
                     ICalendarComponentType::VCalendar,
                 ) => {
-                    for item in items {
+                    for (index, item) in items.into_iter().enumerate() {
                         if let Some(entries) = item.into_object() {
+                            let pointer = state.pointer.as_deref().map(|base| {
+                                join_pointer::<I>(
+                                    base,
+                                    &[
+                                        JSCalendarProperty::Entries::<I>.to_string().as_ref(),
+                                        &index.to_string(),
+                                    ],
+                                )
+                            });
                             self.from_jscalendar(
                                 State {
                                     tz: None,
@@ -1650,8 +1716,10 @@ impl ICalendar {
                                     entries,
                                     is_date: false,
                                     default_component_type: ICalendarComponentType::VEvent,
+                                    pointer,
                                 },
                                 Some(&mut component),
+                                sources,
                             );
                         }
                     }
@@ -1701,6 +1769,17 @@ impl ICalendar {
             });
 
             for (key, value) in overrides.into_vec() {
+                let pointer = state.pointer.as_deref().map(|base| {
+                    join_pointer::<I>(
+                        base,
+                        &[
+                            JSCalendarProperty::RecurrenceOverrides::<I>
+                                .to_string()
+                                .as_ref(),
+                            key.to_string().as_ref(),
+                        ],
+                    )
+                });
                 let (Key::Property(JSCalendarProperty::DateTime(jsdt)), Value::Object(mut obj)) =
                     (key, value)
                 else {
@@ -1805,8 +1884,10 @@ impl ICalendar {
                                 uid: uid.as_deref(),
                                 is_date: state.is_date,
                                 default_component_type: component.component_type.clone(),
+                                pointer,
                             },
                             parent_component.as_deref_mut(),
+                            sources,
                         );
                     } else {
                         // EXDATE
@@ -1957,13 +2038,15 @@ impl ICalendar {
             );
         }
 
-        if let Some(parent_component) = parent_component {
-            parent_component
-                .component_ids
-                .push(self.push_component(component));
+        let id = if let Some(parent_component) = parent_component {
+            let id = self.push_component(component);
+            parent_component.component_ids.push(id);
+            id
         } else {
             self.components[0] = component;
-        }
+            0
+        };
+        record(sources, id, state.pointer);
     }
 
     pub fn push_component(&mut self, component: ICalendarComponent) -> u32 {
@@ -2209,6 +2292,80 @@ impl ICalendarComponent {
     }
 }
 
+/// The pointer of a property of the object at `base`.
+fn join_pointer<I: JSCalendarId>(base: &str, parts: &[&str]) -> String {
+    let parts = JsonPointer::<JSCalendarProperty<I>>::encode(parts);
+    if base.is_empty() {
+        parts
+    } else {
+        format!("{base}/{parts}")
+    }
+}
+
+/// Records the object an output component was converted from.
+fn record(sources: &mut Sources, component: u32, pointer: Option<String>) {
+    if let (Some(sources), Some(pointer)) = (sources, pointer) {
+        sources.push((component, pointer));
+    }
+}
+
+/// A [`DiagnosticKind::NotConverted`] for each `JSPROP` of `ical`, at the
+/// pointer of its object and its `JSPTR`. A lone Event or Task was converted
+/// as the only entry of a Group, so its pointers are rebased on it.
+fn not_converted<I: JSCalendarId, B: JSCalendarId>(
+    ical: &ICalendar,
+    sources: Vec<(u32, String)>,
+    wrapped: bool,
+) -> Vec<Diagnostic> {
+    let mut diagnostics = Vec::new();
+    for (component, pointer) in sources {
+        let Some(entries) = ical.components.get(component as usize).map(|c| &c.entries) else {
+            continue;
+        };
+        for entry in entries {
+            if entry.name != ICalendarProperty::Jsprop {
+                continue;
+            }
+            let Some(jsptr) =
+                entry
+                    .params
+                    .iter()
+                    .find_map(|param| match (&param.name, &param.value) {
+                        (ICalendarParameterName::Jsptr, ICalendarParameterValue::Text(jsptr)) => {
+                            Some(jsptr.as_str())
+                        }
+                        _ => None,
+                    })
+            else {
+                continue;
+            };
+            let full = if pointer.is_empty() {
+                jsptr.to_string()
+            } else {
+                format!("{pointer}/{jsptr}")
+            };
+            let full = match full.strip_prefix("entries/0") {
+                Some(rest) if wrapped => rest.strip_prefix('/').unwrap_or(rest).to_string(),
+                _ => full,
+            };
+            let property = jstype::property_name::<CalendarSchema<I, B>>(
+                if wrapped {
+                    JSCalendarType::Event
+                } else {
+                    JSCalendarType::Group
+                },
+                &full,
+            );
+            diagnostics.push(Diagnostic::new(
+                Location::Json(full),
+                property,
+                DiagnosticKind::NotConverted,
+            ));
+        }
+    }
+    diagnostics
+}
+
 /// A RecurrenceRule property without an iCalendar form, and its value.
 pub(crate) type UnknownRuleProperty<'x, I, B> = (
     JSCalendarProperty<I>,
@@ -2442,10 +2599,7 @@ fn override_base<'x, I: JSCalendarId, B: JSCalendarId>(
     let mut base = entries.clone();
     base.as_mut_vec().retain(|(key, _)| match key {
         Key::Property(property) => !property.is_forbidden_override_patch(),
-        key => !matches!(
-            key.to_string().as_ref(),
-            "recurrenceRules" | "excludedRecurrenceRules"
-        ),
+        key => !V1_RECURRENCE_RULES.contains(&key.to_string().as_ref()),
     });
     base
 }

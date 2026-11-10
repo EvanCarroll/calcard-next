@@ -17,6 +17,7 @@
 use calcard_next::{
     Entry, Parser,
     common::timezone::Tz,
+    diagnostic::Diagnostic,
     icalendar::{
         ICalendar,
         dates::{CalendarEvent, TimeOrDelta},
@@ -469,6 +470,76 @@ fn golden_tz_table() {
         .unwrap();
     }
     check_golden("tz_table.txt", &out);
+}
+
+/// Writes diagnostics sorted, since converted JSON data has its object
+/// members in hash-map order.
+fn render_diagnostics(out: &mut String, label: &str, diagnostics: &[Diagnostic]) {
+    let mut diagnostics = diagnostics.iter().collect::<Vec<_>>();
+    diagnostics.sort();
+    for diagnostic in diagnostics {
+        writeln!(out, "{label}: {diagnostic}").unwrap();
+    }
+}
+
+/// What each corpus file keeps but does not interpret, what its conversion
+/// carries without converting, and what the converted data keeps but does not
+/// interpret. The last is a check on the property tables: a conversion should
+/// produce only what they define.
+#[test]
+fn golden_diagnostics() {
+    let mut out = String::new();
+    for (name, input) in corpus("ical") {
+        writeln!(out, "== ical/{name}").unwrap();
+        let ical = parse_ical(&input);
+        for diagnostic in ical.diagnostics() {
+            let path = ical.path(&diagnostic.location).unwrap_or_default();
+            writeln!(out, "parsed: {diagnostic} at {path}").unwrap();
+        }
+        let copy = ical.clone();
+        let (jscal, report) =
+            ical.into_jscalendar_with_report::<String, String>(Default::default());
+        for diagnostic in report {
+            let path = copy.path(&diagnostic.location).unwrap_or_default();
+            writeln!(out, "to jscalendar: {diagnostic} at {path}").unwrap();
+        }
+        render_diagnostics(&mut out, "converted", &jscal.diagnostics());
+    }
+    for kind in ["jscalendar", "jscalendar_v1"] {
+        for (name, input) in corpus(kind) {
+            writeln!(out, "== {kind}/{name}").unwrap();
+            let mut jscal = JSCalendar::<String, String>::parse(input.trim()).unwrap();
+            render_diagnostics(&mut out, "parsed", &jscal.diagnostics());
+            let (ical, report) = jscal.clone().into_icalendar_with_report().unwrap();
+            render_diagnostics(&mut out, "to icalendar", &report);
+            jscal.upgrade();
+            render_diagnostics(&mut out, "upgraded", &jscal.diagnostics());
+            for diagnostic in ical.diagnostics() {
+                let path = ical.path(&diagnostic.location).unwrap_or_default();
+                writeln!(out, "converted: {diagnostic} at {path}").unwrap();
+            }
+        }
+    }
+    for (name, input) in corpus("vcard") {
+        writeln!(out, "== vcard/{name}").unwrap();
+        let mut parser = Parser::new(&input);
+        while let Entry::VCard(vcard) = parser.entry() {
+            render_diagnostics(&mut out, "parsed", &vcard.diagnostics());
+            let (jscontact, report) =
+                vcard.into_jscontact_with_report::<String, String>(Default::default());
+            render_diagnostics(&mut out, "to jscontact", &report);
+            render_diagnostics(&mut out, "converted", &jscontact.diagnostics());
+        }
+    }
+    for (name, input) in corpus("jscontact") {
+        writeln!(out, "== jscontact/{name}").unwrap();
+        let jscontact = JSContact::<String, String>::parse(input.trim()).unwrap();
+        render_diagnostics(&mut out, "parsed", &jscontact.diagnostics());
+        let (vcard, report) = jscontact.into_vcard_with_report().unwrap();
+        render_diagnostics(&mut out, "to vcard", &report);
+        render_diagnostics(&mut out, "converted", &vcard.diagnostics());
+    }
+    check_golden("diagnostics.txt", &out);
 }
 
 #[test]

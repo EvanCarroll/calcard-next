@@ -26,7 +26,14 @@ struct State<'x, I: JSCalendarId, B: JSCalendarId> {
     start: Option<Zoned>,
     recurrence_id: Option<Zoned>,
     is_date: bool,
+    /// The JSON pointer of the object, when the conversion reports what it
+    /// did not convert.
+    pointer: Option<String>,
 }
+
+/// The output components of a conversion and the JSON pointer of the object
+/// each was converted from.
+type Sources = Option<Vec<(u32, String)>>;
 
 #[allow(clippy::type_complexity)]
 struct ConvertedComponent<'x, I: JSCalendarId, B: JSCalendarId> {

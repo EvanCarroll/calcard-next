@@ -5,6 +5,7 @@
  */
 
 use crate::{
+    diagnostic::{Diagnostic, DiagnosticKind, Location},
     jscontact::{
         JSContact, JSContactId, JSContactKind, JSContactProperty, JSContactValue,
         import::{ConversionOptions, EntryState, GetObjectOrCreate, State},
@@ -26,16 +27,56 @@ impl VCard {
     }
 
     pub fn into_jscontact_with_options<I, B>(
-        mut self,
+        self,
         options: ConversionOptions,
     ) -> JSContact<'static, I, B>
     where
         I: JSContactId,
         B: JSContactId,
     {
-        let mut state = State::new(&mut self, options.include_vcard_parameters);
+        self.convert(options, &mut None)
+    }
 
-        for entry in self.entries {
+    /// Converts to JSContact as [`VCard::into_jscontact_with_options`] does,
+    /// and reports each property the conversion did not map: what it carries
+    /// in `vCard/properties`, or drops when `include_vcard_parameters` is off,
+    /// as [`DiagnosticKind::NotConverted`] at its entry in this vCard.
+    /// `VERSION`, which describes the vCard rather than the contact, is not
+    /// reported.
+    ///
+    /// [`VCard::diagnostics`] reports what the parser kept but did not
+    /// interpret; call it before converting, since the conversion consumes
+    /// the vCard.
+    pub fn into_jscontact_with_report<I, B>(
+        self,
+        options: ConversionOptions,
+    ) -> (JSContact<'static, I, B>, Vec<Diagnostic>)
+    where
+        I: JSContactId,
+        B: JSContactId,
+    {
+        let mut report = Some(Vec::new());
+        let contact = self.convert(options, &mut report);
+        (contact, report.unwrap_or_default())
+    }
+
+    fn convert<I, B>(
+        mut self,
+        options: ConversionOptions,
+        report: &mut Option<Vec<Diagnostic>>,
+    ) -> JSContact<'static, I, B>
+    where
+        I: JSContactId,
+        B: JSContactId,
+    {
+        let mut state = State::new(
+            &mut self,
+            options.include_vcard_parameters,
+            report.is_some(),
+        );
+        let entry_order = state.entry_order.take();
+
+        for (index, entry) in self.entries.into_iter().enumerate() {
             let mut entry = EntryState::new(entry);
 
             match &entry.entry.name {
@@ -558,6 +599,7 @@ impl VCard {
                             JSContactProperty::Name,
                             [],
                         );
+                        not_converted(report, &entry_order, index, &value_entry);
                         state.add_conversion_props(value_entry);
                     }
                     continue;
@@ -1307,9 +1349,33 @@ impl VCard {
                 }
             }
 
+            not_converted(report, &entry_order, index, &entry);
             state.add_conversion_props(entry);
         }
 
         state.into_jscontact()
+    }
+}
+
+/// Reports an entry that is about to be set aside without a conversion.
+/// `order` maps the position of the entry in the conversion to its index in
+/// the vCard.
+fn not_converted(
+    report: &mut Option<Vec<Diagnostic>>,
+    order: &Option<Vec<u32>>,
+    position: usize,
+    entry: &EntryState,
+) {
+    if let (Some(report), Some(order)) = (report, order)
+        && entry.converted_to.is_none()
+        && !matches!(entry.entry.name, VCardProperty::Version)
+    {
+        report.push(Diagnostic::new(
+            Location::VCard {
+                entry: order[position],
+            },
+            entry.entry.name.as_str(),
+            DiagnosticKind::NotConverted,
+        ));
     }
 }
