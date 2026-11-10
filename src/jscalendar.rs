@@ -11,6 +11,7 @@ pub mod parser;
 pub mod patch;
 pub mod types;
 pub mod upgrade;
+pub(crate) mod validate;
 
 use crate::{
     common::{CalendarScale, IanaString, LinkRelation},

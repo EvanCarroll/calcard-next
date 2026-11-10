@@ -6,6 +6,7 @@
 
 use crate::{
     common::{CalendarScale, IanaParse, IdReference},
+    error::ParseError,
     jscontact::{
         Context, Feature, JSContact, JSContactGrammaticalGender, JSContactId, JSContactKind,
         JSContactLevel, JSContactPhoneticSystem, JSContactProperty, JSContactRelation,
@@ -20,8 +21,14 @@ where
     I: JSContactId,
     B: JSContactId,
 {
-    pub fn parse(json: &'x str) -> Result<Self, String> {
-        Value::parse_json(json).map(JSContact)
+    /// Parses JSContact data and checks the `@type` of each object (see
+    /// [`JSContact::validate`]).
+    pub fn parse(json: &'x str) -> Result<Self, ParseError> {
+        let contact = Value::parse_json(json)
+            .map(JSContact)
+            .map_err(ParseError::Json)?;
+        contact.validate()?;
+        Ok(contact)
     }
 
     pub fn to_string_pretty(&self) -> String {

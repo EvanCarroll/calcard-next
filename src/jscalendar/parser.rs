@@ -6,6 +6,7 @@
 
 use crate::{
     common::{CalendarScale, IanaParse, IanaString, IdReference, LinkRelation, parse_rfc3339},
+    error::ParseError,
     icalendar::{
         ICalendarDuration, ICalendarFrequency, ICalendarMethod, ICalendarMonth, ICalendarSkip,
         ICalendarWeekday,
@@ -22,8 +23,14 @@ use jmap_tools::{Element, JsonPointer, JsonPointerItem, Key, Value};
 use std::{borrow::Cow, str::FromStr};
 
 impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
-    pub fn parse(json: &'x str) -> Result<Self, String> {
-        Value::parse_json(json).map(JSCalendar)
+    /// Parses JSCalendar data and checks the `@type` of each object (see
+    /// [`JSCalendar::validate`]).
+    pub fn parse(json: &'x str) -> Result<Self, ParseError> {
+        let calendar = Value::parse_json(json)
+            .map(JSCalendar)
+            .map_err(ParseError::Json)?;
+        calendar.validate()?;
+        Ok(calendar)
     }
 
     pub fn to_string_pretty(&self) -> String {

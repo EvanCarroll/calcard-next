@@ -241,7 +241,7 @@ fn render_ical_roundtrip(out: &mut String, name: &str, input: &str) {
     let back = jscal
         .into_icalendar()
         .map(|ical| canon_text(&ical.to_string()))
-        .unwrap_or_else(|| "<none>".to_string());
+        .unwrap_or_else(|error| format!("<error: {error}>"));
     writeln!(out, "== {name}\n{json}\n--\n{back}").unwrap();
 }
 

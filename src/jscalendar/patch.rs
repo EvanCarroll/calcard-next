@@ -422,12 +422,11 @@ pub(crate) fn shift_to_recurrence_id<I: JSCalendarId, B: JSCalendarId>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::jscalendar::JSCalendar;
+    use crate::jscalendar::{JSCalendarProperty, JSCalendarValue};
 
     fn object(json: &str) -> JSMap<'static, String, String> {
-        JSCalendar::<String, String>::parse(json)
+        jmap_tools::Value::<JSCalendarProperty<String>, JSCalendarValue<String, String>>::parse_json(json)
             .expect("parses")
-            .0
             .into_owned()
             .into_object()
             .expect("object")

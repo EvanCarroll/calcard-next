@@ -1285,10 +1285,14 @@ impl VCard {
                     {
                         let ptr = JsonPointer::<JSContactProperty<I>>::parse(ptr);
 
+                        // A JSPROP value is any JSON value, not a Card.
                         if let Some(VCardValue::Text(text)) = entry.entry.values.first()
-                            && let Ok(jscontact) = JSContact::parse(text)
+                            && let Ok(value) =
+                                Value::<JSContactProperty<I>, JSContactValue<I, B>>::parse_json(
+                                    text,
+                                )
                         {
-                            state.patch_objects.push((ptr, jscontact.0.into_owned()));
+                            state.patch_objects.push((ptr, value.into_owned()));
                             continue;
                         }
                     }

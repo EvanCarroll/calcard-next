@@ -9,6 +9,7 @@ use crate::{
         IanaParse, PartialDateTime,
         timezone::{Tz, TzTimestamp, ZonedTz},
     },
+    error::ConvertError,
     icalendar::*,
     jscalendar::{
         export::{ConvertedComponent, State},
@@ -24,37 +25,40 @@ use std::str::FromStr;
 
 impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
     /// Converts to iCalendar. JSCalendar 1.0 (RFC 8984) data is upgraded to
-    /// 2.0 first (see [`JSCalendar::upgrade`]).
-    pub fn into_icalendar(mut self) -> Option<ICalendar> {
+    /// 2.0 first (see [`JSCalendar::upgrade`]), and the `@type` of each object
+    /// is checked (see [`JSCalendar::validate`]).
+    pub fn into_icalendar(mut self) -> Result<ICalendar, ConvertError> {
         self.upgrade();
-        self.0.into_object().map(|mut entries| {
-            if matches!(
-                entries.get(&Key::Property(JSCalendarProperty::Type)),
-                Some(Value::Element(JSCalendarValue::Type(
-                    JSCalendarType::Event | JSCalendarType::Task
-                )))
-            ) {
-                entries = into_group(entries);
-            }
-            let mut ical = ICalendar::default();
+        self.validate()?;
+        let Value::Object(mut entries) = self.0 else {
+            unreachable!("validate accepts only an object");
+        };
+        if matches!(
+            entries.get(&Key::Property(JSCalendarProperty::Type)),
+            Some(Value::Element(JSCalendarValue::Type(
+                JSCalendarType::Event | JSCalendarType::Task
+            )))
+        ) {
+            entries = into_group(entries);
+        }
+        let mut ical = ICalendar::default();
 
-            ical.from_jscalendar(
-                State {
-                    tz: Default::default(),
-                    tz_end: Default::default(),
-                    tz_rid: Default::default(),
-                    start: Default::default(),
-                    recurrence_id: Default::default(),
-                    uid: Default::default(),
-                    entries,
-                    is_date: false,
-                    default_component_type: ICalendarComponentType::VCalendar,
-                },
-                None,
-            );
+        ical.from_jscalendar(
+            State {
+                tz: Default::default(),
+                tz_end: Default::default(),
+                tz_rid: Default::default(),
+                start: Default::default(),
+                recurrence_id: Default::default(),
+                uid: Default::default(),
+                entries,
+                is_date: false,
+                default_component_type: ICalendarComponentType::VCalendar,
+            },
+            None,
+        );
 
-            ical
-        })
+        Ok(ical)
     }
 
     pub fn into_inner(self) -> Value<'x, JSCalendarProperty<I>, JSCalendarValue<I, B>> {

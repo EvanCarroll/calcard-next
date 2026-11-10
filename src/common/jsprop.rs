@@ -40,12 +40,14 @@ pub(crate) fn apply_jsprop<'x, P: Property, E: Element>(
 #[cfg(test)]
 mod tests {
     use super::apply_jsprop;
-    use crate::jscontact::{JSContact, JSContactProperty};
-    use jmap_tools::JsonPointer;
+    use crate::jscontact::{JSContactProperty, JSContactValue};
+    use jmap_tools::{JsonPointer, Value};
+
+    type JsValue<'x> = Value<'x, JSContactProperty<String>, JSContactValue<String, String>>;
 
     fn apply(target: &str, pointer: &str, value: &str) -> (bool, String) {
-        let mut target = JSContact::<String, String>::parse(target).unwrap().0;
-        let value = JSContact::<String, String>::parse(value).unwrap().0;
+        let mut target = JsValue::parse_json(target).unwrap();
+        let value = JsValue::parse_json(value).unwrap();
         let pointer = JsonPointer::<JSContactProperty<String>>::parse(pointer);
         let applied = apply_jsprop(&mut target, &pointer, value);
         (applied, serde_json::to_string(&target).unwrap())

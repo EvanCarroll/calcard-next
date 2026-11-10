@@ -5,7 +5,8 @@
  */
 
 use crate::{
-    common::{Data, IanaParse, IanaType, timezone::Tz},
+    common::{Data, IanaParse, IanaType, jstype, timezone::Tz},
+    error::ConvertError,
     jscontact::{
         JSContact, JSContactId, JSContactKind, JSContactProperty, JSContactValue,
         export::{
@@ -15,6 +16,7 @@ use crate::{
                 map_kind,
             },
         },
+        validate::ContactSchema,
     },
     vcard::{
         Jscomp, VCard, VCardEntry, VCardLevel, VCardParameter, VCardParameterValue, VCardPhonetic,
@@ -29,9 +31,21 @@ where
     I: JSContactId,
     B: JSContactId,
 {
-    pub fn into_vcard(self) -> Option<VCard> {
+    /// Converts to vCard (RFC 9555).
+    ///
+    /// The `@type` of each object is checked first (see
+    /// [`JSContact::validate`]). An `@type` implied by the object's position
+    /// is not converted (RFC 9555, Appendix A lists it as "not applicable"),
+    /// so it is not written as JSPROP.
+    pub fn into_vcard(mut self) -> Result<VCard, ConvertError> {
+        self.validate()?;
+        jstype::strip_implied::<ContactSchema<I, B>>(&mut self.0);
+
         let mut state = State::<I, B>::default();
-        let mut properties = self.0.into_object()?.into_vec();
+        let Value::Object(root) = self.0 else {
+            unreachable!("validate accepts only an object");
+        };
+        let mut properties = root.into_vec();
         let mut localized_properties: HashMap<String, Vec<_>> = HashMap::new();
 
         for (property, value) in &mut properties {
@@ -1984,7 +1998,7 @@ where
             );
         }
 
-        Some(state.into_vcard())
+        Ok(state.into_vcard())
     }
 
     pub fn into_inner(self) -> Value<'x, JSContactProperty<I>, JSContactValue<I, B>> {

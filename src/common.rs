@@ -14,6 +14,8 @@ pub(crate) mod charset;
 pub mod iana;
 #[cfg(feature = "jmap")]
 pub(crate) mod jsprop;
+#[cfg(feature = "jmap")]
+pub(crate) mod jstype;
 pub mod parser;
 pub mod timezone;
 pub mod tokenizer;

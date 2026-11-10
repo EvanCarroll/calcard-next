@@ -233,7 +233,8 @@ fn reference(json: &Value, tz: Tz, start: Timestamp, end: Timestamp) -> Option<V
     let text = tagged.to_string();
     let ical = JSCalendar::<String, String>::parse(&text)
         .ok()?
-        .into_icalendar()?;
+        .into_icalendar()
+        .ok()?;
     let expand = ical.expand_dates_between(tz, start, end, 100_000);
     let mut rows = Vec::new();
     for event in &expand.events {

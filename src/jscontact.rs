@@ -18,6 +18,7 @@ pub mod export;
 pub mod import;
 pub mod parser;
 pub mod types;
+pub(crate) mod validate;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize)]
 #[repr(transparent)]

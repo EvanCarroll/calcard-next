@@ -25,6 +25,69 @@ pub enum PatchError {
     InvalidPointer(String),
 }
 
+/// An object's `@type` does not fit its position in JSContact (RFC 9553,
+/// Section 1.3.4) or JSCalendar (draft-ietf-calext-jscalendarbis, Section
+/// 1.4.3) data.
+///
+/// The type of an object is implied by the property it is the value of, so
+/// `@type` may be left out there; where it is set, it must name that type.
+/// Where a property allows several types without a default, a member of an
+/// array without a default type, and the topmost object must have `@type`.
+/// `pointer` is the JSON pointer of the object, empty for the topmost one.
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+#[non_exhaustive]
+pub enum TypeError {
+    /// The value at this position must be an object.
+    #[error("{pointer:?} must be an object of type {expected}")]
+    NotAnObject { pointer: String, expected: String },
+    /// `@type` must be set here.
+    #[error("{pointer:?} must have \"@type\" set to {expected}")]
+    Missing { pointer: String, expected: String },
+    /// `@type` is set to a type this position does not allow.
+    #[error("{pointer:?} has \"@type\" {found}, expected {expected}")]
+    Mismatch {
+        pointer: String,
+        expected: String,
+        found: String,
+    },
+}
+
+impl TypeError {
+    /// The JSON pointer of the object, empty for the topmost one.
+    pub fn pointer(&self) -> &str {
+        match self {
+            TypeError::NotAnObject { pointer, .. }
+            | TypeError::Missing { pointer, .. }
+            | TypeError::Mismatch { pointer, .. } => pointer,
+        }
+    }
+}
+
+/// Why JSContact or JSCalendar data could not be parsed by `JSContact::parse`
+/// or `JSCalendar::parse`.
+#[cfg(feature = "jmap")]
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+#[non_exhaustive]
+pub enum ParseError {
+    /// The input is not valid JSON.
+    #[error("invalid JSON: {0}")]
+    Json(String),
+    /// An object's `@type` does not fit its position.
+    #[error(transparent)]
+    Type(#[from] TypeError),
+}
+
+/// Why JSContact or JSCalendar data could not be converted to vCard or
+/// iCalendar.
+#[cfg(feature = "jmap")]
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+#[non_exhaustive]
+pub enum ConvertError {
+    /// An object's `@type` does not fit its position.
+    #[error(transparent)]
+    Type(#[from] TypeError),
+}
+
 /// Why an entry, or one of its instances, could not be expanded by
 /// [`JSCalendar::expand_between`](crate::jscalendar::JSCalendar::expand_between).
 #[cfg(feature = "jmap")]
@@ -38,6 +101,9 @@ pub enum ExpandError {
     /// is returned without it.
     #[error(transparent)]
     Patch(#[from] PatchError),
+    /// An object's `@type` does not fit its position; nothing is expanded.
+    #[error(transparent)]
+    Type(#[from] TypeError),
 }
 
 #[cfg(feature = "jmap")]

@@ -22,7 +22,7 @@ use super::{
 use crate::{
     common::timezone::{Tz, TzTimestamp},
     datecalc::rrule::RRule,
-    error::ExpandError,
+    error::{ExpandError, TypeError},
     icalendar::dates::{
         CalendarErrorType, CalendarEvent, Candidate, Length, Merge, Overlap, TimeOrDelta, Window,
         rule_instances,
@@ -108,6 +108,14 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
             errors: Vec::new(),
         };
 
+        if let Err(error) = calendar.validate() {
+            result.errors.push(JSCalendarExpandError {
+                entry: entry_of(&error),
+                error: error.into(),
+            });
+            return result;
+        }
+
         for (index, entry) in entries(&calendar) {
             if let Err(error) = expand_entry(
                 index,
@@ -129,6 +137,15 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
             .instances
             .sort_by(|a, b| (&a.start, a.entry).cmp(&(&b.start, b.entry)));
         result
+    }
+}
+
+/// The index of the Group entry a type error is in, if it is in one.
+fn entry_of(error: &TypeError) -> Option<usize> {
+    let mut parts = error.pointer().split('/');
+    match (parts.next(), parts.next()) {
+        (Some("entries"), Some(index)) => index.parse().ok(),
+        _ => None,
     }
 }
 

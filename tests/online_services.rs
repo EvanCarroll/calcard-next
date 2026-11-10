@@ -60,10 +60,12 @@ fn user_without_uri_is_written_as_text() {
         ["SOCIALPROFILE;SERVICE-TYPE=Signal;VALUE=TEXT;PROP-ID=s1:+46701234567"]
     );
 
+    // "@type" is implied by the position (RFC 9553, Section 1.3.4), so it is
+    // not converted (RFC 9555, Appendix A).
     let back = to_json(vcard);
     assert_eq!(
         back["onlineServices"],
-        json!({ "s1": { "@type": "OnlineService", "service": "Signal", "user": "+46701234567" } })
+        json!({ "s1": { "service": "Signal", "user": "+46701234567" } })
     );
     assert!(back.pointer("/vCard/properties").is_none(), "{back:#}");
     assert!(
@@ -92,7 +94,17 @@ fn uri_with_and_without_user() {
             "SOCIALPROFILE;SERVICE-TYPE=Mastodon;USERNAME=@alice@example2.com;PROP-ID=s2:https://example2.com/@alice",
         ]
     );
-    assert_eq!(to_json(vcard)["onlineServices"], services);
+    assert_eq!(
+        to_json(vcard)["onlineServices"],
+        json!({
+            "s1": { "service": "Mastodon", "uri": "https://example.com/@foo" },
+            "s2": {
+                "service": "Mastodon",
+                "uri": "https://example2.com/@alice",
+                "user": "@alice@example2.com"
+            }
+        })
+    );
 }
 
 #[test]
@@ -184,7 +196,10 @@ fn service_without_uri_or_user_is_kept_as_jsprop() {
             .any(|line| line.starts_with("JSPROP;JSPTR=onlineServices/s1:")),
         "{vcard}"
     );
-    assert_eq!(to_json(vcard)["onlineServices"]["s1"], service);
+    assert_eq!(
+        to_json(vcard)["onlineServices"]["s1"],
+        json!({ "service": "Signal", "label": "work" })
+    );
 }
 
 #[test]

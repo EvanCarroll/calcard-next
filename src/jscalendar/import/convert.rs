@@ -2081,8 +2081,14 @@ impl ICalendar {
                     {
                         let ptr = JsonPointer::<JSCalendarProperty<I>>::parse(ptr);
 
-                        if let Ok(jscalendar) = JSCalendar::parse(&value) {
-                            state.patch_objects.push((ptr, jscalendar.0.into_owned()));
+                        // A JSPROP value is any JSON value, not a Group,
+                        // Event or Task.
+                        if let Ok(parsed) =
+                            Value::<JSCalendarProperty<I>, JSCalendarValue<I, B>>::parse_json(
+                                &value,
+                            )
+                        {
+                            state.patch_objects.push((ptr, parsed.into_owned()));
                             continue;
                         }
                     }

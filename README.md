@@ -133,6 +133,8 @@ let jscontact = JSContact::<String, String>::parse(input).unwrap();
 println!("Parsed JSContact: {}", jscontact.to_string_pretty());
 ```
 
+`JSCalendar::parse` and `JSContact::parse` check that the `@type` of each object fits its position, as RFC 9553, Section 1.3.4 and jscalendarbis, Section 1.4.3 require. The topmost object must have `@type`; an object elsewhere may leave it out, but if it sets it, it must name the type its property holds, such as `"Participant"` in `participants`. An invalid document is reported as `error::ParseError::Type`. `into_icalendar` and `into_vcard` run the same check, since a document can also be built without `parse`, and report `error::ConvertError`. `validate()` runs the check on its own.
+
 ### Converting to/from iCalendar and JSCalendar
 
 To convert a JSCalendar to an iCalendar, use the `JSCalendar::into_icalendar` method:

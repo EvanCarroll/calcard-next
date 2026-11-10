@@ -103,28 +103,28 @@ fn do_convert(input: &str) -> ConvertResult {
                 let jscalendar = icalendar.into_jscalendar::<String, String>();
                 let conversion = jscalendar.to_string_pretty();
                 match jscalendar.into_icalendar() {
-                    Some(roundtrip) => ConvertResult::ok(
+                    Ok(roundtrip) => ConvertResult::ok(
                         "iCalendar",
                         "JSCalendar",
                         conversion,
                         roundtrip.to_string(),
                         occurrences,
                     ),
-                    None => ConvertResult::error(BUG),
+                    Err(err) => ConvertResult::error(format!("{BUG} ({err})")),
                 }
             }
             Entry::VCard(vcard) => {
                 let jscontact = vcard.into_jscontact::<String, String>();
                 let conversion = jscontact.to_string_pretty();
                 match jscontact.into_vcard() {
-                    Some(roundtrip) => ConvertResult::ok(
+                    Ok(roundtrip) => ConvertResult::ok(
                         "vCard",
                         "JSContact",
                         conversion,
                         roundtrip.to_string(),
                         Vec::new(),
                     ),
-                    None => ConvertResult::error(BUG),
+                    Err(err) => ConvertResult::error(format!("{BUG} ({err})")),
                 }
             }
             Entry::InvalidLine(text) => ConvertResult::error(format!("Invalid line found: {text}")),
@@ -146,7 +146,7 @@ fn do_convert(input: &str) -> ConvertResult {
         if source.contains("\"Group\"") {
             match JSCalendar::<String, String>::parse(source.trim_end()) {
                 Ok(jscalendar) => match jscalendar.into_icalendar() {
-                    Some(icalendar) => {
+                    Ok(icalendar) => {
                         let conversion = icalendar.to_string();
                         let occurrences = expand(icalendar.expand_dates(Tz::Floating, 25));
                         let roundtrip = icalendar
@@ -160,19 +160,19 @@ fn do_convert(input: &str) -> ConvertResult {
                             occurrences,
                         )
                     }
-                    None => ConvertResult::error(BUG),
+                    Err(err) => ConvertResult::error(format!("{BUG} ({err})")),
                 },
                 Err(err) => ConvertResult::error(format!("Failed to parse JSCalendar: {err}")),
             }
         } else if source.contains("\"Card\"") {
             match JSContact::<String, String>::parse(source.trim_end()) {
                 Ok(jscontact) => match jscontact.into_vcard() {
-                    Some(vcard) => {
+                    Ok(vcard) => {
                         let conversion = vcard.to_string();
                         let roundtrip = vcard.into_jscontact::<String, String>().to_string_pretty();
                         ConvertResult::ok("JSContact", "vCard", conversion, roundtrip, Vec::new())
                     }
-                    None => ConvertResult::error(BUG),
+                    Err(err) => ConvertResult::error(format!("{BUG} ({err})")),
                 },
                 Err(err) => ConvertResult::error(format!("Failed to parse JSContact: {err}")),
             }
