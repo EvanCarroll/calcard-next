@@ -43,10 +43,7 @@ fn durations(input: &str) -> Vec<SignedDuration> {
 
 #[test]
 fn vevent_date_time_without_end_has_zero_duration() {
-    let input = calendar(
-        "VEVENT",
-        "DTSTART;TZID=America/Chicago:20260713T190000\r\n",
-    );
+    let input = calendar("VEVENT", "DTSTART;TZID=America/Chicago:20260713T190000\r\n");
     assert_eq!(durations(&input), [SignedDuration::ZERO]);
 }
 

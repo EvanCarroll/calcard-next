@@ -227,10 +227,7 @@ impl ICalendarEntry {
 /// Writes a URI as it is (RFC 5545, Section 3.3.13): `,` and `;` are not escaped.
 /// A backslash or line break, which a valid URI never contains, is still escaped
 /// so the content line stays intact.
-pub(crate) fn write_uri<W: Write>(
-    out: &mut FoldingWriter<'_, W>,
-    value: &Uri,
-) -> std::fmt::Result {
+pub(crate) fn write_uri<W: Write>(out: &mut FoldingWriter<'_, W>, value: &Uri) -> std::fmt::Result {
     match value {
         Uri::Data(v) => {
             let media_type = v.content_type.as_deref().unwrap_or_default();

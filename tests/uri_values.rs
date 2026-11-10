@@ -84,7 +84,9 @@ fn x_property_uri_keeps_separators() {
     let ical = parse(&calendar("X-FOO;VALUE=URI:https://e.x/a;b,c\r\n"));
     assert_eq!(
         values(&ical, "X-FOO"),
-        [ICalendarValue::Uri(Uri::Location("https://e.x/a;b,c".into()))]
+        [ICalendarValue::Uri(Uri::Location(
+            "https://e.x/a;b,c".into()
+        ))]
     );
     assert!(
         unfolded_lines(&ical.to_string())
