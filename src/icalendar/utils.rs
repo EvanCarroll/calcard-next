@@ -300,6 +300,30 @@ impl ICalendarEntry {
     }
 }
 
+impl super::ICalendarParameter {
+    /// The parameter's value as text, as written in iCalendar. RANGE's only
+    /// value, THISANDFUTURE (RFC 5545, Section 3.2.13), is kept as
+    /// `Bool(true)`; this gives its name instead of "TRUE".
+    pub fn value_text(&self) -> Option<&str> {
+        match (&self.name, &self.value) {
+            (ICalendarParameterName::Range, ICalendarParameterValue::Bool(true)) => {
+                Some("THISANDFUTURE")
+            }
+            (_, value) => value.as_text(),
+        }
+    }
+
+    /// The parameter's value as text, as [`ICalendarParameter::value_text`].
+    pub fn into_value_text(self) -> Option<Cow<'static, str>> {
+        match (&self.name, self.value) {
+            (ICalendarParameterName::Range, ICalendarParameterValue::Bool(true)) => {
+                Some(Cow::Borrowed("THISANDFUTURE"))
+            }
+            (_, value) => value.into_text(),
+        }
+    }
+}
+
 impl ICalendarParameterValue {
     pub fn as_text(&self) -> Option<&str> {
         match self {

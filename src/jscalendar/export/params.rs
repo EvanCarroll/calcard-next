@@ -192,7 +192,11 @@ impl ICalendarEntry {
                     }
                     ICalendarParameterName::Range => {
                         let value = value.into_string();
-                        if value.eq_ignore_ascii_case("THISANDFUTURE") {
+                        // THISANDFUTURE is RANGE's only value. Earlier versions
+                        // stored it as "TRUE", which can only have meant the same.
+                        if value.eq_ignore_ascii_case("THISANDFUTURE")
+                            || value.eq_ignore_ascii_case("TRUE")
+                        {
                             ICalendarParameterValue::Bool(true)
                         } else {
                             ICalendarParameterValue::Text(value.into_owned())

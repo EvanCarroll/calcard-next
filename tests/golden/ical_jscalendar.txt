@@ -569,7 +569,7 @@ END:VCALENDAR
         "2024-04-10T09:00:00": {
           "iCalendar/convertedProperties/recurrenceId": {
             "parameters": {
-              "range": "TRUE"
+              "range": "THISANDFUTURE"
             }
           },
           "start": "2024-04-10T11:00:00"
@@ -624,7 +624,7 @@ BEGIN:VEVENT
 DTEND;TZID=Europe/Berlin:20240410T120000
 DTSTAMP:20240101T000000Z
 DTSTART;TZID=Europe/Berlin:20240410T110000
-RECURRENCE-ID;RANGE=TRUE;TZID=Europe/Berlin:20240410T090000
+RECURRENCE-ID;RANGE=THISANDFUTURE;TZID=Europe/Berlin:20240410T090000
 UID:o1
 END:VEVENT
 BEGIN:VEVENT

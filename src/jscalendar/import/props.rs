@@ -516,12 +516,11 @@ impl EntryState {
                 {
                     *value_type = Some(v);
                 }
-            } else if let Some(value) = param.value.into_text() {
-                params
-                    .0
-                    .entry(param.name)
-                    .or_default()
-                    .push(Value::Str(value));
+            } else {
+                let name = param.name.clone();
+                if let Some(value) = param.into_value_text() {
+                    params.0.entry(name).or_default().push(Value::Str(value));
+                }
             }
         }
     }
