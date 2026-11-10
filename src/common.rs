@@ -12,6 +12,8 @@ use jiff::{
 
 pub(crate) mod charset;
 pub mod iana;
+#[cfg(feature = "jmap")]
+pub(crate) mod jsprop;
 pub mod parser;
 pub mod timezone;
 pub mod tokenizer;

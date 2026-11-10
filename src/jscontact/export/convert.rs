@@ -1405,14 +1405,34 @@ where
                     }
                     JSContactProperty::OnlineServices => {
                         for (name, value) in value.into_expanded_object() {
+                            // The SOCIALPROFILE value is the uri, or else the user as
+                            // TEXT (RFC 9554, Section 3.5; RFC 9555, Section 2.7.5).
+                            let has_string = |obj: &Value<'_, _, _>, prop| {
+                                obj.as_object().is_some_and(|obj| {
+                                    matches!(obj.get(&Key::Property(prop)), Some(Value::Str(_)))
+                                })
+                            };
+                            let has_uri = has_string(&value, JSContactProperty::Uri);
+
+                            // RFC 9553, Section 2.3.2 requires uri or user. Without
+                            // either there is no value to write, so keep the object
+                            // as JSPROP rather than writing an empty SOCIALPROFILE
+                            // (stalwartlabs/calcard#16).
+                            if !has_uri && !has_string(&value, JSContactProperty::User) {
+                                state.insert_jsprop(
+                                    &[property.to_string().as_ref(), name.to_string().as_ref()],
+                                    value,
+                                );
+                                continue;
+                            }
+
                             let mut entry = VCardEntry::new(VCardProperty::Socialprofile);
 
                             for (sub_property, value) in value.into_expanded_object() {
                                 match sub_property {
                                     Key::Property(JSContactProperty::Uri) => {
-                                        if let Some(service) = value.into_string() {
-                                            entry.values =
-                                                vec![VCardValue::Text(service.into_owned())];
+                                        if let Some(uri) = value.into_string() {
+                                            entry.values = vec![VCardValue::Text(uri.into_owned())];
                                         }
                                     }
                                     Key::Property(JSContactProperty::Service) => {
@@ -1423,10 +1443,18 @@ where
                                         }
                                     }
                                     Key::Property(JSContactProperty::User) => {
-                                        if let Some(username) = value.into_string() {
-                                            entry.add_param(VCardParameter::username(
-                                                username.into_owned(),
-                                            ));
+                                        if let Some(user) = value.into_string() {
+                                            if has_uri {
+                                                entry.add_param(VCardParameter::username(
+                                                    user.into_owned(),
+                                                ));
+                                            } else {
+                                                entry.values =
+                                                    vec![VCardValue::Text(user.into_owned())];
+                                                entry.add_param(VCardParameter::value(
+                                                    VCardValueType::Text,
+                                                ));
+                                            }
                                         }
                                     }
                                     Key::Property(JSContactProperty::Contexts) => {
@@ -1465,6 +1493,15 @@ where
                                 &[JSContactProperty::OnlineServices],
                                 entry.with_param(VCardParameter::prop_id(name.into_string())),
                             );
+
+                            // A service read from IMPP keeps that name, but an IMPP
+                            // value is always a URI (RFC 6350, Section 6.4.3).
+                            if !has_uri
+                                && let Some(entry) = state.vcard.entries.last_mut()
+                                && entry.name == VCardProperty::Impp
+                            {
+                                entry.name = VCardProperty::Socialprofile;
+                            }
                         }
                     }
                     JSContactProperty::Phones => {

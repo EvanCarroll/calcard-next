@@ -1048,7 +1048,10 @@ END:VCALENDAR
           "calendarAddress": "mailto:tom@calendar.example.com",
           "email": "tom@foobar.example.com",
           "name": "Tom Tool",
-          "participationStatus": "accepted"
+          "participationStatus": "accepted",
+          "roles": {
+            "attendee": true
+          }
         },
         "em9lQGZvb2GFtcGxlLmNvbQ": {
           "@type": "Participant",

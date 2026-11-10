@@ -22,7 +22,7 @@ use crate::{
     },
 };
 use ahash::AHashMap;
-use jmap_tools::{JsonPointer, JsonPointerHandler, JsonPointerItem, Key, Map, Property, Value};
+use jmap_tools::{JsonPointer, JsonPointerItem, Key, Map, Property, Value};
 use std::{borrow::Cow, collections::hash_map::Entry, str::FromStr};
 
 /// A recurrence id key and its PatchObject.
@@ -305,7 +305,7 @@ impl<I: JSCalendarId, B: JSCalendarId> State<I, B> {
         let mut obj = Value::Object(self.entries.into_iter().collect());
         if !self.patch_objects.is_empty() {
             for (ptr, patch) in self.patch_objects {
-                obj.patch_jptr(ptr.iter(), patch);
+                crate::common::jsprop::apply_jsprop(&mut obj, &ptr, patch);
             }
         }
 

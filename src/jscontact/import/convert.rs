@@ -903,20 +903,55 @@ impl VCard {
                     }
                 }
                 VCardProperty::Socialprofile => {
-                    state.map_named_entry(
-                        &mut entry,
-                        &[
-                            VCardParameterName::Type,
-                            VCardParameterName::Pref,
-                            VCardParameterName::PropId,
-                            VCardParameterName::Label,
-                            VCardParameterName::ServiceType,
-                            VCardParameterName::Username,
-                        ],
-                        JSContactProperty::OnlineServices,
-                        JSContactProperty::Uri,
-                        [],
-                    );
+                    // An empty value is neither a URI nor a username (RFC 9554,
+                    // Section 3.5). The entry is kept unconverted, with all of its
+                    // parameters, rather than becoming an OnlineService with
+                    // neither uri nor user (stalwartlabs/calcard#16).
+                    let has_value = entry
+                        .entry
+                        .values
+                        .first()
+                        .is_some_and(|value| value.as_text() != Some(""));
+
+                    // A URI value is the service's uri, and any other value
+                    // its user (RFC 9555, Section 2.7.5).
+                    if has_value && entry.entry.is_type(&VCardValueType::Text) {
+                        // The user property implies VALUE=TEXT. USERNAME is not
+                        // extracted, so that a second user value is kept as a
+                        // parameter instead of overwriting this one.
+                        entry
+                            .entry
+                            .params
+                            .retain(|param| param.name != VCardParameterName::Value);
+                        state.map_named_entry(
+                            &mut entry,
+                            &[
+                                VCardParameterName::Type,
+                                VCardParameterName::Pref,
+                                VCardParameterName::PropId,
+                                VCardParameterName::Label,
+                                VCardParameterName::ServiceType,
+                            ],
+                            JSContactProperty::OnlineServices,
+                            JSContactProperty::User,
+                            [],
+                        );
+                    } else if has_value {
+                        state.map_named_entry(
+                            &mut entry,
+                            &[
+                                VCardParameterName::Type,
+                                VCardParameterName::Pref,
+                                VCardParameterName::PropId,
+                                VCardParameterName::Label,
+                                VCardParameterName::ServiceType,
+                                VCardParameterName::Username,
+                            ],
+                            JSContactProperty::OnlineServices,
+                            JSContactProperty::Uri,
+                            [],
+                        );
+                    }
                 }
                 VCardProperty::Tel => {
                     state.map_named_entry(

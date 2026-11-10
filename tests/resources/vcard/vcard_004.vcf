@@ -1,0 +1,12 @@
+BEGIN:VCARD
+VERSION:4.0
+UID:urn:uuid:5f3a1c8e-online-services
+FN:Alice Example
+SOCIALPROFILE;SERVICE-TYPE=Mastodon:https://example.com/@foo
+SOCIALPROFILE:https://example.com/ietf
+SOCIALPROFILE;SERVICE-TYPE=SomeSite;VALUE=text:peter94
+SOCIALPROFILE;SERVICE-TYPE=GitHub;USERNAME=alice:https://github.com/alice
+SOCIALPROFILE;SERVICE-TYPE=SomeSite;USERNAME=other;VALUE=text:a\,b\;c
+SOCIALPROFILE;SERVICE-TYPE=Signal;VALUE=text:
+IMPP;PREF=1:xmpp:alice@example.com
+END:VCARD

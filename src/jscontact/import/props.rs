@@ -18,7 +18,7 @@ use crate::{
     },
 };
 use ahash::AHashMap;
-use jmap_tools::{JsonPointerHandler, Key, Map, Property, Value};
+use jmap_tools::{Key, Map, Property, Value};
 use std::{
     borrow::Cow,
     collections::{HashMap, HashSet, hash_map::Entry},
@@ -601,7 +601,7 @@ where
         let mut obj = Value::Object(self.entries.into_iter().collect());
         if !self.patch_objects.is_empty() {
             for (ptr, patch) in self.patch_objects {
-                obj.patch_jptr(ptr.iter(), patch);
+                crate::common::jsprop::apply_jsprop(&mut obj, &ptr, patch);
             }
         }
 

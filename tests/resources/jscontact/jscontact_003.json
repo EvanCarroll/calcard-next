@@ -1,0 +1,40 @@
+{
+    "@type": "Card",
+    "version": "1.0",
+    "uid": "urn:uuid:5f3a1c8e-online-services",
+    "name": {
+        "full": "Alice Example"
+    },
+    "onlineServices": {
+        "s1": {
+            "@type": "OnlineService",
+            "service": "Signal",
+            "user": "+46701234567"
+        },
+        "s2": {
+            "@type": "OnlineService",
+            "service": "Mastodon",
+            "uri": "https://example2.com/@alice",
+            "user": "@alice@example2.com"
+        },
+        "s3": {
+            "@type": "OnlineService",
+            "uri": "xmpp:alice@example.com",
+            "contexts": {
+                "private": true
+            },
+            "pref": 1
+        },
+        "s4": {
+            "@type": "OnlineService",
+            "service": "SomeSite",
+            "user": "a,b;c",
+            "label": "work"
+        },
+        "s5": {
+            "@type": "OnlineService",
+            "service": "NoValue",
+            "label": "neither uri nor user"
+        }
+    }
+}
