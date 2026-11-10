@@ -134,10 +134,16 @@ impl VCardEntry {
                     _ => VCardParameterValue::Text(value.into_string().into_owned()),
                 };
 
-                self.params.push(VCardParameter {
+                // Next to the other values of the parameter, so the writer
+                // joins them, as in TYPE=HOME,DOM.
+                let parameter = VCardParameter {
                     name: param.clone(),
                     value,
-                });
+                };
+                match self.params.iter().rposition(|p| p.name == param) {
+                    Some(last) => self.params.insert(last + 1, parameter),
+                    None => self.params.push(parameter),
+                }
             }
         }
     }

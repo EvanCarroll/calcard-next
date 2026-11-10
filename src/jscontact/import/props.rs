@@ -13,8 +13,8 @@ use crate::{
         },
     },
     vcard::{
-        VCard, VCardEntry, VCardParameter, VCardParameterName, VCardProperty, VCardValue,
-        VCardValueType,
+        VCard, VCardEntry, VCardParameter, VCardParameterName, VCardProperty, VCardType,
+        VCardValue, VCardValueType,
     },
 };
 use ahash::AHashMap;
@@ -183,7 +183,8 @@ where
         };
 
         if let Some(value) = value {
-            let mut params = self.extract_params(&mut entry.entry.params, extract);
+            let mut params =
+                self.extract_params(&entry.entry.name, &mut entry.entry.params, extract);
             let prop_id = params.prop_id();
             let alt_id = params.alt_id();
             let sub_property = top_property_name.sub_property();
@@ -274,8 +275,12 @@ where
         }
     }
 
+    /// Takes the parameters in `extract` that convert to JSContact out of
+    /// `params`, which keeps the rest. `property` is the property they are
+    /// set on.
     pub(super) fn extract_params(
         &self,
+        property: &VCardProperty,
         params: &mut Vec<VCardParameter>,
         extract: &[VCardParameterName],
     ) -> ExtractedParams {
@@ -394,12 +399,23 @@ where
                     params.push(param);
                 }
                 VCardParameterName::Type if extract.contains(&VCardParameterName::Type) => {
-                    if let Some(typ) = param.value.into_type() {
-                        if p.types.is_empty() {
-                            p.types = vec![typ];
-                        } else {
-                            p.types.push(typ);
+                    match param.value.into_type() {
+                        Some(typ) if type_converts(property, &typ) => p.types.push(typ),
+                        // "pref" is the vCard 3 form of PREF=1 (RFC 6350,
+                        // Appendix A.2).
+                        Some(IanaType::Other(typ))
+                            if typ.eq_ignore_ascii_case("pref")
+                                && p.pref.is_none()
+                                && extract.contains(&VCardParameterName::Pref) =>
+                        {
+                            p.pref = Some(1);
                         }
+                        // A value with no JSContact counterpart for this
+                        // property is kept as a vCard parameter (RFC 9555,
+                        // Section 2.15.2).
+                        Some(IanaType::Iana(typ)) => params.push(VCardParameter::typ(typ)),
+                        Some(IanaType::Other(typ)) => params.push(VCardParameter::typ(typ)),
+                        None => {}
                     }
                 }
                 VCardParameterName::Jscomps if extract.contains(&VCardParameterName::Jscomps) => {
@@ -665,4 +681,34 @@ impl VCardValue {
             VCardValue::Kind(v) => Value::Str(v.as_str().into()),
         }
     }
+}
+
+/// Whether a TYPE value of `property` converts to JSContact (RFC 9555,
+/// Section 2.3.22): "home" and "work" to contexts on any property, the ADR
+/// values "billing" and "delivery" to Address contexts (RFC 9554, Sections
+/// 5.1 and 5.2), the TEL values to Phone features (Table 3), and every value
+/// of RELATED to a relation, whether JSContact registers it or not.
+fn type_converts(property: &VCardProperty, typ: &IanaType<VCardType, String>) -> bool {
+    matches!(
+        (property, typ),
+        (VCardProperty::Related, _)
+            | (_, IanaType::Iana(VCardType::Home | VCardType::Work))
+            | (
+                VCardProperty::Adr,
+                IanaType::Iana(VCardType::Billing | VCardType::Delivery)
+            )
+            | (
+                VCardProperty::Tel,
+                IanaType::Iana(
+                    VCardType::Text
+                        | VCardType::Voice
+                        | VCardType::Fax
+                        | VCardType::Cell
+                        | VCardType::Video
+                        | VCardType::Pager
+                        | VCardType::Textphone
+                        | VCardType::MainNumber,
+                ),
+            )
+    )
 }

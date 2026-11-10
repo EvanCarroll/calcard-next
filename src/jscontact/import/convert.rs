@@ -152,6 +152,7 @@ impl VCard {
                     {
                         // Extract language and value type
                         let mut params = state.extract_params(
+                            &entry.entry.name,
                             &mut entry.entry.params,
                             &[VCardParameterName::Language, VCardParameterName::PropId],
                         );
@@ -291,6 +292,7 @@ impl VCard {
                     {
                         if let Some(lang) = state
                             .extract_params(
+                                &entry.entry.name,
                                 &mut entry.entry.params,
                                 &[VCardParameterName::Language],
                             )
@@ -339,6 +341,7 @@ impl VCard {
                                 && !state.has_n_localization))
                     {
                         let mut params = state.extract_params(
+                            &entry.entry.name,
                             &mut entry.entry.params,
                             &[
                                 VCardParameterName::Language,
@@ -556,7 +559,7 @@ impl VCard {
                     if !state.has_gram_gender
                         && let Some(gram_gender) = entry.to_gram_gender()
                     {
-                        state.extract_params(&mut entry.entry.params, &[]);
+                        state.extract_params(&entry.entry.name, &mut entry.entry.params, &[]);
                         state
                             .get_mut_object_or_insert(JSContactProperty::SpeakToAs)
                             .insert(JSContactProperty::GrammaticalGender, gram_gender);
@@ -629,6 +632,7 @@ impl VCard {
                 }
                 VCardProperty::Adr => {
                     let mut params = state.extract_params(
+                        &entry.entry.name,
                         &mut entry.entry.params,
                         &[
                             VCardParameterName::Language,
@@ -1219,8 +1223,11 @@ impl VCard {
                 }
                 VCardProperty::Related => {
                     if let Some(text) = entry.to_string() {
-                        let mut params = state
-                            .extract_params(&mut entry.entry.params, &[VCardParameterName::Type]);
+                        let mut params = state.extract_params(
+                            &entry.entry.name,
+                            &mut entry.entry.params,
+                            &[VCardParameterName::Type],
+                        );
                         entry.set_converted_to::<I>(&[
                             JSContactProperty::RelatedTo::<I>.to_cow().as_ref(),
                             text.as_ref(),
