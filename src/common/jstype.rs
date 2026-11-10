@@ -28,6 +28,7 @@
 
 use crate::error::TypeError;
 use jmap_tools::{Element, JsonPointer, JsonPointerItem, Key, Map, Property, Value};
+use std::ops::ControlFlow;
 
 /// How the objects of a property are held.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -122,7 +123,7 @@ pub(crate) enum Slot<T: 'static> {
 }
 
 /// The `@type` of an object.
-enum Tag<'a, T> {
+pub(crate) enum Tag<'a, T> {
     Absent,
     Known(T),
     /// A value that is not a type this implementation knows, as JSON.
@@ -151,13 +152,101 @@ pub(crate) trait TypeSchema {
     fn pointer(key: &Self::P) -> Option<&JsonPointer<Self::P>>;
 }
 
-type JsValue<'x, S> = Value<'x, <S as TypeSchema>::P, <S as TypeSchema>::E>;
-type JsMap<'x, S> = Map<'x, <S as TypeSchema>::P, <S as TypeSchema>::E>;
+pub(crate) type JsValue<'x, S> = Value<'x, <S as TypeSchema>::P, <S as TypeSchema>::E>;
+pub(crate) type JsMap<'x, S> = Map<'x, <S as TypeSchema>::P, <S as TypeSchema>::E>;
+
+/// What a walk over typed objects reports to. The walk resolves the type of
+/// each object from its position and `@type`, descends into the properties
+/// [`TypeSchema::slot`] types and into PatchObjects, and stops at the first
+/// [`ControlFlow::Break`]. `path` is the position of the value at hand.
+pub(crate) trait Visitor<S: TypeSchema> {
+    type Break;
+
+    /// An object position holds a value that is not an object.
+    fn not_object(&mut self, typed: &Typed<S::Type>, path: &[String]) -> ControlFlow<Self::Break>;
+
+    /// The `@type` of an object is missing where it must be set, or names a
+    /// type the position does not allow. The object is not looked into.
+    fn untyped(
+        &mut self,
+        typed: &Typed<S::Type>,
+        tag: Tag<'_, S::Type>,
+        path: &[String],
+    ) -> ControlFlow<Self::Break>;
+
+    /// A property of an object of type `typ`, before the walk descends into
+    /// its value. `path` ends with `key`, and must be left as it was.
+    fn property(
+        &mut self,
+        _typ: S::Type,
+        _key: &Key<'_, S::P>,
+        _value: &JsValue<'_, S>,
+        _path: &mut Vec<String>,
+    ) -> ControlFlow<Self::Break> {
+        ControlFlow::Continue(())
+    }
+
+    /// A property of a PatchObject whose pointers start at an object of type
+    /// `root`, before the walk descends into its value. `path` ends with
+    /// `key`, and must be left as it was.
+    fn patch_property(
+        &mut self,
+        _root: S::Type,
+        _key: &Key<'_, S::P>,
+        _value: &JsValue<'_, S>,
+        _path: &mut Vec<String>,
+    ) -> ControlFlow<Self::Break> {
+        ControlFlow::Continue(())
+    }
+}
+
+/// Walks the typed objects of `root`, starting at the topmost one.
+pub(crate) fn walk<S: TypeSchema, V: Visitor<S>>(
+    root: &JsValue<'_, S>,
+    visitor: &mut V,
+) -> ControlFlow<V::Break> {
+    let mut path = Vec::new();
+    walk_element::<S, V>(&S::ROOT, root, &mut path, visitor)
+}
 
 /// Checks the `@type` of every object in `root` against its position.
 pub(crate) fn validate<S: TypeSchema>(root: &JsValue<'_, S>) -> Result<(), TypeError> {
-    let mut path = Vec::new();
-    check_element::<S>(&S::ROOT, root, &mut path)
+    match walk::<S, _>(root, &mut Validate) {
+        ControlFlow::Continue(()) => Ok(()),
+        ControlFlow::Break(error) => Err(error),
+    }
+}
+
+/// The [`Visitor`] of [`validate`].
+struct Validate;
+
+impl<S: TypeSchema> Visitor<S> for Validate {
+    type Break = TypeError;
+
+    fn not_object(&mut self, typed: &Typed<S::Type>, path: &[String]) -> ControlFlow<TypeError> {
+        ControlFlow::Break(TypeError::NotAnObject {
+            pointer: pointer::<S>(path),
+            expected: expected::<S>(typed),
+        })
+    }
+
+    fn untyped(
+        &mut self,
+        typed: &Typed<S::Type>,
+        tag: Tag<'_, S::Type>,
+        path: &[String],
+    ) -> ControlFlow<TypeError> {
+        ControlFlow::Break(match tag {
+            Tag::Absent => TypeError::Missing {
+                pointer: pointer::<S>(path),
+                expected: expected::<S>(typed),
+            },
+            // An extension type is accepted, but its properties are unknown.
+            _ if typed.open => return ControlFlow::Continue(()),
+            Tag::Known(typ) => mismatch::<S>(typed, path, format!("{:?}", S::name(typ))),
+            Tag::Unknown(found) => mismatch::<S>(typed, path, found.into_owned()),
+        })
+    }
 }
 
 /// Removes `@type` from every object below the topmost one whose position
@@ -175,104 +264,90 @@ pub(crate) fn strip_implied<S: TypeSchema>(root: &mut JsValue<'_, S>) {
     }
 }
 
-fn check_element<S: TypeSchema>(
+fn walk_element<S: TypeSchema, V: Visitor<S>>(
     typed: &Typed<S::Type>,
     value: &JsValue<'_, S>,
     path: &mut Vec<String>,
-) -> Result<(), TypeError> {
+    visitor: &mut V,
+) -> ControlFlow<V::Break> {
     let Value::Object(map) = value else {
-        return Err(TypeError::NotAnObject {
-            pointer: pointer::<S>(path),
-            expected: expected::<S>(typed),
-        });
+        return visitor.not_object(typed, path);
     };
-    let typ = match tag::<S>(map) {
-        Tag::Known(typ) if typed.allowed.contains(&typ) => typ,
-        Tag::Absent => match typed.default {
-            Some(typ) => typ,
-            None => {
-                return Err(TypeError::Missing {
-                    pointer: pointer::<S>(path),
-                    expected: expected::<S>(typed),
-                });
-            }
-        },
-        // An extension type is accepted, but its properties are unknown.
-        Tag::Known(_) | Tag::Unknown(_) if typed.open => return Ok(()),
-        Tag::Known(typ) => {
-            return Err(mismatch::<S>(typed, path, format!("{:?}", S::name(typ))));
+    match tag::<S>(map) {
+        Tag::Known(typ) if typed.allowed.contains(&typ) => {
+            walk_object::<S, V>(typ, map, path, visitor)
         }
-        Tag::Unknown(found) => return Err(mismatch::<S>(typed, path, found.into_owned())),
-    };
-    check_object::<S>(typ, map, path)
+        Tag::Absent if let Some(typ) = typed.default => {
+            walk_object::<S, V>(typ, map, path, visitor)
+        }
+        tag => visitor.untyped(typed, tag, path),
+    }
 }
 
-fn check_object<S: TypeSchema>(
+fn walk_object<S: TypeSchema, V: Visitor<S>>(
     typ: S::Type,
     map: &JsMap<'_, S>,
     path: &mut Vec<String>,
-) -> Result<(), TypeError> {
+    visitor: &mut V,
+) -> ControlFlow<V::Break> {
     for (key, value) in map.iter() {
-        let Key::Property(property) = key else {
-            continue;
-        };
-        let Some(slot) = S::slot(typ, property) else {
-            continue;
-        };
         path.push(key.to_string().into_owned());
-        let result = match slot {
-            Slot::Typed(typed) => check_slot::<S>(&typed, value, path),
-            Slot::Patch(root) => check_patch::<S>(root, value, path),
-        };
+        visitor.property(typ, key, value, path)?;
+        if let Key::Property(property) = key {
+            match S::slot(typ, property) {
+                Some(Slot::Typed(typed)) => walk_slot::<S, V>(&typed, value, path, visitor)?,
+                Some(Slot::Patch(root)) => walk_patch::<S, V>(root, value, path, visitor)?,
+                None => {}
+            }
+        }
         path.pop();
-        result?;
     }
-    Ok(())
+    ControlFlow::Continue(())
 }
 
-/// Checks the objects a property holds. A value of another JSON type than the
+/// Walks the objects a property holds. A value of another JSON type than the
 /// property's is not a type error and is left to the conversion.
-fn check_slot<S: TypeSchema>(
+fn walk_slot<S: TypeSchema, V: Visitor<S>>(
     typed: &Typed<S::Type>,
     value: &JsValue<'_, S>,
     path: &mut Vec<String>,
-) -> Result<(), TypeError> {
+    visitor: &mut V,
+) -> ControlFlow<V::Break> {
     match (typed.container, value) {
-        (Container::One, Value::Object(_)) => check_element::<S>(typed, value, path),
+        (Container::One, Value::Object(_)) => walk_element::<S, V>(typed, value, path, visitor),
         (Container::Map, Value::Object(map)) => {
             for (id, value) in map.iter() {
                 if matches!(value, Value::Null) {
                     continue;
                 }
                 path.push(id.to_string().into_owned());
-                let result = check_element::<S>(typed, value, path);
+                walk_element::<S, V>(typed, value, path, visitor)?;
                 path.pop();
-                result?;
             }
-            Ok(())
+            ControlFlow::Continue(())
         }
         (Container::Array, Value::Array(values)) => {
             for (index, value) in values.iter().enumerate() {
                 path.push(index.to_string());
-                let result = check_element::<S>(typed, value, path);
+                walk_element::<S, V>(typed, value, path, visitor)?;
                 path.pop();
-                result?;
             }
-            Ok(())
+            ControlFlow::Continue(())
         }
-        _ => Ok(()),
+        _ => ControlFlow::Continue(()),
     }
 }
 
-/// Checks the values of a map of PatchObjects, each at the position its
+/// Walks the values of a map of PatchObjects, each at the position its
 /// pointer resolves to from an object of type `root`.
-fn check_patch<S: TypeSchema>(
+fn walk_patch<S: TypeSchema, V: Visitor<S>>(
     root: S::Type,
     value: &JsValue<'_, S>,
     path: &mut Vec<String>,
-) -> Result<(), TypeError> {
+    visitor: &mut V,
+) -> ControlFlow<V::Break> {
     let Value::Object(patches) = value else {
-        return Ok(());
+        return ControlFlow::Continue(());
     };
     for (id, patch) in patches.iter() {
         let Value::Object(patch) = patch else {
@@ -280,26 +355,22 @@ fn check_patch<S: TypeSchema>(
         };
         path.push(id.to_string().into_owned());
         for (key, value) in patch.iter() {
-            if matches!(value, Value::Null) {
-                continue;
-            }
-            let Some(target) = target::<S>(root, key) else {
-                continue;
-            };
             path.push(key.to_string().into_owned());
-            let result = match target {
-                Target::Element(typed) => check_element::<S>(&typed, value, path),
-                Target::Slot(typed) => check_slot::<S>(&typed, value, path),
-            };
-            path.pop();
-            if let Err(error) = result {
-                path.pop();
-                return Err(error);
+            visitor.patch_property(root, key, value, path)?;
+            if !matches!(value, Value::Null) {
+                match target::<S>(root, key) {
+                    Some(Target::Element(typed)) => {
+                        walk_element::<S, V>(&typed, value, path, visitor)?
+                    }
+                    Some(Target::Slot(typed)) => walk_slot::<S, V>(&typed, value, path, visitor)?,
+                    None => {}
+                }
             }
+            path.pop();
         }
         path.pop();
     }
-    Ok(())
+    ControlFlow::Continue(())
 }
 
 /// What a PatchObject pointer sets.
@@ -317,15 +388,18 @@ enum Segment<'a, 'x, P: Property> {
     Index,
 }
 
-/// Resolves the pointer of a PatchObject key from an object of type `root`.
-/// `None` if it does not set a typed value.
-fn target<S: TypeSchema>(root: S::Type, key: &Key<'_, S::P>) -> Option<Target<S::Type>> {
-    enum At<T: 'static> {
-        Object(T),
-        Slot(Typed<T>),
-        Element(Typed<T>),
-    }
+/// What part of a pointer resolves to.
+enum At<T: 'static> {
+    Object(T),
+    Slot(Typed<T>),
+    Element(Typed<T>),
+}
 
+/// Calls `f` with the parts of the pointer of a PatchObject key.
+fn with_segments<S: TypeSchema, R>(
+    key: &Key<'_, S::P>,
+    f: impl FnOnce(&[Segment<'_, '_, S::P>]) -> R,
+) -> R {
     // A key is parsed as a pointer where its parent is known to hold
     // PatchObjects; elsewhere, as in JSContact `localizations`, it is kept as
     // the text of the pointer.
@@ -348,7 +422,17 @@ fn target<S: TypeSchema>(root: S::Type, key: &Key<'_, S::P>) -> Option<Target<S:
             .collect(),
         None => vec![Segment::Key(key)],
     };
+    f(&segments)
+}
 
+/// Follows pointer parts from an object of type `root` through typed
+/// properties. `None` if a part is not a typed property. `pick` is the type
+/// of an object whose `@type` is not known from the pointer alone.
+fn follow<S: TypeSchema>(
+    root: S::Type,
+    segments: &[Segment<'_, '_, S::P>],
+    pick: fn(&Typed<S::Type>) -> Option<S::Type>,
+) -> Option<At<S::Type>> {
     // The slot of a property of an object of type `parent`.
     let property = |parent: S::Type, segment: &Segment<'_, '_, S::P>| match segment {
         Segment::Key(Key::Property(property)) => match S::slot(parent, property)? {
@@ -359,23 +443,98 @@ fn target<S: TypeSchema>(root: S::Type, key: &Key<'_, S::P>) -> Option<Target<S:
     };
 
     let mut at = At::Object(root);
-    for segment in &segments {
+    for segment in segments {
         at = match at {
             At::Object(typ) => property(typ, segment)?,
             // The value of a property of type `A` is the object itself.
             At::Slot(typed) if typed.container == Container::One => {
-                property(typed.default?, segment)?
+                property(pick(&typed)?, segment)?
             }
             At::Slot(typed) => At::Element(typed),
-            At::Element(typed) => property(typed.default?, segment)?,
+            At::Element(typed) => property(pick(&typed)?, segment)?,
         };
     }
+    Some(at)
+}
 
-    match at {
-        At::Object(_) => None,
-        At::Slot(typed) => Some(Target::Slot(typed)),
-        At::Element(typed) => Some(Target::Element(typed)),
+/// The type an object without `@type` has at a position.
+fn default_type<T: Copy>(typed: &Typed<T>) -> Option<T> {
+    typed.default
+}
+
+/// Resolves the pointer of a PatchObject key from an object of type `root`.
+/// `None` if it does not set a typed value.
+fn target<S: TypeSchema>(root: S::Type, key: &Key<'_, S::P>) -> Option<Target<S::Type>> {
+    with_segments::<S, _>(key, |segments| {
+        match follow::<S>(root, segments, default_type)? {
+            At::Object(_) => None,
+            At::Slot(typed) => Some(Target::Slot(typed)),
+            At::Element(typed) => Some(Target::Element(typed)),
+        }
+    })
+}
+
+/// Resolves the pointer of a PatchObject key from an object of type `root` to
+/// the property it sets, and calls `f` with the type of the object that has
+/// the property and its name. `None` if the pointer does not end in a
+/// property of an object whose type is known, as when it sets an array
+/// element or a member of an untyped map.
+pub(crate) fn with_patch_property<S: TypeSchema, R>(
+    root: S::Type,
+    key: &Key<'_, S::P>,
+    f: impl FnOnce(S::Type, &Key<'_, S::P>) -> R,
+) -> Option<R> {
+    with_segments::<S, _>(key, |segments| {
+        let (Segment::Key(last), init) = segments.split_last()? else {
+            return None;
+        };
+        let parent = match follow::<S>(root, init, default_type)? {
+            At::Object(typ) => typ,
+            At::Slot(typed) if typed.container == Container::One => typed.default?,
+            At::Element(typed) => typed.default?,
+            At::Slot(_) => return None,
+        };
+        Some(f(parent, last))
+    })
+}
+
+/// The name of the property a JSON pointer from an object of type `root`
+/// ends in, or is inside of: the last part that is a property of a typed
+/// object, rather than an id, an index or a key of a map. An object whose
+/// type the pointer does not tell, as a Group entry, is taken to be of its
+/// first allowed type, since the name does not depend on it. The first part
+/// if no part is a property of a typed object.
+pub(crate) fn property_name<S: TypeSchema>(root: S::Type, pointer: &str) -> String {
+    let any_type = |typed: &Typed<S::Type>| typed.default.or(typed.allowed.first().copied());
+    let parsed = JsonPointer::<S::P>::parse(pointer);
+    let segments: Vec<Segment<'_, '_, S::P>> = parsed
+        .iter()
+        .filter_map(|item| match item {
+            JsonPointerItem::Key(key) => Some(Segment::Key(key)),
+            JsonPointerItem::Number(_) | JsonPointerItem::Wildcard => Some(Segment::Index),
+            JsonPointerItem::Root => None,
+        })
+        .collect();
+    for end in (1..=segments.len()).rev() {
+        let (Segment::Key(last), init) = segments[..end].split_last().unwrap() else {
+            continue;
+        };
+        let resolved = match follow::<S>(root, init, any_type) {
+            Some(At::Object(_)) => true,
+            Some(At::Slot(typed)) => typed.container == Container::One,
+            Some(At::Element(_)) => true,
+            None => false,
+        };
+        if resolved {
+            return last.to_string().into_owned();
+        }
     }
+    pointer.split('/').next().unwrap_or(pointer).to_string()
+}
+
+/// The JSON pointer of a path, without a leading `/`.
+pub(crate) fn pointer<S: TypeSchema>(path: &[String]) -> String {
+    JsonPointer::<S::P>::encode(path)
 }
 
 fn strip_object<S: TypeSchema>(typ: S::Type, map: &mut JsMap<'_, S>) {
@@ -474,10 +633,6 @@ fn expected<S: TypeSchema>(typed: &Typed<S::Type>) -> String {
         .map(|typ| S::name(*typ))
         .collect::<Vec<_>>()
         .join("|")
-}
-
-fn pointer<S: TypeSchema>(path: &[String]) -> String {
-    JsonPointer::<S::P>::encode(path)
 }
 
 #[cfg(test)]
