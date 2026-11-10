@@ -12,7 +12,10 @@
 //! A.3.2) also allows a pointer to reference an existing member of an array,
 //! although array members still cannot be inserted or removed.
 
-use super::{JSCalendarDateTime, JSCalendarId, JSCalendarProperty, JSCalendarValue};
+use super::{
+    JSCalendarDateTime, JSCalendarId, JSCalendarProperty, JSCalendarValue,
+    upgrade::V1_RECURRENCE_RULES,
+};
 use crate::error::PatchError;
 use jmap_tools::{JsonPointer, JsonPointerItem, Key, Map, Value};
 
@@ -140,10 +143,7 @@ pub(crate) fn is_recurrence_property<I: JSCalendarId>(key: &JSKey<'_, I>) -> boo
             property,
             JSCalendarProperty::RecurrenceRule | JSCalendarProperty::RecurrenceOverrides
         ),
-        key => matches!(
-            key.to_string().as_ref(),
-            "recurrenceRules" | "excludedRecurrenceRules"
-        ),
+        key => V1_RECURRENCE_RULES.contains(&key.to_string().as_ref()),
     }
 }
 

@@ -13,6 +13,8 @@ use jiff::{
 pub(crate) mod charset;
 pub mod iana;
 #[cfg(feature = "jmap")]
+pub(crate) mod jsdiag;
+#[cfg(feature = "jmap")]
 pub(crate) mod jsprop;
 #[cfg(feature = "jmap")]
 pub(crate) mod jstype;

@@ -152,11 +152,7 @@ fn entry_of(error: &TypeError) -> Option<usize> {
 /// Whether [`JSCalendar::upgrade`] could change the object.
 fn needs_upgrade<I: JSCalendarId, B: JSCalendarId>(calendar: &JSCalendar<'_, I, B>) -> bool {
     match &calendar.0 {
-        Value::Object(root) => match root.get(&Key::Property(JSCalendarProperty::Version)) {
-            None => true,
-            Some(Value::Str(version)) => version == "1.0",
-            Some(_) => false,
-        },
+        Value::Object(root) => super::upgrade::is_v1(root),
         _ => false,
     }
 }

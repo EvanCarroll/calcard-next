@@ -17,6 +17,7 @@ use vcard::VCard;
 
 pub mod common;
 pub mod datecalc;
+pub mod diagnostic;
 pub mod error;
 pub mod icalendar;
 #[cfg(feature = "jmap")]

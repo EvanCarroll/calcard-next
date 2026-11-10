@@ -11,6 +11,7 @@ use std::hash::{Hash, Hasher};
 
 pub mod builder;
 pub mod dates;
+mod diagnostic;
 pub mod parser;
 pub mod timezone;
 pub mod types;

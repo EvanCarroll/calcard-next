@@ -1,5 +1,6 @@
 Unreleased
 ==========
+- New: opt-in reports of what was kept but not interpreted (#7). `ICalendar::diagnostics`, `VCard::diagnostics`, `JSCalendar::diagnostics` and `JSContact::diagnostics` return a `diagnostic::Diagnostic` for each unknown property; each vendor-specific or `X-` property, value or type (as `Extension`); each known property in an object or component that does not define it; each obsolete property, such as a JSCalendar 1.0 `recurrenceRules` with more than one rule, `EXRULE`, or a vCard 3 `LABEL`; each value that could not be parsed and was kept as text; each enumerated value that is not registered; and each component or object of an unknown type. Each is located by a JSON pointer (`entries/0/recurrenceRules`) or by component and entry index; `ICalendar::path` renders the latter as `VCALENDAR/VEVENT[0]/DTSTART`. Nothing is collected unless asked, and parsing and conversion output are unchanged. An empty report does not mean the data is valid: mandatory properties and other semantic rules are not checked.
 - Fix: vCard entries that the conversion to JSContact does not reorder keep their order in the vCard. They were sorted with an unstable sort, so ids such as `k1`, `k2` and `k3` were given to EMAIL, TEL and other repeated properties in an arbitrary order, which could change with the Rust version.
 
 calcard-next 2.0.0 (2026-11-10)

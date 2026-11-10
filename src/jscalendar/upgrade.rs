@@ -48,10 +48,8 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
         let Value::Object(root) = &mut self.0 else {
             return;
         };
-        match root.get(&Key::Property(JSCalendarProperty::Version)) {
-            None => {}
-            Some(Value::Str(version)) if version == "1.0" => {}
-            Some(_) => return,
+        if !is_v1(root) {
+            return;
         }
 
         if object_type(root) == Some(JSCalendarType::Group) {
@@ -72,6 +70,41 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
             Key::Property(JSCalendarProperty::Version),
             Value::Str("2.0".into()),
         );
+    }
+}
+
+/// Whether a Group, or an Event or Task without an enclosing Group, is
+/// version 1.0: it "does not have a "version" property", or has `"1.0"`
+/// (draft-ietf-calext-jscalendarbis, Section 3.1.2).
+pub(crate) fn is_v1<I: JSCalendarId, B: JSCalendarId>(root: &JSMap<'_, I, B>) -> bool {
+    match root.get(&Key::Property(JSCalendarProperty::Version)) {
+        None => true,
+        Some(Value::Str(version)) => version == "1.0",
+        Some(_) => false,
+    }
+}
+
+/// The 1.0 recurrence rule properties, which 2.0 does not define: an Event or
+/// Task has a single `recurrenceRule` instead (Appendix A.2.1).
+pub(crate) const V1_RECURRENCE_RULES: [&str; 2] = ["recurrenceRules", "excludedRecurrenceRules"];
+
+/// Whether 1.0 (RFC 8984) defined the property `name` for objects of type
+/// `parent` and 2.0 obsoletes it (draft-ietf-calext-jscalendarbis, Appendix
+/// A.2.1). The TimeZone and TimeZoneRule types are obsolete as a whole, with
+/// `timeZones`.
+pub(crate) fn is_obsolete(parent: JSCalendarType, name: &str) -> bool {
+    use JSCalendarType as T;
+    match parent {
+        T::Event | T::Task => {
+            matches!(
+                name,
+                "recurrenceRules" | "excludedRecurrenceRules" | "timeZones"
+            ) || (parent == T::Task && name == "progressUpdated")
+        }
+        T::Link => name == "cid",
+        T::Location => matches!(name, "relativeTo" | "timeZone"),
+        T::Participant => matches!(name, "language" | "locationId" | "progressUpdated"),
+        _ => false,
     }
 }
 
@@ -109,7 +142,7 @@ fn upgrade_recurrence_rules<I: JSCalendarId, B: JSCalendarId>(entry: &mut JSMap<
     if entry.contains_key(&Key::Property(JSCalendarProperty::RecurrenceRule)) {
         return;
     }
-    let Some(pos) = position(entry, "recurrenceRules") else {
+    let Some(pos) = position(entry, V1_RECURRENCE_RULES[0]) else {
         return;
     };
     let rule = match &entry.as_vec()[pos].1 {

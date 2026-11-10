@@ -14,6 +14,7 @@ use std::{
     str::FromStr,
 };
 
+mod diagnostic;
 pub mod export;
 pub mod import;
 pub mod parser;
