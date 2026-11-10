@@ -17,7 +17,66 @@ use ahash::{AHashMap, AHashSet};
 use jiff::{SignedDuration, Timestamp, Zoned};
 use std::fmt::{Display, Formatter};
 
-const ONE_DAY: SignedDuration = SignedDuration::from_hours(24);
+/// How long an instance lasts (RFC 5545, Section 3.3.6): a number of nominal
+/// days, which keep the wall time across daylight saving changes, then an
+/// exact time.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct Length {
+    pub(crate) days: i64,
+    pub(crate) time: SignedDuration,
+}
+
+impl Length {
+    pub(crate) const ZERO: Length = Length {
+        days: 0,
+        time: SignedDuration::ZERO,
+    };
+    pub(crate) const ONE_DAY: Length = Length {
+        days: 1,
+        time: SignedDuration::ZERO,
+    };
+
+    /// An exact length, as from a DATE-TIME DTSTART to its DTEND.
+    pub(crate) fn exact(time: SignedDuration) -> Self {
+        Length { days: 0, time }
+    }
+
+    /// A DURATION value: its weeks and days are nominal, its hours,
+    /// minutes and seconds exact.
+    pub(crate) fn of(duration: &super::ICalendarDuration) -> Self {
+        let sign = if duration.neg { -1 } else { 1 };
+        Length {
+            days: sign * (i64::from(duration.weeks) * 7 + i64::from(duration.days)),
+            time: SignedDuration::from_secs(
+                sign * (i64::from(duration.hours) * 3600
+                    + i64::from(duration.minutes) * 60
+                    + i64::from(duration.seconds)),
+            ),
+        }
+    }
+
+    /// The length between two DATE values: whole nominal days.
+    pub(crate) fn between_dates(start: jiff::civil::DateTime, end: jiff::civil::DateTime) -> Self {
+        let span = start.duration_until(end);
+        Length {
+            days: span.as_secs().div_euclid(86_400),
+            time: SignedDuration::from_secs(span.as_secs().rem_euclid(86_400)),
+        }
+    }
+
+    /// The end of an instance that starts at `start`: the nominal days are
+    /// added on the calendar, then the exact time.
+    pub(crate) fn end_of(&self, start: &Zoned) -> Option<Zoned> {
+        let after_days = if self.days == 0 {
+            start.clone()
+        } else {
+            start
+                .checked_add(jiff::Span::new().try_days(self.days).ok()?)
+                .ok()?
+        };
+        after_days.checked_add(self.time).ok()
+    }
+}
 
 #[allow(clippy::type_complexity)]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
@@ -65,7 +124,12 @@ impl<S, E> CalendarEvent<S, E> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(tag = "type", content = "data"))]
 pub enum TimeOrDelta<T, D> {
+    /// A point in time. Expansion always gives an instance's end in this form,
+    /// computed with nominal days and exact hours, minutes and seconds (RFC
+    /// 5545, Section 3.3.6).
     Time(T),
+    /// An exact duration, which cannot express a nominal day across a
+    /// daylight saving change.
     Delta(D),
 }
 
@@ -215,7 +279,7 @@ impl ICalendar {
 
             // Set by a THISANDFUTURE override for the instances after it.
             let mut shift = None;
-            let mut length = TimeOrDelta::Delta(event.default_duration);
+            let mut length = event.default_duration;
 
             for (original, own_end) in candidates {
                 if limit == 0 || original.timestamp() >= stop {
@@ -229,7 +293,7 @@ impl ICalendar {
                         if overriding.rid_this_and_future {
                             comp_id = override_comp_id;
                             shift = Some(original.duration_until(&instance.start));
-                            length = TimeOrDelta::Delta(match &instance.end {
+                            length = Length::exact(match &instance.end {
                                 TimeOrDelta::Time(end) => instance.start.duration_until(end),
                                 TimeOrDelta::Delta(delta) => *delta,
                             });
@@ -246,12 +310,17 @@ impl ICalendar {
                             Some(shift) => original.checked_add(shift).unwrap_or(original.clone()),
                             None => original.clone(),
                         };
+                        let Some(end) =
+                            own_end.or_else(|| length.end_of(&start).map(TimeOrDelta::Time))
+                        else {
+                            continue;
+                        };
                         let instance = CalendarEvent {
                             comp_id,
                             series_comp_id: Some(series_comp_id),
                             recurrence_id: Some(original),
                             start,
-                            end: own_end.unwrap_or_else(|| length.clone()),
+                            end,
                         };
                         if window.contains(&instance, event.overlap) {
                             limit -= 1;
@@ -397,7 +466,7 @@ struct CalendarEventBuilder<'x> {
     dt_start: DateTimeResult,
     dt_start_tzid: Option<&'x str>,
     start_tz: Tz,
-    default_duration: SignedDuration,
+    default_duration: Length,
     rrule: Option<RRule>,
     exdates: Vec<(Option<&'x str>, DateTimeResult)>,
     rid: Option<Zoned>,
@@ -496,13 +565,11 @@ impl ICalendarComponent {
                                     }
                                 }
                                 ICalendarPeriod::Duration { start, duration } => {
-                                    if let (Some(start), Some(duration)) =
-                                        (start.to_date_time(), duration.to_duration())
-                                    {
+                                    if let Some(start) = start.to_date_time() {
                                         rdates_periods.push((
                                             tz_id,
                                             start,
-                                            TimeOrDelta::Delta(duration),
+                                            TimeOrDelta::Delta(Length::of(duration)),
                                         ));
                                     }
                                 }
@@ -618,9 +685,9 @@ impl ICalendarComponent {
             // DTEND (RFC 5545, Section 3.8.5.3), across time zones and
             // daylight saving changes. Between dates, days are nominal.
             let length = if dt_start_has_time {
-                dt_start_tz.duration_until(&end)
+                Length::exact(dt_start_tz.duration_until(&end))
             } else {
-                dt_end.date_time.duration_since(dt_start.date_time)
+                Length::between_dates(dt_start.date_time, dt_end.date_time)
             };
             event = Some(CalendarEvent::new(
                 comp_id,
@@ -629,15 +696,16 @@ impl ICalendarComponent {
             ));
             length
         } else if let Some(duration) = duration {
-            let duration = duration
-                .to_duration()
+            let length = Length::of(duration);
+            let end = length
+                .end_of(&dt_start_tz)
                 .ok_or(CalendarErrorType::InvalidDuration)?;
             event = Some(CalendarEvent::new(
                 comp_id,
                 dt_start_tz,
-                TimeOrDelta::Delta(duration),
+                TimeOrDelta::Time(end),
             ));
-            duration
+            length
         } else if let Some((due, due_tzid)) = todo_dates
             .into_iter()
             .filter_map(|(prop, dt, tz_id)| {
@@ -657,9 +725,9 @@ impl ICalendarComponent {
             // DUE (RFC 5545, Section 3.8.5.3), across time zones and
             // daylight saving changes. Between dates, days are nominal.
             let length = if dt_start_has_time {
-                dt_start_tz.duration_until(&end)
+                Length::exact(dt_start_tz.duration_until(&end))
             } else {
-                due.date_time.duration_since(dt_start.date_time)
+                Length::between_dates(dt_start.date_time, due.date_time)
             };
             event = Some(CalendarEvent::new(
                 comp_id,
@@ -682,17 +750,20 @@ impl ICalendarComponent {
                RFC 4791, Section 9.9 states the same as a number: the duration
                is 0 seconds for a DATE-TIME DTSTART and 1 day (+P1D) for a DATE.
             */
-            let duration = if dt_start_has_time {
-                SignedDuration::ZERO
+            let length = if dt_start_has_time {
+                Length::ZERO
             } else {
-                ONE_DAY
+                Length::ONE_DAY
             };
+            let end = length
+                .end_of(&dt_start_tz)
+                .ok_or(CalendarErrorType::InvalidDtStart)?;
             event = Some(CalendarEvent::new(
                 comp_id,
                 dt_start_tz,
-                TimeOrDelta::Delta(duration),
+                TimeOrDelta::Time(end),
             ));
-            duration
+            length
         };
         let rid = if let Some(rid) = rid {
             rid.to_date_time_with_tz(tz_resolver.resolve_or_default(rid_tzid.or(dt_start_tzid)))
@@ -711,11 +782,15 @@ impl ICalendarComponent {
         }
         for (tz_id, start, end) in rdates_periods {
             let tz = tz_resolver.resolve_or_default(tz_id.or(dt_start_tzid));
-            if let (Some(date_start), Some(date_end)) = (
-                start.to_date_time_with_tz(tz),
-                end.into_date_time_with_tz(tz),
-            ) {
-                rdate_instances.push((date_start, Some(date_end)));
+            let Some(date_start) = start.to_date_time_with_tz(tz) else {
+                continue;
+            };
+            let date_end = match end {
+                TimeOrDelta::Time(end) => end.to_date_time_with_tz(tz),
+                TimeOrDelta::Delta(length) => length.end_of(&date_start),
+            };
+            if let Some(date_end) = date_end {
+                rdate_instances.push((date_start, Some(TimeOrDelta::Time(date_end))));
             }
         }
         rdate_instances.sort_by_key(|(start, _)| start.timestamp());
@@ -760,19 +835,8 @@ impl CalendarEvent<Zoned, TimeOrDelta<Zoned, SignedDuration>> {
     pub fn try_into_date_time(self) -> Option<CalendarEvent<Zoned, Zoned>> {
         match self.end {
             TimeOrDelta::Time(time) => Some(time),
-            TimeOrDelta::Delta(delta) => {
-                self.start
-                    .datetime()
-                    .checked_add(delta)
-                    .ok()
-                    .and_then(|end| {
-                        self.start
-                            .time_zone()
-                            .to_ambiguous_zoned(end)
-                            .unambiguous()
-                            .ok()
-                    })
-            }
+            // An exact duration (RFC 5545, Section 3.3.6), as in `timestamps`.
+            TimeOrDelta::Delta(delta) => self.start.checked_add(delta).ok(),
         }
         .map(|end| CalendarEvent {
             comp_id: self.comp_id,

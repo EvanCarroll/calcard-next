@@ -24,7 +24,7 @@ use crate::{
     datecalc::rrule::RRule,
     error::ExpandError,
     icalendar::dates::{
-        CalendarErrorType, CalendarEvent, Candidate, Merge, Overlap, TimeOrDelta, Window,
+        CalendarErrorType, CalendarEvent, Candidate, Length, Merge, Overlap, TimeOrDelta, Window,
         rule_instances,
     },
 };
@@ -34,8 +34,6 @@ use jmap_tools::{Key, Map, Value};
 use std::{borrow::Cow, str::FromStr};
 
 type JSMap<'x, I, B> = Map<'x, JSCalendarProperty<I>, JSCalendarValue<I, B>>;
-
-const ONE_DAY: SignedDuration = SignedDuration::from_hours(24);
 
 /// The result of [`JSCalendar::expand_between`].
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -203,10 +201,10 @@ struct Anchor {
     /// The length of an instance: from `duration`, from `start` to `due`, or
     /// the default for a start without an end (RFC 5545, Section 3.6.1;
     /// RFC 4791, Section 9.9).
-    length: SignedDuration,
+    length: Length,
     /// The length of an instance without `duration` or `due`: 1 day for a
     /// date, 0 for a date-time.
-    default_length: SignedDuration,
+    default_length: Length,
     /// For a Task with `start` and `due`: the local `due`.
     due: Option<civil::DateTime>,
     is_date: bool,
@@ -216,19 +214,14 @@ struct Anchor {
 impl Anchor {
     /// The length from `start` to `due`: "the same exact duration" for
     /// date-times (RFC 5545, Section 3.8.5.3), nominal days between dates.
-    fn between(
-        tz: Tz,
-        is_date: bool,
-        start: civil::DateTime,
-        due: civil::DateTime,
-    ) -> SignedDuration {
+    fn between(tz: Tz, is_date: bool, start: civil::DateTime, due: civil::DateTime) -> Length {
         if !is_date
             && let (Some(start), Some(due)) =
                 (tz.from_local_datetime(start), tz.from_local_datetime(due))
         {
-            start.duration_until(&due)
+            Length::exact(start.duration_until(&due))
         } else {
-            start.duration_until(due)
+            Length::between_dates(start, due)
         }
     }
 }
@@ -246,9 +239,9 @@ impl Anchor {
         let start = local(entry, JSCalendarProperty::Start);
         let due = local(entry, JSCalendarProperty::Due).filter(|_| is_task);
         let default_length = if is_date {
-            ONE_DAY
+            Length::ONE_DAY
         } else {
-            SignedDuration::ZERO
+            Length::ZERO
         };
         Ok(Some(match (start, due) {
             (Some(start), Some(due)) => Anchor {
@@ -273,7 +266,7 @@ impl Anchor {
             (None, Some(due)) => Anchor {
                 local: due,
                 tz,
-                length: SignedDuration::ZERO,
+                length: Length::ZERO,
                 default_length,
                 due: None,
                 is_date,
@@ -285,9 +278,9 @@ impl Anchor {
     }
 }
 
-fn duration<I: JSCalendarId, B: JSCalendarId>(obj: &JSMap<'_, I, B>) -> Option<SignedDuration> {
+fn duration<I: JSCalendarId, B: JSCalendarId>(obj: &JSMap<'_, I, B>) -> Option<Length> {
     match obj.get(&Key::Property(JSCalendarProperty::Duration))? {
-        Value::Element(JSCalendarValue::Duration(duration)) => duration.to_duration(),
+        Value::Element(JSCalendarValue::Duration(duration)) => Some(Length::of(duration)),
         _ => None,
     }
 }
@@ -402,7 +395,10 @@ fn expand_entry<'x, I: JSCalendarId, B: JSCalendarId>(
         let Some((start, end)) = placement(&anchor, &original, patch) else {
             continue;
         };
-        let event = CalendarEvent::new(0, start, TimeOrDelta::Delta(end));
+        let Some(end) = end.end_of(&start) else {
+            continue;
+        };
+        let event = CalendarEvent::new(0, start, TimeOrDelta::Time(end));
         if !window.contains(&event, anchor.overlap) {
             continue;
         }
@@ -441,7 +437,7 @@ fn placement<I: JSCalendarId, B: JSCalendarId>(
     anchor: &Anchor,
     original: &Zoned,
     patch: Option<&JSMap<'_, I, B>>,
-) -> Option<(Zoned, SignedDuration)> {
+) -> Option<(Zoned, Length)> {
     let Some(patch) = patch else {
         return Some((original.clone(), anchor.length));
     };
@@ -460,7 +456,7 @@ fn placement<I: JSCalendarId, B: JSCalendarId>(
     };
 
     let length = if anchor.overlap == Overlap::TodoDue {
-        SignedDuration::ZERO
+        Length::ZERO
     } else if let Some(due) = anchor.due {
         // The due date-time shifts with the recurrence id unless patched.
         let due = local(patch, JSCalendarProperty::Due).unwrap_or_else(|| {
@@ -470,9 +466,7 @@ fn placement<I: JSCalendarId, B: JSCalendarId>(
         Anchor::between(tz, anchor.is_date, start_local, due)
     } else {
         match patch.get(&Key::Property(JSCalendarProperty::Duration)) {
-            Some(Value::Element(JSCalendarValue::Duration(duration))) => {
-                duration.to_duration().unwrap_or(anchor.length)
-            }
+            Some(Value::Element(JSCalendarValue::Duration(duration))) => Length::of(duration),
             Some(Value::Null) => anchor.default_length,
             _ => anchor.length,
         }
