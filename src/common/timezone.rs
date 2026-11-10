@@ -155,13 +155,14 @@ impl Tz {
 
     /// Interprets a wall-clock time in this time zone.
     ///
-    /// Returns `None` when the wall-clock time is ambiguous (it falls in a
-    /// fold) or does not exist (it falls in a gap), or is out of range.
+    /// As RFC 5545, Section 3.3.5 specifies, a time that occurs twice (in a
+    /// fold) is its first occurrence, and a time that does not occur (in a
+    /// gap) "is interpreted using the UTC offset before the gap", so 02:30 on
+    /// a night the clocks go from 02:00 to 03:00 is 03:30. Erratum 4271
+    /// applies the same rule to recurrence instances. Returns `None` only when
+    /// the time is out of range.
     pub fn from_local_datetime(&self, dt: civil::DateTime) -> Option<Zoned> {
-        self.to_time_zone()
-            .to_ambiguous_zoned(dt)
-            .unambiguous()
-            .ok()
+        self.to_time_zone().to_ambiguous_zoned(dt).compatible().ok()
     }
 
     /// Converts a UTC wall-clock time to this time zone.

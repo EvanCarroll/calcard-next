@@ -44,6 +44,8 @@ struct State<I: JSCalendarId, B: JSCalendarId> {
     jsid: Option<String>,
     uid: Option<String>,
     recurrence_id: Option<Zoned>,
+    /// The RECURRENCE-ID as written, and the zone it was written in.
+    recurrence_id_written: Option<(crate::common::DateTimeResult, Option<Tz>)>,
     tz_start: Option<Tz>,
     tz_end: Option<Tz>,
     has_dates: bool,

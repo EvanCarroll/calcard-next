@@ -307,6 +307,25 @@ impl ICalendarEntry {
         self
     }
 
+    /// As [`ICalendarEntry::with_date`], for the local date-time `local` that
+    /// resolved to `dt`. In a daylight saving gap the local time does not
+    /// exist and `dt` is past the gap; the value keeps the written wall time,
+    /// which RFC 5545, Section 3.3.5 resolves to the same instant. That keeps
+    /// a recurrence set anchored at it on its wall time on the following days.
+    pub(super) fn with_local_date(self, dt: Zoned, local: civil::DateTime, is_date: bool) -> Self {
+        let in_gap = !is_date && dt.datetime() != local;
+        let resolved = PartialDateTime::from_naive_timestamp(dt.to_naive_timestamp());
+        let mut entry = self.with_date(dt, is_date);
+        if in_gap
+            && let Some(ICalendarValue::PartialDateTime(value)) = entry.values.last_mut()
+            && **value == resolved
+            && let Ok(local) = TimeZone::UTC.to_timestamp(local)
+        {
+            **value = PartialDateTime::from_naive_timestamp(local.as_second());
+        }
+        entry
+    }
+
     pub(super) fn with_dates(mut self, dts: Vec<Zoned>, is_date: bool) -> Self {
         if !is_date {
             return self.with_date_times(dts);

@@ -184,9 +184,17 @@ impl ICalendar {
                         let Some(recurrence_id) = recurrence.recurrence_id.take() else {
                             continue;
                         };
-                        let recurrence_id = recurrence_id
-                            .with_tz(component.tz_start.unwrap_or_default())
-                            .to_naive_timestamp();
+                        let recurrence_id = match recurrence.recurrence_id_written.take() {
+                            Some((written, written_zone)) => local_timestamp(
+                                &recurrence_id,
+                                &written,
+                                written_zone,
+                                component.tz_start.unwrap_or_default(),
+                            ),
+                            None => recurrence_id
+                                .with_tz(component.tz_start.unwrap_or_default())
+                                .to_naive_timestamp(),
+                        };
                         let _ = recurrence.uid.take();
 
                         privacy = privacy.max(recurrence.privacy());
@@ -1063,16 +1071,29 @@ impl ICalendar {
                 ) if value.has_date() => {
                     let tzid = entry.entry.tz_id();
                     state.tz_start = tzid.and_then(|v| tz_resolver.resolve(v));
-                    if let Some(dt) = value
-                        .to_date_time()
+                    let written = value.to_date_time();
+                    if let Some(dt) = written
+                        .as_ref()
                         .and_then(|dt| dt.to_date_time_with_tz(state.tz_start.unwrap_or_default()))
                     {
                         state.has_dates = true;
+                        // `start` is local to the start's own zone, which becomes the
+                        // series' zone below.
+                        let start = written.as_ref().map_or_else(
+                            || dt.to_naive_timestamp(),
+                            |written| {
+                                local_timestamp(
+                                    &dt,
+                                    written,
+                                    state.tz_start,
+                                    state.tz_start.unwrap_or_else(|| dt.tz()),
+                                )
+                            },
+                        );
                         state.entries.insert(
                             Key::Property(JSCalendarProperty::Start),
                             Value::Element(JSCalendarValue::DateTime(JSCalendarDateTime::new(
-                                dt.to_naive_timestamp(),
-                                true,
+                                start, true,
                             ))),
                         );
 
@@ -1193,8 +1214,9 @@ impl ICalendar {
                 ) if value.has_date() => {
                     let tzid = entry.entry.tz_id();
                     let due_tz = tzid.and_then(|v| tz_resolver.resolve(v)).or(state.tz_start);
-                    if let Some(dt) = value
-                        .to_date_time()
+                    let written = value.to_date_time();
+                    if let Some(dt) = written
+                        .as_ref()
                         .and_then(|dt| dt.to_date_time_with_tz(due_tz.unwrap_or_default()))
                     {
                         // Remove IANA TZ references
@@ -1213,12 +1235,24 @@ impl ICalendar {
                             state.tz_start = dt.tz().to_resolved();
                         }
 
+                        let due = written.as_ref().map_or_else(
+                            || {
+                                dt.with_tz(state.tz_start.unwrap_or_default())
+                                    .to_naive_timestamp()
+                            },
+                            |written| {
+                                local_timestamp(
+                                    &dt,
+                                    written,
+                                    due_tz,
+                                    state.tz_start.unwrap_or_default(),
+                                )
+                            },
+                        );
                         state.entries.insert(
                             Key::Property(JSCalendarProperty::Due),
                             Value::Element(JSCalendarValue::DateTime(JSCalendarDateTime::new(
-                                dt.with_tz(state.tz_start.unwrap_or_default())
-                                    .to_naive_timestamp(),
-                                true,
+                                due, true,
                             ))),
                         );
 
@@ -1291,14 +1325,16 @@ impl ICalendar {
                 ) if value.has_date_and_time() => {
                     let tzid = entry.entry.tz_id();
                     let rid_tz = tzid.and_then(|v| tz_resolver.resolve(v)).or(state.tz_start);
+                    let written = value.to_date_time();
 
-                    if let Some(dt) = value
-                        .to_date_time()
+                    if let Some(dt) = written
+                        .as_ref()
                         .and_then(|dt| dt.to_date_time_with_tz(rid_tz.unwrap_or_default()))
                     {
                         state.has_dates = true;
                         let dt_tz = dt.tz();
                         state.recurrence_id = Some(dt);
+                        state.recurrence_id_written = written.map(|written| (written, rid_tz));
 
                         // Remove IANA TZ references
                         if tzid.is_some() && rid_tz.and_then(|tz| tz.name()).as_deref() == tzid {
@@ -1369,9 +1405,21 @@ impl ICalendar {
                         for pos in 0..entry.entry.values.len() {
                             let (dt, duration) =
                                 period_to_date_time(&entry.entry.values[pos], tz).unwrap();
+                            let written = match &entry.entry.values[pos] {
+                                ICalendarValue::Period(
+                                    ICalendarPeriod::Range { start, .. }
+                                    | ICalendarPeriod::Duration { start, .. },
+                                ) => start.to_date_time(),
+                                _ => None,
+                            };
                             let key = Key::Property(JSCalendarProperty::DateTime(
                                 JSCalendarDateTime::new(
-                                    dt.with_tz(tz_start).to_naive_timestamp(),
+                                    written.map_or_else(
+                                        || dt.with_tz(tz_start).to_naive_timestamp(),
+                                        |written| {
+                                            local_timestamp(&dt, &written, Some(tz), tz_start)
+                                        },
+                                    ),
                                     true,
                                 ),
                             ));
@@ -1408,11 +1456,13 @@ impl ICalendar {
                 ) if value.has_date() => {
                     let tzid = entry.entry.tz_id();
                     let tz = tzid.and_then(|v| tz_resolver.resolve(v)).or(state.tz_start);
+                    let first = value.to_date_time().and_then(|written| {
+                        written
+                            .to_date_time_with_tz(tz.unwrap_or_default())
+                            .map(|dt| (written, dt))
+                    });
 
-                    if let Some(dt) = value
-                        .to_date_time()
-                        .and_then(|dt| dt.to_date_time_with_tz(tz.unwrap_or_default()))
-                    {
+                    if let Some((first_written, dt)) = first {
                         state.has_dates = true;
 
                         // Remove IANA TZ references
@@ -1447,19 +1497,23 @@ impl ICalendar {
                             },
                         ));
 
-                        for (pos, dt) in [dt]
+                        for (pos, (written, dt)) in [(first_written, dt)]
                             .into_iter()
                             .chain(values.filter_map(|v| {
-                                v.into_partial_date_time()
-                                    .and_then(|dt| dt.to_date_time())
-                                    .and_then(|dt| dt.to_date_time_with_tz(tz.unwrap_or_default()))
+                                let written = v.into_partial_date_time()?.to_date_time()?;
+                                let dt = written.to_date_time_with_tz(tz.unwrap_or_default())?;
+                                Some((written, dt))
                             }))
                             .enumerate()
                         {
                             let key = Key::Property(JSCalendarProperty::DateTime(
                                 JSCalendarDateTime::new(
-                                    dt.with_tz(state.tz_start.unwrap_or_default())
-                                        .to_naive_timestamp(),
+                                    local_timestamp(
+                                        &dt,
+                                        &written,
+                                        tz,
+                                        state.tz_start.unwrap_or_default(),
+                                    ),
                                     true,
                                 ),
                             ));
@@ -2087,4 +2141,26 @@ fn override_base<I: JSCalendarId, B: JSCalendarId>(
         !matches!(key, Key::Property(property) if property.is_forbidden_override_patch())
     });
     base
+}
+
+/// The JSCalendar local date-time, in `zone`, of an iCalendar date-time
+/// `written` (in `written_zone`) that resolved to `instant`. A value written
+/// as a local time in the same zone keeps its written wall time. That differs
+/// from the instant's wall time only in a daylight saving gap, where RFC 5545,
+/// Section 3.3.5 resolves 02:30 to 03:30; keeping 02:30 keeps a recurrence
+/// set anchored at 02:30 on the following days.
+fn local_timestamp(
+    instant: &Zoned,
+    written: &crate::common::DateTimeResult,
+    written_zone: Option<Tz>,
+    zone: Tz,
+) -> i64 {
+    if written.offset.is_none()
+        && written_zone.unwrap_or(zone) == zone
+        && let Ok(local) = jiff::tz::TimeZone::UTC.to_timestamp(written.date_time)
+    {
+        local.as_second()
+    } else {
+        instant.with_tz(zone).to_naive_timestamp()
+    }
 }

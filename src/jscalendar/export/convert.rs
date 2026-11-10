@@ -219,11 +219,12 @@ impl ICalendar {
             state.start = Some(start);
         }
         if let Some(dt) = state.start.clone() {
-            component.entries.push(
-                ICalendarEntry::new(ICalendarProperty::Dtstart)
-                    .import_converted(&[JSCalendarProperty::Start], &mut root_conversions)
-                    .with_date(dt, state.is_date),
-            );
+            let entry = ICalendarEntry::new(ICalendarProperty::Dtstart)
+                .import_converted(&[JSCalendarProperty::Start], &mut root_conversions);
+            component.entries.push(match start {
+                Some(local) => entry.with_local_date(dt, local, state.is_date),
+                None => entry.with_date(dt, state.is_date),
+            });
         }
 
         // Add UID
@@ -1351,14 +1352,13 @@ impl ICalendar {
                     Value::Element(JSCalendarValue::DateTime(dt)),
                     ICalendarComponentType::VTodo,
                 ) => {
-                    if let Some(dt) = dt
-                        .to_naive_date_time()
-                        .and_then(|dt| state.tz.unwrap_or_default().from_local_datetime(dt))
+                    if let Some(local) = dt.to_naive_date_time()
+                        && let Some(dt) = state.tz.unwrap_or_default().from_local_datetime(local)
                     {
                         component.entries.push(
                             ICalendarEntry::new(ICalendarProperty::Due)
                                 .import_converted(&[JSCalendarProperty::Due], &mut root_conversions)
-                                .with_date(dt, state.is_date),
+                                .with_local_date(dt, local, state.is_date),
                         );
                     }
                 }

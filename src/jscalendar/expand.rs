@@ -309,7 +309,9 @@ fn expand_entry<'x, I: JSCalendarId, B: JSCalendarId>(
         .from_local_datetime(anchor.local)
         .ok_or(CalendarErrorType::InvalidDtStart)?;
 
-    // recurrenceOverrides, by the local recurrence id. A key whose patch is
+    // recurrenceOverrides, by the instant of the recurrence id: a key is a
+    // local date-time, and in a daylight saving gap 02:30 and 03:30 are the
+    // same instance (RFC 5545, Section 3.3.5). A key whose patch is
     // `excluded` removes that instance; every other key is an instance.
     let mut patches = AHashMap::new();
     let mut excluded = AHashSet::new();
@@ -323,23 +325,28 @@ fn expand_entry<'x, I: JSCalendarId, B: JSCalendarId>(
             else {
                 continue;
             };
+            let Some(local) = rid.to_naive_date_time() else {
+                continue;
+            };
+            let Some(start) = anchor.tz.from_local_datetime(local) else {
+                continue;
+            };
             if matches!(
                 patch.get(&Key::Property(JSCalendarProperty::Excluded)),
                 Some(Value::Bool(true))
             ) {
-                excluded.insert(rid.timestamp);
+                excluded.insert(start.timestamp());
                 continue;
             }
-            patches.insert(rid.timestamp, patch);
-            if let Some(start) = rid
-                .to_naive_date_time()
-                .and_then(|rid| anchor.tz.from_local_datetime(rid))
-            {
-                extra.push((start, None));
-            }
+            patches.insert(start.timestamp(), (*rid, patch));
+            extra.push(Candidate {
+                start,
+                local: Some(local),
+                end: None,
+            });
         }
     }
-    extra.sort_by_key(|(start, _): &Candidate| start.timestamp());
+    extra.sort_by_key(|candidate| candidate.start.timestamp());
 
     let rule = match entry.get(&Key::Property(JSCalendarProperty::RecurrenceRule)) {
         Some(Value::Object(rule)) => RRule::from_floating_ical(
@@ -362,8 +369,12 @@ fn expand_entry<'x, I: JSCalendarId, B: JSCalendarId>(
         None => None,
     };
     let rule: Box<dyn Iterator<Item = Candidate>> = match rule {
-        Some(rule) => Box::new(rule.map(|start| (start, None))),
-        None => Box::new(std::iter::once((first, None))),
+        Some(rule) => Box::new(rule),
+        None => Box::new(std::iter::once(Candidate {
+            start: first,
+            local: Some(anchor.local),
+            end: None,
+        })),
     };
     let candidates = Merge {
         a: rule.peekable(),
@@ -374,25 +385,38 @@ fn expand_entry<'x, I: JSCalendarId, B: JSCalendarId>(
     // iteration continues until no patch could.
     let lookahead = patches
         .iter()
-        .filter_map(|(rid, patch)| {
+        .filter_map(|(_, (rid, patch))| {
             let start = local(patch, JSCalendarProperty::Start)?;
-            let rid = JSCalendarDateTime::new(*rid, true).to_naive_date_time()?;
-            Some(rid.duration_until(start).abs())
+            Some(rid.to_naive_date_time()?.duration_until(start).abs())
         })
         .max()
         .unwrap_or(SignedDuration::ZERO);
     let stop = window.end.checked_add(lookahead).unwrap_or(Timestamp::MAX);
 
-    for (original, _) in candidates {
+    for candidate in candidates {
+        let original = candidate.start;
         if (recurs && *limit == 0) || original.timestamp() >= stop {
             break;
         }
-        let rid = original.to_naive_timestamp();
-        if excluded.contains(&rid) {
+        if excluded.contains(&original.timestamp()) {
             continue;
         }
-        let patch = patches.get(&rid).copied();
-        let Some((start, end)) = placement(&anchor, &original, patch) else {
+        // The recurrence id is the key of the instance's patch, else the local
+        // date-time the rule generated.
+        let (rid, patch) = match patches.get(&original.timestamp()) {
+            Some((rid, patch)) => (*rid, Some(*patch)),
+            None => {
+                let local = candidate
+                    .local
+                    .and_then(|local| jiff::tz::TimeZone::UTC.to_timestamp(local).ok())
+                    .map_or_else(|| original.to_naive_timestamp(), |local| local.as_second());
+                (JSCalendarDateTime::new(local, true), None)
+            }
+        };
+        let Some(rid_local) = rid.to_naive_date_time() else {
+            continue;
+        };
+        let Some((start, end)) = placement(&anchor, &original, rid_local, patch) else {
             continue;
         };
         let Some(end) = end.end_of(&start) else {
@@ -408,7 +432,7 @@ fn expand_entry<'x, I: JSCalendarId, B: JSCalendarId>(
             *limit -= 1;
         }
 
-        let recurrence_id = recurs.then(|| JSCalendarDateTime::new(rid, true));
+        let recurrence_id = recurs.then_some(rid);
         let (object, error) = patch::occurrence(entry, recurrence_id, patch);
         if let Some(error) = error {
             errors.push(JSCalendarExpandError {
@@ -436,12 +460,12 @@ fn expand_entry<'x, I: JSCalendarId, B: JSCalendarId>(
 fn placement<I: JSCalendarId, B: JSCalendarId>(
     anchor: &Anchor,
     original: &Zoned,
+    rid: civil::DateTime,
     patch: Option<&JSMap<'_, I, B>>,
 ) -> Option<(Zoned, Length)> {
     let Some(patch) = patch else {
         return Some((original.clone(), anchor.length));
     };
-    let rid = original.datetime();
     let tz = time_zone(patch).unwrap_or(anchor.tz);
     let start_property = if anchor.overlap == Overlap::TodoDue {
         JSCalendarProperty::Due

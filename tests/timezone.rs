@@ -67,19 +67,25 @@ fn floating_maps_to_unknown_zone() {
     assert_eq!(dt.offset(), Offset::UTC);
 }
 
+/// RFC 5545, Section 3.3.5: a local time that occurs twice is its first
+/// occurrence, and one that does not occur "is interpreted using the UTC
+/// offset before the gap in local times".
 #[test]
-fn local_times_in_gaps_and_folds_are_rejected() {
+fn local_times_in_gaps_and_folds_follow_rfc_5545() {
     let ny = Tz::from_str("America/New_York").unwrap();
-    // Spring forward: 02:30 does not exist.
-    assert_eq!(
-        ny.from_local_datetime(civil::date(2024, 3, 10).at(2, 30, 0, 0)),
-        None
-    );
-    // Fall back: 01:30 occurs twice.
-    assert_eq!(
-        ny.from_local_datetime(civil::date(2024, 11, 3).at(1, 30, 0, 0)),
-        None
-    );
+    // Spring forward: 02:30 does not exist; with the offset before the gap
+    // (UTC-05:00) it is 07:30 UTC, 03:30 EDT.
+    let gap = ny
+        .from_local_datetime(civil::date(2024, 3, 10).at(2, 30, 0, 0))
+        .unwrap();
+    assert_eq!(gap.timestamp().to_string(), "2024-03-10T07:30:00Z");
+    assert_eq!(gap.datetime(), civil::date(2024, 3, 10).at(3, 30, 0, 0));
+    // Fall back: 01:30 occurs twice; the first is 01:30 EDT (UTC-04:00).
+    let fold = ny
+        .from_local_datetime(civil::date(2024, 11, 3).at(1, 30, 0, 0))
+        .unwrap();
+    assert_eq!(fold.timestamp().to_string(), "2024-11-03T05:30:00Z");
+    assert_eq!(fold.offset().seconds(), -4 * 3600);
     let dt = ny
         .from_local_datetime(civil::date(2024, 7, 1).at(9, 0, 0, 0))
         .unwrap();

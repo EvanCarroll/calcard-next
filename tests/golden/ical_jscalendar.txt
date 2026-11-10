@@ -421,27 +421,18 @@ END:VCALENDAR
   "entries": [
     {
       "@type": "Event",
+      "duration": "PT3H",
+      "endTimeZone": "Europe/Paris",
       "iCalendar": {
-        "name": "vevent",
-        "properties": [
-          [
-            "dtstart",
-            {
-              "tzid": "America/Los_Angeles"
-            },
-            "unknown",
-            "20241103T010000"
-          ],
-          [
-            "dtend",
-            {
-              "tzid": "Europe/Paris"
-            },
-            "unknown",
-            "20241103T120000"
-          ]
-        ]
+        "convertedProperties": {
+          "duration": {
+            "name": "dtend"
+          }
+        },
+        "name": "vevent"
       },
+      "start": "2024-11-03T01:00:00",
+      "timeZone": "America/Los_Angeles",
       "uid": "u1",
       "updated": "2024-01-01T00:00:00Z"
     },
@@ -455,38 +446,16 @@ END:VCALENDAR
     {
       "@type": "Event",
       "duration": "PT1H",
-      "iCalendar": {
-        "name": "vevent",
-        "properties": [
-          [
-            "dtstart",
-            {
-              "tzid": "America/New_York"
-            },
-            "unknown",
-            "20240310T023000"
-          ]
-        ]
-      },
+      "start": "2024-03-10T02:30:00",
+      "timeZone": "America/New_York",
       "uid": "u3",
       "updated": "2024-01-01T00:00:00Z"
     },
     {
       "@type": "Event",
       "duration": "PT1H",
-      "iCalendar": {
-        "name": "vevent",
-        "properties": [
-          [
-            "dtstart",
-            {
-              "tzid": "America/New_York"
-            },
-            "unknown",
-            "20241103T013000"
-          ]
-        ]
-      },
+      "start": "2024-11-03T01:30:00",
+      "timeZone": "America/New_York",
       "uid": "u4",
       "updated": "2024-01-01T00:00:00Z"
     },

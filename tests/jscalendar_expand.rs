@@ -212,28 +212,20 @@ fn entries_with_the_same_uid() {
     assert_eq!(found, [(0, "A".to_string()), (1, "B".to_string())]);
 }
 
-type Row = (usize, Option<String>, i64, i64);
+/// (entry, instant of the recurrence id, start, end). The recurrence id is
+/// compared as an instant: in a daylight saving gap the same instance has
+/// the local ids 02:30 (as generated) and 03:30 (as resolved).
+type Row = (usize, Option<i64>, i64, i64);
 
 /// The reference expansion: convert to iCalendar, expand there, and map each
 /// instance back to its entry. The native expansion must agree with it.
 fn reference(json: &Value, tz: Tz, start: Timestamp, end: Timestamp) -> Option<Vec<Row>> {
-    use calcard_next::common::timezone::TzTimestamp;
     let mut tagged = json.clone();
     let entries = match tagged.get_mut("entries") {
         Some(Value::Array(entries)) => entries.iter_mut().collect::<Vec<_>>(),
         _ => vec![&mut tagged],
     };
-    // Each entry's time zone: JSCalendar recurrence ids are local date-times
-    // in it.
-    let mut zones = Vec::new();
     for (index, entry) in entries.into_iter().enumerate() {
-        zones.push(
-            entry
-                .get("timeZone")
-                .and_then(Value::as_str)
-                .and_then(|name| Tz::from_str(name).ok())
-                .unwrap_or(tz),
-        );
         if let Some(entry) = entry.as_object_mut() {
             entry.insert("uid".into(), json!(format!("ref-{index}")));
         }
@@ -257,17 +249,10 @@ fn reference(json: &Value, tz: Tz, start: Timestamp, end: Timestamp) -> Option<V
             times.start.timestamp().as_second(),
             times.end.timestamp().as_second(),
         );
-        let rid = event.recurrence_id.as_ref().map(|rid| {
-            // A rule instance at a local time that does not exist is left
-            // floating by both expansions; its local time is the id.
-            let local = if rid.time_zone().is_unknown() {
-                rid.to_naive_timestamp()
-            } else {
-                rid.with_time_zone(zones[index].to_time_zone())
-                    .to_naive_timestamp()
-            };
-            calcard_next::jscalendar::JSCalendarDateTime::new(local, true).to_rfc3339()
-        });
+        let rid = event
+            .recurrence_id
+            .as_ref()
+            .map(|rid| rid.timestamp().as_second());
         rows.push((index, rid, s, e));
     }
     rows.sort();
@@ -275,6 +260,7 @@ fn reference(json: &Value, tz: Tz, start: Timestamp, end: Timestamp) -> Option<V
 }
 
 fn native(json: &Value, tz: Tz, start: Timestamp, end: Timestamp) -> Option<Vec<Row>> {
+    let zones = entry_zones(json, tz);
     let text = json.to_string();
     let calendar = JSCalendar::<String, String>::parse(&text).ok()?;
     let expand = calendar.expand_between(tz, start, end, 100_000);
@@ -284,7 +270,10 @@ fn native(json: &Value, tz: Tz, start: Timestamp, end: Timestamp) -> Option<Vec<
         .map(|i| {
             (
                 i.entry,
-                i.recurrence_id.map(|rid| rid.to_rfc3339()),
+                i.recurrence_id
+                    .and_then(|rid| rid.to_naive_date_time())
+                    .and_then(|rid| zones[i.entry].from_local_datetime(rid))
+                    .map(|rid| rid.timestamp().as_second()),
                 i.start.timestamp().as_second(),
                 i.end.timestamp().as_second(),
             )
@@ -423,4 +412,23 @@ fn this_and_future_is_icalendar_only() {
             "2024-04-24T09:00:00"
         ]
     );
+}
+
+/// Each entry's time zone: JSCalendar recurrence ids are local date-times in
+/// it.
+fn entry_zones(json: &Value, tz: Tz) -> Vec<Tz> {
+    let entries = match json.get("entries") {
+        Some(Value::Array(entries)) => entries.iter().collect::<Vec<_>>(),
+        _ => vec![json],
+    };
+    entries
+        .iter()
+        .map(|entry| {
+            entry
+                .get("timeZone")
+                .and_then(Value::as_str)
+                .and_then(|name| Tz::from_str(name).ok())
+                .unwrap_or(tz)
+        })
+        .collect()
 }
