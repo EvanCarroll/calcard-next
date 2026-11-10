@@ -7,6 +7,7 @@
 #![deny(rust_2018_idioms)]
 #![forbid(unsafe_code)]
 use common::tokenizer::{StopChar, Token};
+use diagnostic::{Diagnostic, DiagnosticKind, Location};
 use icalendar::{ICalendar, ICalendarComponentType};
 use std::{
     borrow::Cow,
@@ -57,6 +58,11 @@ pub struct Parser<'x> {
     pub(crate) strip_ctl: bool,
     pub(crate) token_buf: Vec<Token<'x>>,
     pub(crate) last_token_end: usize,
+    /// What the lenient parser skipped or repaired, when collected.
+    pub(crate) diagnostics: Option<Vec<Diagnostic>>,
+    /// The offset and 1-based line of the last diagnostic, from which the
+    /// next one's line is counted.
+    pub(crate) last_line: (usize, u32),
 }
 
 impl<'x> Parser<'x> {
@@ -78,12 +84,58 @@ impl<'x> Parser<'x> {
             strip_ctl: false,
             token_buf: Vec::with_capacity(10),
             last_token_end: usize::MAX,
+            diagnostics: None,
+            last_line: (0, 1),
         }
     }
 
     pub fn strict(mut self) -> Self {
         self.strict = true;
         self
+    }
+
+    /// Collects what the parser skips or repairs in input it does not reject:
+    /// lines without a value or name, `BEGIN` and `END` without a component
+    /// name, an `END` that does not match the open component, and components
+    /// left open at the end of the input. Each is a
+    /// [`DiagnosticKind::Skipped`] or [`DiagnosticKind::Repaired`] at a
+    /// [`Location::Input`]. A strict parser rejects such input instead. Take
+    /// them with [`Parser::take_diagnostics`].
+    pub fn with_diagnostics(mut self) -> Self {
+        self.diagnostics = Some(Vec::new());
+        self
+    }
+
+    /// Takes the diagnostics collected for the entries parsed so far.
+    pub fn take_diagnostics(&mut self) -> Vec<Diagnostic> {
+        self.diagnostics
+            .as_mut()
+            .map(std::mem::take)
+            .unwrap_or_default()
+    }
+
+    /// Records what was skipped or repaired at `offset`, when collecting.
+    pub(crate) fn note(&mut self, offset: usize, property: &str, kind: DiagnosticKind) {
+        let Some(diagnostics) = self.diagnostics.as_mut() else {
+            return;
+        };
+        let offset = offset.min(self.input.len());
+        let (from, line) = if offset >= self.last_line.0 {
+            self.last_line
+        } else {
+            (0, 1)
+        };
+        let line = line
+            + self.input[from..offset]
+                .iter()
+                .filter(|&&byte| byte == b'\n')
+                .count() as u32;
+        self.last_line = (offset, line);
+        diagnostics.push(Diagnostic::new(
+            Location::Input { offset, line },
+            property,
+            kind,
+        ));
     }
 
     pub fn entry(&mut self) -> Entry {

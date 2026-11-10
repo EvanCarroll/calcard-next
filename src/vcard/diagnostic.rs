@@ -32,6 +32,9 @@ impl VCard {
     /// mean the card is valid: mandatory properties, cardinality and other
     /// rules of RFC 6350 are not checked, nor are the values of known
     /// parameters. This works on owned data, not on its rkyv archive.
+    ///
+    /// Lines the parser skipped are not in the parsed data; collect them with
+    /// [`Parser::with_diagnostics`](crate::Parser::with_diagnostics).
     pub fn diagnostics(&self) -> Vec<Diagnostic> {
         let mut diagnostics = Vec::new();
         for (entry_id, entry) in self.entries.iter().enumerate() {

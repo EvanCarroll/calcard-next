@@ -11,6 +11,7 @@ use crate::{
         CalendarScale, Encoding, PartialDateTime,
         parser::{Boolean, Integer, parse_digits, parse_small_digits},
     },
+    diagnostic::DiagnosticKind,
     icalendar::{ICalendarDay, ICalendarWeekday},
 };
 use std::{borrow::Cow, iter::Peekable, slice::Iter};
@@ -33,6 +34,7 @@ impl Parser<'_> {
         let mut next_component_id: u32 = 1;
         let mut ical_idx = 0;
         let mut ical = ical_components.last_mut().unwrap();
+        let mut terminated = false;
 
         loop {
             // Fetch property name
@@ -41,6 +43,7 @@ impl Parser<'_> {
                 Some(token) => token,
                 None => break,
             };
+            let line_start = token.start;
 
             let mut params = Params {
                 params: Vec::new(),
@@ -59,7 +62,11 @@ impl Parser<'_> {
                 StopChar::Colon => {}
                 StopChar::Lf => {
                     // Invalid line
-                    if name.is_empty() || !self.strict {
+                    if name.is_empty() {
+                        continue;
+                    } else if !self.strict {
+                        let name = Token::new(name).into_string();
+                        self.note(line_start, &name, DiagnosticKind::Skipped);
                         continue;
                     } else {
                         return Entry::InvalidLine(Token::new(name).into_string());
@@ -96,10 +103,13 @@ impl Parser<'_> {
                                 return Entry::TooManyComponents;
                             }
                             ical = ical_components.last_mut().unwrap();
+                            continue;
                         }
                     }
 
+                    // BEGIN without a component name.
                     if !self.strict {
+                        self.note(line_start, "BEGIN", DiagnosticKind::Skipped);
                         continue;
                     } else {
                         return Entry::InvalidLine("BEGIN".to_string());
@@ -114,10 +124,17 @@ impl Parser<'_> {
                                     ICalendarComponentType::Other(token.into_string())
                                 });
                             if ical.component_type == component_type || !self.strict {
+                                if ical.component_type != component_type {
+                                    // Taken as the end of the open component.
+                                    let end = format!("END:{}", component_type.as_str());
+                                    self.note(line_start, &end, DiagnosticKind::Repaired);
+                                }
                                 if let Some(parent_ical_idx) = ical_stack.pop() {
                                     ical_idx = parent_ical_idx;
                                     ical = ical_components.get_mut(ical_idx).unwrap();
+                                    continue;
                                 } else {
+                                    terminated = true;
                                     break;
                                 }
                             } else {
@@ -129,7 +146,9 @@ impl Parser<'_> {
                         }
                     }
 
+                    // END without a component name.
                     if !self.strict {
+                        self.note(line_start, "END", DiagnosticKind::Skipped);
                         continue;
                     } else {
                         return Entry::InvalidLine("END".to_string());
@@ -144,6 +163,7 @@ impl Parser<'_> {
                         if params.stop_char != StopChar::Lf {
                             self.seek_lf();
                         }
+                        self.note(line_start, "", DiagnosticKind::Skipped);
                         continue;
                     }
                 }
@@ -439,7 +459,20 @@ impl Parser<'_> {
             }
         }
 
-        if ical_stack.is_empty() || !self.strict {
+        if terminated {
+            Entry::ICalendar(ICalendar {
+                components: ical_components,
+            })
+        } else if !self.strict {
+            // Each component still open at the end of the input, innermost
+            // first, is taken to end there.
+            let open = std::iter::once(ical_idx)
+                .chain(ical_stack.iter().rev().copied())
+                .map(|idx| ical_components[idx].component_type.as_str().to_string())
+                .collect::<Vec<_>>();
+            for component in open {
+                self.note(self.input.len(), &component, DiagnosticKind::Repaired);
+            }
             Entry::ICalendar(ICalendar {
                 components: ical_components,
             })

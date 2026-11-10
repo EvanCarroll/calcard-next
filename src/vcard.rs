@@ -405,4 +405,18 @@ impl VCard {
             other => Err(other),
         }
     }
+
+    /// Parses as [`VCard::parse`] does, and also returns what the parser
+    /// skipped or repaired in the input (see [`Parser::with_diagnostics`]).
+    /// [`VCard::diagnostics`] reports what the parsed vCard keeps but does
+    /// not interpret.
+    pub fn parse_with_diagnostics(
+        value: impl AsRef<str>,
+    ) -> Result<(Self, Vec<crate::diagnostic::Diagnostic>), Entry> {
+        let mut parser = Parser::new(value.as_ref()).with_diagnostics();
+        match parser.entry() {
+            Entry::VCard(vcard) => Ok((vcard, parser.take_diagnostics())),
+            other => Err(other),
+        }
+    }
 }

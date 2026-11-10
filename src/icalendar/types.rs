@@ -1384,6 +1384,20 @@ impl ICalendar {
             other => Err(other),
         }
     }
+
+    /// Parses as [`ICalendar::parse`] does, and also returns what the
+    /// parser skipped or repaired in the input (see
+    /// [`Parser::with_diagnostics`]). [`ICalendar::diagnostics`] reports
+    /// what the parsed calendar keeps but does not interpret.
+    pub fn parse_with_diagnostics(
+        value: impl AsRef<str>,
+    ) -> Result<(Self, Vec<crate::diagnostic::Diagnostic>), Entry> {
+        let mut parser = Parser::new(value.as_ref()).with_diagnostics();
+        match parser.entry() {
+            Entry::ICalendar(icalendar) => Ok((icalendar, parser.take_diagnostics())),
+            other => Err(other),
+        }
+    }
 }
 
 impl Hash for ICalendarValue {

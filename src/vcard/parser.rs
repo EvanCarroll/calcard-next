@@ -15,6 +15,7 @@ use crate::{
         parser::{Boolean, Integer, Timestamp, parse_digits, parse_small_digits},
         tokenizer::StopChar,
     },
+    diagnostic::DiagnosticKind,
     vcard::{
         Jscomp, VCardGramGender, VCardKind, VCardLevel, VCardParameterValue, VCardPhonetic,
         VCardProperty, VCardSex,
@@ -46,6 +47,7 @@ impl Parser<'_> {
                 None => break,
             };
             self.stop_dot = false;
+            let line_start = token.start;
 
             let mut params = Params {
                 params: Vec::new(),
@@ -75,7 +77,11 @@ impl Parser<'_> {
                 StopChar::Colon => {}
                 StopChar::Lf => {
                     // Invalid line
-                    if name.is_empty() || !self.strict {
+                    if name.is_empty() {
+                        continue;
+                    } else if !self.strict {
+                        let name = Token::new(name).into_string();
+                        self.note(line_start, &name, DiagnosticKind::Skipped);
                         continue;
                     } else {
                         return Entry::InvalidLine(Token::new(name).into_string());
@@ -100,6 +106,7 @@ impl Parser<'_> {
                         if params.stop_char != StopChar::Lf {
                             self.seek_lf();
                         }
+                        self.note(line_start, "", DiagnosticKind::Skipped);
                         continue;
                     }
                 }
@@ -366,7 +373,15 @@ impl Parser<'_> {
             vcard.entries.push(entry);
         }
 
-        if is_valid || !self.strict {
+        if is_valid {
+            Entry::VCard(vcard)
+        } else if !self.strict {
+            // Taken to end at the end of the input, or at a nested BEGIN.
+            self.note(
+                self.last_token_end.min(self.input.len()),
+                "VCARD",
+                DiagnosticKind::Repaired,
+            );
             Entry::VCard(vcard)
         } else {
             Entry::UnterminatedComponent("BEGIN".into())

@@ -19,6 +19,8 @@
 //!   and `JSContact::diagnostics` describe a parsed value.
 //! - The `*_with_report` conversions also return what they carried without
 //!   converting.
+//! - `Parser::with_diagnostics` collects what the lenient parser skipped or
+//!   repaired in the input, which the parsed value cannot show.
 //!
 //! An empty report means nothing was kept uninterpreted. It does not mean the
 //! data is valid: semantic rules, such as a mandatory property or an `UNTIL`
@@ -66,6 +68,9 @@ pub enum Location {
     ICalendar { component: u32, entry: Option<u32> },
     /// An entry of a `VCard`, by its index in `VCard::entries`.
     VCard { entry: u32 },
+    /// A place in the input of a parser: the byte offset and the 1-based line
+    /// of the content line, or the end of the input.
+    Input { offset: usize, line: u32 },
 }
 
 /// What a [`Diagnostic`] reports.
@@ -103,6 +108,15 @@ pub enum DiagnosticKind {
     /// `iCalendar/properties`, `iCalendar/components` or `vCard/properties`,
     /// or dropped because the conversion options leave those out.
     NotConverted,
+    /// Input the parser dropped: a line without a value or name, or a `BEGIN`
+    /// or `END` without a component name. `property` is the line's name, if
+    /// it has one.
+    Skipped,
+    /// Structure the parser fixed up: an `END` that does not match the open
+    /// component, which it takes as that component's end, or a component
+    /// left open at the end of the input. `property` is the `END` line, or
+    /// the type of the open component.
+    Repaired,
 }
 
 impl DiagnosticKind {
@@ -117,6 +131,8 @@ impl DiagnosticKind {
             DiagnosticKind::UnknownValue => "unknown value",
             DiagnosticKind::UnknownComponent => "unknown component",
             DiagnosticKind::NotConverted => "not converted",
+            DiagnosticKind::Skipped => "skipped",
+            DiagnosticKind::Repaired => "repaired",
         }
     }
 }
@@ -140,6 +156,7 @@ impl fmt::Display for Location {
                 entry: None,
             } => write!(f, "component {component}"),
             Location::VCard { entry } => write!(f, "entry {entry}"),
+            Location::Input { line, .. } => write!(f, "line {line}"),
         }
     }
 }

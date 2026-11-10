@@ -491,7 +491,8 @@ fn golden_diagnostics() {
     let mut out = String::new();
     for (name, input) in corpus("ical") {
         writeln!(out, "== ical/{name}").unwrap();
-        let ical = parse_ical(&input);
+        let (ical, skipped) = ICalendar::parse_with_diagnostics(&input).unwrap();
+        render_diagnostics(&mut out, "input", &skipped);
         for diagnostic in ical.diagnostics() {
             let path = ical.path(&diagnostic.location).unwrap_or_default();
             writeln!(out, "parsed: {diagnostic} at {path}").unwrap();
@@ -522,8 +523,9 @@ fn golden_diagnostics() {
     }
     for (name, input) in corpus("vcard") {
         writeln!(out, "== vcard/{name}").unwrap();
-        let mut parser = Parser::new(&input);
+        let mut parser = Parser::new(&input).with_diagnostics();
         while let Entry::VCard(vcard) = parser.entry() {
+            render_diagnostics(&mut out, "input", &parser.take_diagnostics());
             render_diagnostics(&mut out, "parsed", &vcard.diagnostics());
             let (jscontact, report) =
                 vcard.into_jscontact_with_report::<String, String>(Default::default());
