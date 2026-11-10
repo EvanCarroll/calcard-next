@@ -205,3 +205,33 @@ fn a_utc_dtstart_recurs_in_utc() {
         ]
     );
 }
+
+/// Every instance lasts "the same exact duration" as DTSTART to DTEND (RFC
+/// 5545, Section 3.8.5.3), also when DTEND is in another time zone or a
+/// daylight saving change falls in between.
+#[test]
+fn instances_last_the_exact_dtstart_to_dtend_duration() {
+    let lengths = |ical: &ICalendar| {
+        let expand = ical.expand_dates(Tz::UTC, 10);
+        expand
+            .events
+            .iter()
+            .map(|e| {
+                let (start, end) = e.timestamps();
+                end - start
+            })
+            .collect::<Vec<_>>()
+    };
+    // 10:00 in São Paulo (UTC-3) to 15:00 in Dublin (UTC+0) is 2 hours.
+    let zones = calendar(
+        "BEGIN:VEVENT\r\nUID:z\r\nDTSTART;TZID=America/Sao_Paulo:20180301T100000\r\n\
+         DTEND;TZID=Europe/Dublin:20180301T150000\r\nRRULE:FREQ=MONTHLY;COUNT=3\r\nEND:VEVENT\r\n",
+    );
+    assert_eq!(lengths(&zones), [7200; 3]);
+    // 23:00 to 04:00 across the spring-forward night is 4 hours.
+    let dst = calendar(
+        "BEGIN:VEVENT\r\nUID:d\r\nDTSTART;TZID=America/New_York:20240309T230000\r\n\
+         DTEND;TZID=America/New_York:20240310T040000\r\nRRULE:FREQ=DAILY;COUNT=2\r\nEND:VEVENT\r\n",
+    );
+    assert_eq!(lengths(&dst), [4 * 3600; 2]);
+}

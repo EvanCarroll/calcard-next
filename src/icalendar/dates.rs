@@ -611,12 +611,20 @@ impl ICalendarComponent {
                 .to_date_time_with_tz(tz_resolver.resolve_or_default(dt_end_tzid.or(dt_start_tzid)))
                 .ok_or(CalendarErrorType::InvalidDtEnd)?;
 
+            // Every instance lasts "the same exact duration" as DTSTART to
+            // DTEND (RFC 5545, Section 3.8.5.3), across time zones and
+            // daylight saving changes. Between dates, days are nominal.
+            let length = if dt_start_has_time {
+                dt_start_tz.duration_until(&end)
+            } else {
+                dt_end.date_time.duration_since(dt_start.date_time)
+            };
             event = Some(CalendarEvent::new(
                 comp_id,
                 dt_start_tz,
                 TimeOrDelta::Time(end),
             ));
-            dt_end.date_time.duration_since(dt_start.date_time)
+            length
         } else if let Some(duration) = duration {
             let duration = duration
                 .to_duration()
@@ -642,12 +650,20 @@ impl ICalendarComponent {
                 .to_date_time_with_tz(tz_resolver.resolve_or_default(due_tzid.or(dt_start_tzid)))
                 .ok_or(CalendarErrorType::InvalidDtEnd)?;
 
+            // Every instance lasts "the same exact duration" as DTSTART to
+            // DUE (RFC 5545, Section 3.8.5.3), across time zones and
+            // daylight saving changes. Between dates, days are nominal.
+            let length = if dt_start_has_time {
+                dt_start_tz.duration_until(&end)
+            } else {
+                due.date_time.duration_since(dt_start.date_time)
+            };
             event = Some(CalendarEvent::new(
                 comp_id,
                 dt_start_tz,
                 TimeOrDelta::Time(end),
             ));
-            due.date_time.duration_since(dt_start.date_time)
+            length
         } else {
             /*
                For cases where a "VEVENT" calendar component
