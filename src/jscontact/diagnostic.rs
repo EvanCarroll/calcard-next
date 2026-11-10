@@ -203,6 +203,7 @@ impl<I: JSContactId, B: JSContactId> PropertySchema for ContactSchema<I, B> {
                 | JSContactProperty::Context(_)
                 | JSContactProperty::Feature(_)
                 | JSContactProperty::SortAsKind(_)
+                | JSContactProperty::LanguageTag(_)
                 | JSContactProperty::Pointer(_)
         )
     }

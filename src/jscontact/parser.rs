@@ -45,7 +45,8 @@ where
 
     fn try_parse<P>(key: &Key<'_, Self::Property>, value: &str) -> Option<Self> {
         if let Key::Property(prop) = key {
-            match prop {
+            // A patch sets the property its pointer ends in.
+            match prop.patch_or_prop() {
                 JSContactProperty::Type => JSContactType::from_str(value)
                     .ok()
                     .map(JSContactValue::Type),
@@ -120,7 +121,16 @@ impl<I: JSContactId> jmap_tools::Property for JSContactProperty<I> {
                 JSContactProperty::SortAs => JSContactKind::from_str(value)
                     .ok()
                     .map(JSContactProperty::SortAsKind),
-                JSContactProperty::ConvertedProperties | JSContactProperty::Localizations => {
+                JSContactProperty::ConvertedProperties => {
+                    JSContactProperty::Pointer(JsonPointer::parse(value)).into()
+                }
+                // "localizations: String[PatchObject]" maps language tags to
+                // PatchObjects, whose keys are pointers (RFC 9553, Section
+                // 2.7.1).
+                JSContactProperty::Localizations => {
+                    JSContactProperty::LanguageTag(value.to_string()).into()
+                }
+                JSContactProperty::LanguageTag(_) if value.contains('/') => {
                     JSContactProperty::Pointer(JsonPointer::parse(value)).into()
                 }
                 JSContactProperty::AddressBookIds => match IdReference::parse(value) {

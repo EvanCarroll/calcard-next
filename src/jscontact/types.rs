@@ -180,6 +180,7 @@ impl<I: JSContactId> JSContactProperty<I> {
             JSContactProperty::Pointer(pointer) => return Cow::Owned(pointer.to_string()),
             JSContactProperty::IdValue(id) => return Cow::Owned(id.to_string()),
             JSContactProperty::IdReference(s) => return Cow::Owned(format!("#{}", s)),
+            JSContactProperty::LanguageTag(tag) => return Cow::Owned(tag.clone()),
         }
         .into()
     }

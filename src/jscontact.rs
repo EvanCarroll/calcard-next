@@ -129,6 +129,9 @@ pub enum JSContactProperty<I: JSContactId> {
     Year,
     IdValue(I),
     IdReference(String),
+    /// A language tag that keys the PatchObjects of `localizations` (RFC
+    /// 9553, Section 2.7.1).
+    LanguageTag(String),
     Context(Context),
     Feature(Feature),
     SortAsKind(JSContactKind),

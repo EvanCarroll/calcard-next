@@ -569,15 +569,18 @@ where
                     self.localizations
                         .into_iter()
                         .map(|(lang, locals)| {
-                            (
-                                Key::Owned(lang),
-                                Value::Object(
-                                    locals
-                                        .into_iter()
-                                        .map(|(key, value)| (Key::Owned(key), value))
-                                        .collect(),
-                                ),
-                            )
+                            // The keys the parser would read from this data.
+                            let lang = Key::Property(JSContactProperty::LanguageTag(lang));
+                            let locals = locals
+                                .into_iter()
+                                .map(|(key, value)| {
+                                    let key = JSContactProperty::try_parse(Some(&lang), &key)
+                                        .map(Key::Property)
+                                        .unwrap_or(Key::Owned(key));
+                                    (key, value)
+                                })
+                                .collect();
+                            (lang, Value::Object(locals))
                         })
                         .collect(),
                 ),
