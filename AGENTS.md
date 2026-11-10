@@ -3,6 +3,19 @@
 Guidance for AI coding agents working on `calcard-next`, a Rust library for
 parsing, generating and converting iCalendar/JSCalendar and vCard/JSContact.
 
+## Priorities
+
+- **Correctness and performance come first.** Never sacrifice either one for
+  backwards compatibility or a smaller changeset. Make the change the
+  specification requires, even when it breaks the public API, changes output
+  or touches many files. Mark breaking changes as described below.
+- Don't keep known-wrong behaviour as a fallback, and don't work around a bug
+  in one place while leaving it in another. Fix it where it lives. If that is
+  out of scope, say so explicitly and file an issue rather than leaving it
+  silently.
+- Don't avoid restructuring code, or reformatting the lines you touch, to keep
+  the diff small. Review a large diff carefully rather than shrinking it.
+
 ## Commits
 
 - **Never add a `Co-Authored-By` trailer**, or any other AI attribution
