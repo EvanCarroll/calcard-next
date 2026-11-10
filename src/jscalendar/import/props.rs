@@ -287,6 +287,15 @@ impl<I: JSCalendarId, B: JSCalendarId> State<I, B> {
         if !self.is_recurrence_instance
             && let Some(component_type) = self.component_type.to_jscalendar_type()
         {
+            /*
+             A Group without a "version" property is version "1.0"
+             (draft-ietf-calext-jscalendarbis, Section 3.1.2).
+            */
+            if component_type == crate::jscalendar::JSCalendarType::Group {
+                self.entries
+                    .entry(Key::Property(JSCalendarProperty::Version))
+                    .or_insert_with(|| Value::Str("2.0".into()));
+            }
             self.entries.insert(
                 Key::Property(JSCalendarProperty::Type),
                 Value::Element(JSCalendarValue::Type(component_type)),

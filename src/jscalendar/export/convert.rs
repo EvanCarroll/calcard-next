@@ -23,7 +23,10 @@ type JSMap<'x, I, B> = Map<'x, JSCalendarProperty<I>, JSCalendarValue<I, B>>;
 use std::str::FromStr;
 
 impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
-    pub fn into_icalendar(self) -> Option<ICalendar> {
+    /// Converts to iCalendar. JSCalendar 1.0 (RFC 8984) data is upgraded to
+    /// 2.0 first (see [`JSCalendar::upgrade`]).
+    pub fn into_icalendar(mut self) -> Option<ICalendar> {
+        self.upgrade();
         self.0.into_object().map(|entries| {
             let mut ical = ICalendar::default();
 

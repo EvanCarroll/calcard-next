@@ -1,0 +1,612 @@
+{
+ "@type": "Group",
+ "uid": "00b9be7e-8d9a-52c9-83b9-315212e603ac",
+ "prodId": "-//danyal-meetups//jscalendar.py//EN",
+ "updated": "2026-11-09T20:20:59Z",
+ "title": "Meetups at Improving Houston",
+ "entries": [
+  {
+   "@type": "Event",
+   "uid": "c7529b60-c968-57cd-9ab6-95f360173924",
+   "title": "Code 4 Y'all",
+   "start": "2026-03-02T19:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "mo",
+       "nthOfPeriod": 1
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-07-06T19:00:00": {
+     "start": "2026-07-13T19:00:00"
+    },
+    "2026-09-07T19:00:00": {
+     "start": "2026-09-14T19:00:00"
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "8e9974d3-2135-531d-91d6-1658cec15b9d",
+   "title": "Houston Open Source Society",
+   "start": "2026-02-04T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "we",
+       "nthOfPeriod": 1
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "d10d8aad-6992-5879-a285-b54a05fb92e0",
+   "title": "Side Project Society",
+   "start": "2026-02-05T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "th",
+       "nthOfPeriod": 1
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-09-03T18:00:00": {
+     "start": "2026-09-10T18:00:00"
+    },
+    "2026-10-01T18:00:00": {
+     "start": "2026-10-08T18:00:00"
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "84a5fe08-4ec0-5617-b5a7-725a492da133",
+   "title": "Bad Movie Night",
+   "start": "2026-02-06T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "fr",
+       "nthOfPeriod": 1
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-05-01T18:00:00": {
+     "excluded": true
+    },
+    "2026-07-03T18:00:00": {
+     "start": "2026-07-10T18:00:00"
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "af3d8b35-ba7e-5ec3-b4b1-3e479ad4b851",
+   "title": "Houston Sales Community",
+   "start": "2026-06-09T19:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "tu",
+       "nthOfPeriod": 2
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-07-14T19:00:00": {
+     "excluded": true
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "79e5d733-951e-5e83-93e6-2848f60038c6",
+   "title": "Design Thinking and Innovation",
+   "start": "2026-02-11T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "we",
+       "nthOfPeriod": 2
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-04-08T18:00:00": {
+     "excluded": true
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "33f685cb-0dc2-586d-959a-9792a6e1630c",
+   "title": "Agile HTX - Lean Beers",
+   "start": "2026-02-12T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "th",
+       "nthOfPeriod": 2
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "49ac8332-1465-59e0-8483-43ebf62072ee",
+   "title": "PyHou",
+   "start": "2026-01-20T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "tu",
+       "nthOfPeriod": 3
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-05-19T18:00:00": {
+     "excluded": true
+    },
+    "2026-09-15T18:00:00": {
+     "excluded": true
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "96f85be5-52bb-58d3-97c3-7427d7ab1750",
+   "title": "Houston Business Analysts",
+   "start": "2026-01-21T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "we",
+       "nthOfPeriod": 3
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "8428d2b9-4029-5b7a-88e9-bf109a5161f2",
+   "title": "Agile Leadership Network Houston",
+   "start": "2026-02-19T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "th",
+       "nthOfPeriod": 3
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-05-21T18:00:00": {
+     "excluded": true
+    },
+    "2026-06-18T18:00:00": {
+     "excluded": true
+    },
+    "2026-08-20T18:00:00": {
+     "start": "2026-08-19T18:00:00",
+     "description": "Roundup post listed this as Thursday 8/19, but that date is a Wednesday; date unconfirmed."
+    },
+    "2026-09-17T18:00:00": {
+     "excluded": true
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "da4b0250-cffe-5fb9-8735-e32dc1651b61",
+   "title": "Houston AWS Group",
+   "start": "2026-07-28T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "tu",
+       "nthOfPeriod": 4
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-07-28T18:00:00": {
+     "start": "2026-07-22T18:00:00"
+    },
+    "2026-11-24T18:00:00": {
+     "excluded": true
+    },
+    "2026-12-22T18:00:00": {
+     "excluded": true
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "d1c26dc2-7ba5-5956-834c-105a6712cb11",
+   "title": "Houston Java User Group",
+   "start": "2026-01-28T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "we",
+       "nthOfPeriod": 4
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-01-28T18:00:00": {
+     "start": "2026-01-21T18:00:00"
+    },
+    "2026-07-22T18:00:00": {
+     "start": "2026-07-29T18:00:00"
+    },
+    "2026-10-28T18:00:00": {
+     "start": "2026-10-15T18:00:00"
+    },
+    "2026-11-25T18:00:00": {
+     "excluded": true
+    },
+    "2026-12-23T18:00:00": {
+     "excluded": true
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "85da4dca-c0e5-56cc-9342-69deda8c46a6",
+   "title": "The Houston Innovation Commons",
+   "start": "2026-01-29T18:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "th",
+       "nthOfPeriod": -1
+      }
+     ]
+    }
+   ],
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-04-30T18:00:00": {
+     "excluded": true
+    },
+    "2026-05-28T18:00:00": {
+     "excluded": true
+    },
+    "2026-11-26T18:00:00": {
+     "excluded": true
+    },
+    "2026-12-31T18:00:00": {
+     "excluded": true
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "f9ff8a16-0fa3-571f-beb9-b8f51bbeac52",
+   "title": "Code & Coffee Houston",
+   "start": "2026-01-25T13:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "su",
+       "nthOfPeriod": -1
+      }
+     ],
+     "until": "2026-05-31T23:59:59"
+    }
+   ],
+   "relatedTo": {
+    "52b89bba-1cc8-51d8-8889-68ac7f78fe29": {
+     "@type": "Relation",
+     "relation": {
+      "next": true
+     }
+    }
+   },
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-01-25T13:00:00": {
+     "description": "Roundup post listed this as Saturday 1/25, but that date is a Sunday; date unconfirmed."
+    }
+   }
+  },
+  {
+   "@type": "Event",
+   "uid": "52b89bba-1cc8-51d8-8889-68ac7f78fe29",
+   "title": "Code & Coffee Houston",
+   "start": "2026-06-28T10:00:00",
+   "timeZone": "America/Chicago",
+   "duration": "PT2H",
+   "status": "tentative",
+   "privacy": "public",
+   "freeBusyStatus": "free",
+   "recurrenceRules": [
+    {
+     "@type": "RecurrenceRule",
+     "frequency": "monthly",
+     "byDay": [
+      {
+       "@type": "NDay",
+       "day": "su",
+       "nthOfPeriod": -1
+      }
+     ]
+    }
+   ],
+   "relatedTo": {
+    "f9ff8a16-0fa3-571f-beb9-b8f51bbeac52": {
+     "@type": "Relation",
+     "relation": {
+      "first": true
+     }
+    }
+   },
+   "locations": {
+    "improving-houston": {
+     "@type": "Location",
+     "name": "Improving Houston",
+     "timeZone": "America/Chicago"
+    }
+   },
+   "recurrenceOverrides": {
+    "2026-06-28T10:00:00": {
+     "description": "Roundup post listed this as Saturday 6/28, but that date is a Sunday; date unconfirmed."
+    },
+    "2026-07-26T10:00:00": {
+     "excluded": true
+    },
+    "2026-10-25T10:00:00": {
+     "excluded": true
+    },
+    "2026-11-29T10:00:00": {
+     "excluded": true
+    },
+    "2026-12-27T10:00:00": {
+     "excluded": true
+    }
+   }
+  }
+ ]
+}

@@ -9,6 +9,7 @@ pub mod import;
 pub mod parser;
 pub mod patch;
 pub mod types;
+pub mod upgrade;
 
 use crate::{
     common::{CalendarScale, IanaString, LinkRelation},

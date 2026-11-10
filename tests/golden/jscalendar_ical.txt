@@ -5,7 +5,7 @@ CREATED:20200115T130000Z
 DTSTAMP:20200115T130000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date basic
 UID:e-basic
 END:VEVENT
@@ -23,13 +23,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T13:00:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date basic",
@@ -49,7 +46,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-basic",
-  "updated": "2020-01-15T13:00:00Z"
+  "updated": "2020-01-15T13:00:00Z",
+  "version": "2.0"
 }
 == date_basic_fmt.json
 BEGIN:VCALENDAR
@@ -58,7 +56,7 @@ CREATED:20200115T130000Z
 DTSTAMP:20200115T130000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date basic_fmt
 UID:e-basic_fmt
 END:VEVENT
@@ -76,13 +74,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T13:00:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date basic_fmt",
@@ -102,15 +97,17 @@ END:VCALENDAR
     ]
   },
   "uid": "g-basic_fmt",
-  "updated": "2020-01-15T13:00:00Z"
+  "updated": "2020-01-15T13:00:00Z",
+  "version": "2.0"
 }
 == date_date_only.json
 BEGIN:VCALENDAR
 BEGIN:VEVENT
 DURATION:PT1H
 JSPROP;JSPTR=created:"2020-01-15"
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15"}]
+JSPROP;JSPTR=recurrenceRule/until:"2020-01-15"
 JSPROP;JSPTR=updated:"2020-01-15"
+RRULE:FREQ=DAILY
 SUMMARY:date date_only
 UID:e-date_only
 END:VEVENT
@@ -128,13 +125,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15"
+      },
       "title": "date date_only",
       "uid": "e-date_only",
       "updated": "2020-01-15"
@@ -152,15 +146,17 @@ END:VCALENDAR
     ]
   },
   "uid": "g-date_only",
-  "updated": "2020-01-15"
+  "updated": "2020-01-15",
+  "version": "2.0"
 }
 == date_feb30.json
 BEGIN:VCALENDAR
 BEGIN:VEVENT
 DURATION:PT1H
 JSPROP;JSPTR=created:"2020-02-30T00:00:00"
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-02-30T00:00:00"}]
+JSPROP;JSPTR=recurrenceRule/until:"2020-02-30T00:00:00"
 JSPROP;JSPTR=updated:"2020-02-30T00:00:00"
+RRULE:FREQ=DAILY
 SUMMARY:date feb30
 UID:e-feb30
 END:VEVENT
@@ -178,13 +174,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-02-30T00:00:00",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-02-30T00:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-02-30T00:00:00"
+      },
       "title": "date feb30",
       "uid": "e-feb30",
       "updated": "2020-02-30T00:00:00"
@@ -202,7 +195,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-feb30",
-  "updated": "2020-02-30T00:00:00"
+  "updated": "2020-02-30T00:00:00",
+  "version": "2.0"
 }
 == date_fraction.json
 BEGIN:VCALENDAR
@@ -211,7 +205,7 @@ CREATED:20200115T130000Z
 DTSTAMP:20200115T130000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date fraction
 UID:e-fraction
 END:VEVENT
@@ -229,13 +223,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T13:00:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date fraction",
@@ -255,15 +246,17 @@ END:VCALENDAR
     ]
   },
   "uid": "g-fraction",
-  "updated": "2020-01-15T13:00:00Z"
+  "updated": "2020-01-15T13:00:00Z",
+  "version": "2.0"
 }
 == date_hour25.json
 BEGIN:VCALENDAR
 BEGIN:VEVENT
 DURATION:PT1H
 JSPROP;JSPTR=created:"2020-01-15T25:00:00"
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T25:00:00"}]
+JSPROP;JSPTR=recurrenceRule/until:"2020-01-15T25:00:00"
 JSPROP;JSPTR=updated:"2020-01-15T25:00:00"
+RRULE:FREQ=DAILY
 SUMMARY:date hour25
 UID:e-hour25
 END:VEVENT
@@ -281,13 +274,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T25:00:00",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T25:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T25:00:00"
+      },
       "title": "date hour25",
       "uid": "e-hour25",
       "updated": "2020-01-15T25:00:00"
@@ -305,7 +295,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-hour25",
-  "updated": "2020-01-15T25:00:00"
+  "updated": "2020-01-15T25:00:00",
+  "version": "2.0"
 }
 == date_leap.json
 BEGIN:VCALENDAR
@@ -314,7 +305,7 @@ CREATED:20240229T235959Z
 DTSTAMP:20240229T235959Z
 DTSTART;TZID=America/New_York:20240229T235959
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2024-02-29T23:59:59"}]
+RRULE:FREQ=DAILY;UNTIL=20240301T045959Z
 SUMMARY:date leap
 UID:e-leap
 END:VEVENT
@@ -332,13 +323,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2024-02-29T23:59:59Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2024-02-29T23:59:59"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2024-02-29T23:59:59"
+      },
       "start": "2024-02-29T23:59:59",
       "timeZone": "America/New_York",
       "title": "date leap",
@@ -358,7 +346,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-leap",
-  "updated": "2024-02-29T23:59:59Z"
+  "updated": "2024-02-29T23:59:59Z",
+  "version": "2.0"
 }
 == date_lower_t.json
 BEGIN:VCALENDAR
@@ -367,7 +356,7 @@ CREATED:20200115T130000Z
 DTSTAMP:20200115T130000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date lower_t
 UID:e-lower_t
 END:VEVENT
@@ -385,13 +374,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T13:00:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date lower_t",
@@ -411,7 +397,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-lower_t",
-  "updated": "2020-01-15T13:00:00Z"
+  "updated": "2020-01-15T13:00:00Z",
+  "version": "2.0"
 }
 == date_negoffset.json
 BEGIN:VCALENDAR
@@ -420,7 +407,7 @@ CREATED:20200115T163000Z
 DTSTAMP:20200115T163000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date negoffset
 UID:e-negoffset
 END:VEVENT
@@ -438,13 +425,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T16:30:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date negoffset",
@@ -464,7 +448,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-negoffset",
-  "updated": "2020-01-15T16:30:00Z"
+  "updated": "2020-01-15T16:30:00Z",
+  "version": "2.0"
 }
 == date_no_seconds.json
 BEGIN:VCALENDAR
@@ -473,7 +458,7 @@ CREATED:20200115T130000Z
 DTSTAMP:20200115T130000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date no_seconds
 UID:e-no_seconds
 END:VEVENT
@@ -491,13 +476,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T13:00:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date no_seconds",
@@ -517,7 +499,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-no_seconds",
-  "updated": "2020-01-15T13:00:00Z"
+  "updated": "2020-01-15T13:00:00Z",
+  "version": "2.0"
 }
 == date_offset.json
 BEGIN:VCALENDAR
@@ -526,7 +509,7 @@ CREATED:20200115T073000Z
 DTSTAMP:20200115T073000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date offset
 UID:e-offset
 END:VEVENT
@@ -544,13 +527,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T07:30:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date offset",
@@ -570,15 +550,17 @@ END:VCALENDAR
     ]
   },
   "uid": "g-offset",
-  "updated": "2020-01-15T07:30:00Z"
+  "updated": "2020-01-15T07:30:00Z",
+  "version": "2.0"
 }
 == date_short_fields.json
 BEGIN:VCALENDAR
 BEGIN:VEVENT
 DURATION:PT1H
 JSPROP;JSPTR=created:"2020-1-5T1:2:3"
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-1-5T1:2:3"}]
+JSPROP;JSPTR=recurrenceRule/until:"2020-1-5T1:2:3"
 JSPROP;JSPTR=updated:"2020-1-5T1:2:3"
+RRULE:FREQ=DAILY
 SUMMARY:date short_fields
 UID:e-short_fields
 END:VEVENT
@@ -596,13 +578,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-1-5T1:2:3",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-1-5T1:2:3"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-1-5T1:2:3"
+      },
       "title": "date short_fields",
       "uid": "e-short_fields",
       "updated": "2020-1-5T1:2:3"
@@ -620,7 +599,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-short_fields",
-  "updated": "2020-1-5T1:2:3"
+  "updated": "2020-1-5T1:2:3",
+  "version": "2.0"
 }
 == date_space.json
 BEGIN:VCALENDAR
@@ -629,7 +609,7 @@ CREATED:20200115T130000Z
 DTSTAMP:20200115T130000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date space
 UID:e-space
 END:VEVENT
@@ -647,13 +627,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T13:00:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date space",
@@ -673,15 +650,17 @@ END:VCALENDAR
     ]
   },
   "uid": "g-space",
-  "updated": "2020-01-15T13:00:00Z"
+  "updated": "2020-01-15T13:00:00Z",
+  "version": "2.0"
 }
 == date_trailing.json
 BEGIN:VCALENDAR
 BEGIN:VEVENT
 DURATION:PT1H
 JSPROP;JSPTR=created:"2020-01-15T13:00:00abc"
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00abc"}]
+JSPROP;JSPTR=recurrenceRule/until:"2020-01-15T13:00:00abc"
 JSPROP;JSPTR=updated:"2020-01-15T13:00:00abc"
+RRULE:FREQ=DAILY
 SUMMARY:date trailing
 UID:e-trailing
 END:VEVENT
@@ -699,13 +678,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T13:00:00abc",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00abc"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00abc"
+      },
       "title": "date trailing",
       "uid": "e-trailing",
       "updated": "2020-01-15T13:00:00abc"
@@ -723,7 +699,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-trailing",
-  "updated": "2020-01-15T13:00:00abc"
+  "updated": "2020-01-15T13:00:00abc",
+  "version": "2.0"
 }
 == date_y1900.json
 BEGIN:VCALENDAR
@@ -732,7 +709,7 @@ CREATED:19000101T000000Z
 DTSTAMP:19000101T000000Z
 DTSTART;TZID=America/New_York:19000101T000000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"1900-01-01T00:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=19000101T050000Z
 SUMMARY:date y1900
 UID:e-y1900
 END:VEVENT
@@ -750,13 +727,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "1900-01-01T00:00:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "1900-01-01T00:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "1900-01-01T00:00:00"
+      },
       "start": "1900-01-01T00:00:00",
       "timeZone": "America/New_York",
       "title": "date y1900",
@@ -776,7 +750,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-y1900",
-  "updated": "1900-01-01T00:00:00Z"
+  "updated": "1900-01-01T00:00:00Z",
+  "version": "2.0"
 }
 == date_zulu.json
 BEGIN:VCALENDAR
@@ -785,7 +760,7 @@ CREATED:20200115T130000Z
 DTSTAMP:20200115T130000Z
 DTSTART;TZID=America/New_York:20200115T130000
 DURATION:PT1H
-JSPROP;JSPTR=recurrenceRules:[{"@type":"RecurrenceRule"\,"frequency":"daily"\,"until":"2020-01-15T13:00:00"}]
+RRULE:FREQ=DAILY;UNTIL=20200115T180000Z
 SUMMARY:date zulu
 UID:e-zulu
 END:VEVENT
@@ -803,13 +778,10 @@ END:VCALENDAR
       "@type": "Event",
       "created": "2020-01-15T13:00:00Z",
       "duration": "PT1H",
-      "recurrenceRules": [
-        {
-          "@type": "RecurrenceRule",
-          "frequency": "daily",
-          "until": "2020-01-15T13:00:00"
-        }
-      ],
+      "recurrenceRule": {
+        "frequency": "daily",
+        "until": "2020-01-15T13:00:00"
+      },
       "start": "2020-01-15T13:00:00",
       "timeZone": "America/New_York",
       "title": "date zulu",
@@ -829,7 +801,8 @@ END:VCALENDAR
     ]
   },
   "uid": "g-zulu",
-  "updated": "2020-01-15T13:00:00Z"
+  "updated": "2020-01-15T13:00:00Z",
+  "version": "2.0"
 }
 == jscal_001.json
 BEGIN:VCALENDAR
@@ -1120,7 +1093,8 @@ END:VCALENDAR
         "2.0"
       ]
     ]
-  }
+  },
+  "version": "2.0"
 }
 == jscal_002.json
 BEGIN:VCALENDAR
@@ -1249,7 +1223,8 @@ END:VCALENDAR
         "2.0"
       ]
     ]
-  }
+  },
+  "version": "2.0"
 }
 == jscal_003.json
 BEGIN:VCALENDAR
@@ -1331,5 +1306,6 @@ END:VCALENDAR
         "2.0"
       ]
     ]
-  }
+  },
+  "version": "2.0"
 }

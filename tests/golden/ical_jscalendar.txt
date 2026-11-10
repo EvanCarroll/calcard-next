@@ -65,7 +65,8 @@
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -162,7 +163,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -264,7 +266,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -383,7 +386,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -505,7 +509,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -596,7 +601,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -695,7 +701,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -969,7 +976,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1226,7 +1234,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "Microsoft Exchange Server 2010"
+  "prodId": "Microsoft Exchange Server 2010",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1442,7 +1451,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//Apple Inc.//iCal 3.0//EN"
+  "prodId": "-//Apple Inc.//iCal 3.0//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1637,7 +1647,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//Google Inc//Google Calendar 70.9054//EN"
+  "prodId": "-//Google Inc//Google Calendar 70.9054//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1700,7 +1711,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1753,7 +1765,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1801,7 +1814,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1846,7 +1860,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1894,7 +1909,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -1956,7 +1972,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2006,7 +2023,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2054,7 +2072,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2097,7 +2116,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2145,7 +2165,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2187,7 +2208,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2239,7 +2261,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2282,7 +2305,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2331,7 +2355,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2387,7 +2412,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2434,7 +2460,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2488,7 +2515,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2538,7 +2566,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2580,7 +2609,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2633,7 +2663,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2681,7 +2712,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2726,7 +2758,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2774,7 +2807,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2836,7 +2870,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2886,7 +2921,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2934,7 +2970,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -2977,7 +3014,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3025,7 +3063,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3067,7 +3106,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3119,7 +3159,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3162,7 +3203,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3211,7 +3253,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3267,7 +3310,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3314,7 +3358,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3368,7 +3413,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3418,7 +3464,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3460,7 +3507,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3513,7 +3561,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3561,7 +3610,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3606,7 +3656,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3654,7 +3705,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3716,7 +3768,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3766,7 +3819,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3814,7 +3868,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3857,7 +3912,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3905,7 +3961,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3947,7 +4004,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -3999,7 +4057,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4042,7 +4101,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4091,7 +4151,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4147,7 +4208,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4194,7 +4256,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4248,7 +4311,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4298,7 +4362,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4340,7 +4405,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4393,7 +4459,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4441,7 +4508,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4486,7 +4554,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4534,7 +4603,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4596,7 +4666,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4646,7 +4717,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4694,7 +4766,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4737,7 +4810,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4785,7 +4859,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4827,7 +4902,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4879,7 +4955,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4922,7 +4999,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -4971,7 +5049,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5027,7 +5106,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5074,7 +5154,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5128,7 +5209,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5178,7 +5260,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5232,7 +5315,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5281,7 +5365,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5330,7 +5415,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5373,7 +5459,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5423,7 +5510,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5478,7 +5566,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5521,7 +5610,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5567,7 +5657,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5618,7 +5709,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5667,7 +5759,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5711,7 +5804,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5759,7 +5853,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5808,7 +5903,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5871,7 +5967,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5915,7 +6012,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -5968,7 +6066,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6025,7 +6124,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6076,7 +6176,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6130,7 +6231,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6179,7 +6281,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6228,7 +6331,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6271,7 +6375,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6321,7 +6426,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6376,7 +6482,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6419,7 +6526,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6473,7 +6581,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6522,7 +6631,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6568,7 +6678,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6617,7 +6728,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6680,7 +6792,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6731,7 +6844,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6780,7 +6894,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6824,7 +6939,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6873,7 +6989,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6916,7 +7033,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -6969,7 +7087,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7013,7 +7132,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7063,7 +7183,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7120,7 +7241,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7168,7 +7290,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7223,7 +7346,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7274,7 +7398,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7317,7 +7442,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7371,7 +7497,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7420,7 +7547,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7466,7 +7594,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7515,7 +7644,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7578,7 +7708,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7629,7 +7760,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7678,7 +7810,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7722,7 +7855,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7771,7 +7905,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7814,7 +7949,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7867,7 +8003,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7911,7 +8048,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -7961,7 +8099,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8018,7 +8157,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8066,7 +8206,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8121,7 +8262,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8172,7 +8314,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8215,7 +8358,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8269,7 +8413,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8318,7 +8463,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8364,7 +8510,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8413,7 +8560,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8476,7 +8624,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8527,7 +8676,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8576,7 +8726,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8620,7 +8771,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8669,7 +8821,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8712,7 +8865,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8765,7 +8919,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8809,7 +8964,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8859,7 +9015,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8916,7 +9073,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -8964,7 +9122,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9019,7 +9178,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9070,7 +9230,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9113,7 +9274,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9167,7 +9329,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9216,7 +9379,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9262,7 +9426,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9311,7 +9476,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9374,7 +9540,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9425,7 +9592,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9474,7 +9642,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9518,7 +9687,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9567,7 +9737,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9610,7 +9781,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9663,7 +9835,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9707,7 +9880,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9757,7 +9931,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9814,7 +9989,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9862,7 +10038,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9917,7 +10094,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -9968,7 +10146,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10017,7 +10196,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10080,7 +10260,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10124,7 +10305,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10177,7 +10359,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10234,7 +10417,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10285,7 +10469,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10339,7 +10524,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10388,7 +10574,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10437,7 +10624,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10480,7 +10668,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10530,7 +10719,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10585,7 +10775,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10628,7 +10819,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10674,7 +10866,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10725,7 +10918,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10774,7 +10968,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10818,7 +11013,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10866,7 +11062,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10915,7 +11112,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -10978,7 +11176,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11022,7 +11221,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11075,7 +11275,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11132,7 +11333,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11183,7 +11385,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11226,7 +11429,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11280,7 +11484,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11329,7 +11534,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11375,7 +11581,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11424,7 +11631,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11487,7 +11695,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11538,7 +11747,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11587,7 +11797,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11631,7 +11842,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11680,7 +11892,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11723,7 +11936,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11776,7 +11990,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11820,7 +12035,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11870,7 +12086,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11927,7 +12144,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -11975,7 +12193,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12030,7 +12249,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12081,7 +12301,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12124,7 +12345,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12178,7 +12400,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12227,7 +12450,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12273,7 +12497,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12322,7 +12547,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12385,7 +12611,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12436,7 +12663,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12485,7 +12713,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12529,7 +12758,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12578,7 +12808,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12621,7 +12852,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12674,7 +12906,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12718,7 +12951,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12768,7 +13002,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12825,7 +13060,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12873,7 +13109,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12928,7 +13165,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -12979,7 +13217,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13022,7 +13261,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13076,7 +13316,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13125,7 +13366,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13171,7 +13413,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13220,7 +13463,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13283,7 +13527,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13334,7 +13579,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13383,7 +13629,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13427,7 +13674,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13476,7 +13724,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13519,7 +13768,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13572,7 +13822,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13616,7 +13867,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13666,7 +13918,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13723,7 +13976,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13771,7 +14025,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13826,7 +14081,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13877,7 +14133,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13920,7 +14177,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -13974,7 +14232,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14023,7 +14282,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14069,7 +14329,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14118,7 +14379,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14181,7 +14443,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14232,7 +14495,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14281,7 +14545,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14325,7 +14590,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14374,7 +14640,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14417,7 +14684,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14470,7 +14738,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14514,7 +14783,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14564,7 +14834,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14621,7 +14892,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14669,7 +14941,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14724,7 +14997,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14775,7 +15049,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14818,7 +15093,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14864,7 +15140,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14915,7 +15192,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -14964,7 +15242,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15008,7 +15287,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15056,7 +15336,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15105,7 +15386,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15168,7 +15450,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15212,7 +15495,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15265,7 +15549,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15322,7 +15607,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15373,7 +15659,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15427,7 +15714,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15476,7 +15764,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15525,7 +15814,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15568,7 +15858,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15618,7 +15909,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15673,7 +15965,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15716,7 +16009,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15762,7 +16056,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15813,7 +16108,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15862,7 +16158,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15906,7 +16203,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -15954,7 +16252,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16003,7 +16302,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16066,7 +16366,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16110,7 +16411,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16163,7 +16465,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16220,7 +16523,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16271,7 +16575,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16325,7 +16630,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16374,7 +16680,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16423,7 +16730,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16466,7 +16774,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16516,7 +16825,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16571,7 +16881,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16614,7 +16925,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16660,7 +16972,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16711,7 +17024,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16760,7 +17074,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16804,7 +17119,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16852,7 +17168,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16901,7 +17218,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -16964,7 +17282,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -17008,7 +17327,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -17061,7 +17381,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -17118,7 +17439,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
@@ -17169,7 +17491,8 @@ END:VCALENDAR
       ]
     ]
   },
-  "prodId": "-//calcard-next//golden//EN"
+  "prodId": "-//calcard-next//golden//EN",
+  "version": "2.0"
 }
 --
 BEGIN:VCALENDAR
