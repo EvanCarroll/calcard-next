@@ -1,3 +1,7 @@
+Unreleased
+================================
+- Fix: recurrence expansion gives a component whose `DTSTART` is a DATE-TIME, and which has no `DTEND`, `DURATION` or `DUE`, a duration of zero instead of ending at 23:59:59 on the start date (RFC 5545, Section 3.6.1; RFC 4791, Section 9.9). This also applies to a VTODO with only `DUE`, only `COMPLETED` or only `CREATED`. Callers that test overlap with `start < range_end && end > range_start` will now skip these zero-length instances; RFC 4791, Section 9.9 matches them with `range_start <= start < range_end` (#1).
+
 calcard-next 1.0.1 (2026-11-09)
 ================================
 - Fix: iCalendar URI and CAL-ADDRESS property values are no longer backslash-escaped as if they were TEXT (RFC 5545, Section 3.3.13). For example, `geo:1,2` and `data:text/plain;base64,...` were written as `geo:1\,2` and `data:text/plain;base64\,...`, which other clients read as part of the URI (stalwartlabs/calcard#27). Escaped values written by earlier versions still parse.

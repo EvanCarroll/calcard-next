@@ -433,17 +433,12 @@ impl ICalendarComponent {
                time of day specified by the "DTSTART" property.
             */
 
+            /*
+               RFC 4791, Section 9.9 states the same as a number: the duration
+               is 0 seconds for a DATE-TIME DTSTART and 1 day (+P1D) for a DATE.
+            */
             let duration = if dt_start_has_time {
-                // If the start has time, we use the same time for the end
-                dt_start
-                    .date_time
-                    .with()
-                    .hour(23)
-                    .minute(59)
-                    .second(59)
-                    .build()
-                    .map(|dt| dt.duration_since(dt_start.date_time))
-                    .unwrap_or(ONE_DAY)
+                SignedDuration::ZERO
             } else {
                 ONE_DAY
             };
