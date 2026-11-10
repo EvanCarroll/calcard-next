@@ -72,9 +72,12 @@ impl Tz {
     pub fn as_id(&self) -> u16 {
         match self {
             Tz::Tz(tz) => tz.id(),
+            // A zero offset is UTC and has UTC's id. `Tz::Fixed` is public, so
+            // a caller can build one; the library itself never does.
+            Tz::Fixed(offset) if offset.seconds() / 60 == 0 => Tz::UTC.as_id(),
             Tz::Fixed(offset) => {
                 let offset = offset.seconds() / 60;
-                debug_assert!((-1440..=1440).contains(&offset) && offset != 0);
+                debug_assert!((-1440..=1440).contains(&offset));
                 0x8000 | ((offset + 1440) as u16)
             }
             Tz::Floating => 0x8000,

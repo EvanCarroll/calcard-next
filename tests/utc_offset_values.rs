@@ -145,3 +145,13 @@ fn a_zero_offset_id_is_utc() {
     assert_eq!(tz, Tz::UTC);
     assert_eq!(Tz::from_id(tz.as_id()), Some(Tz::UTC));
 }
+
+/// A zero fixed offset is UTC: `Tz::Fixed` is public, so a caller can build
+/// one, and its id must be UTC's rather than a fixed-offset id that only
+/// reads back as UTC.
+#[test]
+fn a_zero_fixed_offset_has_the_utc_id() {
+    let zero = Tz::Fixed(Offset::UTC);
+    assert_eq!(zero.as_id(), Tz::UTC.as_id());
+    assert_eq!(Tz::from_id(zero.as_id()), Some(Tz::UTC));
+}
