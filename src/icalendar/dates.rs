@@ -598,7 +598,11 @@ impl ICalendarComponent {
             },
         };
         let event;
-        let start_tz = tz_resolver.resolve_or_default(dt_start_tzid);
+        // A DTSTART in UTC (or with an offset) recurs in UTC, not in the
+        // default time zone (RFC 5545, Section 3.3.5).
+        let start_tz = dt_start
+            .tz()
+            .unwrap_or_else(|| tz_resolver.resolve_or_default(dt_start_tzid));
         let dt_start_tz = dt_start
             .to_date_time_with_tz(start_tz)
             .ok_or(CalendarErrorType::InvalidDtStart)?;

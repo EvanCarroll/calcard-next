@@ -179,3 +179,29 @@ fn expand_dates_is_an_unbounded_range() {
         ical.expand_dates_between(Tz::UTC, Timestamp::MIN, Timestamp::MAX, 10)
     );
 }
+
+/// A DTSTART in UTC recurs at the same UTC time, whatever the default time
+/// zone (RFC 5545, Section 3.3.5: a "Z" date-time is in UTC).
+#[test]
+fn a_utc_dtstart_recurs_in_utc() {
+    use std::str::FromStr;
+    let ical = calendar(
+        "BEGIN:VEVENT\r\nUID:u\r\nDTSTART:20240308T023000Z\r\nDURATION:PT1H\r\n\
+         RRULE:FREQ=WEEKLY;COUNT=3\r\nEND:VEVENT\r\n",
+    );
+    let chicago = Tz::from_str("America/Chicago").unwrap();
+    let expand = ical.expand_dates(chicago, 10);
+    let found = expand
+        .events
+        .iter()
+        .map(|e| e.start.timestamp().to_string())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        found,
+        [
+            "2024-03-08T02:30:00Z",
+            "2024-03-15T02:30:00Z",
+            "2024-03-22T02:30:00Z"
+        ]
+    );
+}
