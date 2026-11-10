@@ -17,14 +17,13 @@
 use calcard_next::{
     Entry, Parser,
     common::timezone::Tz,
-    diagnostic::Diagnostic,
     icalendar::{
         ICalendar,
         dates::{CalendarEvent, TimeOrDelta},
     },
-    jscalendar::JSCalendar,
-    jscontact::JSContact,
 };
+#[cfg(feature = "jmap")]
+use calcard_next::{diagnostic::Diagnostic, jscalendar::JSCalendar, jscontact::JSContact};
 use std::{
     borrow::Cow,
     fmt::Write,
@@ -57,6 +56,7 @@ fn fmt_delta(delta: &Delta) -> String {
 
 /// Re-serializes JSON with object keys sorted, since the library emits
 /// object members in hash-map iteration order.
+#[cfg(feature = "jmap")]
 fn canon_json(json: &str) -> String {
     fn sort(value: serde_json::Value) -> serde_json::Value {
         match value {
@@ -235,6 +235,7 @@ fn render_events(out: &mut String, ical: &ICalendar, default_tz: Tz) {
     }
 }
 
+#[cfg(feature = "jmap")]
 fn render_ical_roundtrip(out: &mut String, name: &str, input: &str) {
     let ical = parse_ical(input);
     let jscal = ical.into_jscalendar::<String, String>();
@@ -246,6 +247,7 @@ fn render_ical_roundtrip(out: &mut String, name: &str, input: &str) {
     writeln!(out, "== {name}\n{json}\n--\n{back}").unwrap();
 }
 
+#[cfg(feature = "jmap")]
 fn render_vcard_roundtrip(out: &mut String, name: &str, input: &str) {
     let Entry::VCard(vcard) = Parser::new(input).entry() else {
         panic!("expected vCard in {name}");
@@ -270,6 +272,7 @@ fn golden_expand() {
     check_golden("expand.txt", &out);
 }
 
+#[cfg(feature = "jmap")]
 #[test]
 fn golden_ical_jscalendar_roundtrip() {
     let mut out = String::new();
@@ -279,6 +282,7 @@ fn golden_ical_jscalendar_roundtrip() {
     check_golden("ical_jscalendar.txt", &out);
 }
 
+#[cfg(feature = "jmap")]
 #[test]
 fn golden_jscalendar_ical_roundtrip() {
     let mut out = String::new();
@@ -297,6 +301,7 @@ fn golden_jscalendar_ical_roundtrip() {
 /// JSCalendar 1.0 input (the RFC 8984, Section 6 examples): the upgraded 2.0
 /// form, the iCalendar it converts to, its expansion and the JSCalendar that
 /// iCalendar converts back to.
+#[cfg(feature = "jmap")]
 #[test]
 fn golden_jscalendar_v1() {
     let mut out = String::new();
@@ -314,6 +319,7 @@ fn golden_jscalendar_v1() {
     check_golden("jscalendar_v1.txt", &out);
 }
 
+#[cfg(feature = "jmap")]
 #[test]
 fn golden_vcard_jscontact_roundtrip() {
     let mut out = String::new();
@@ -332,6 +338,7 @@ fn golden_vcard_jscontact_roundtrip() {
 
 /// Text in legacy character sets decodes only with the `legacy-charsets`
 /// feature; without it, it must be kept as binary data, never garbled.
+#[cfg(feature = "jmap")]
 #[test]
 fn golden_charsets() {
     let mut out = String::new();
@@ -474,6 +481,7 @@ fn golden_tz_table() {
 
 /// Writes diagnostics sorted, since converted JSON data has its object
 /// members in hash-map order.
+#[cfg(feature = "jmap")]
 fn render_diagnostics(out: &mut String, label: &str, diagnostics: &[Diagnostic]) {
     let mut diagnostics = diagnostics.iter().collect::<Vec<_>>();
     diagnostics.sort();
@@ -486,6 +494,7 @@ fn render_diagnostics(out: &mut String, label: &str, diagnostics: &[Diagnostic])
 /// carries without converting, and what the converted data keeps but does not
 /// interpret. The last is a check on the property tables: a conversion should
 /// produce only what they define.
+#[cfg(feature = "jmap")]
 #[test]
 fn golden_diagnostics() {
     let mut out = String::new();

@@ -5,6 +5,8 @@
 //! validate" it. An `@type` the position implies is not converted to vCard
 //! (RFC 9555, Appendix A lists it as "not applicable").
 
+#![cfg(feature = "jmap")]
+
 use calcard_next::{
     error::{ConvertError, ParseError, TypeError},
     icalendar::ICalendar,

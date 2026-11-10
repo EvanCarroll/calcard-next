@@ -4,6 +4,8 @@
 //! (stalwartlabs/stalwart#2884), where a service with a `user` and no `uri` was
 //! written with an empty value and dropped when read back.
 
+#![cfg(feature = "jmap")]
+
 use calcard_next::{jscontact::JSContact, vcard::VCard};
 use serde_json::{Value, json};
 
