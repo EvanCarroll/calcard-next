@@ -1,4 +1,4 @@
-calcard-next 3.0.1 (unreleased)
+calcard-next 3.0.1 (2026-11-10)
 ===============================
 - Fix: `JSCalendar::diagnostics` no longer reports `description` and `descriptionContentType` on a Group as `MisplacedProperty`; both are Group properties (RFC 8984, Section 5.3; draft-ietf-calext-jscalendarbis, Section 4.3), and their values are now checked as strings (#8).
 
