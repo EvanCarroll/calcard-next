@@ -24,3 +24,25 @@ pub enum PatchError {
     #[error("patch pointer {0:?} is not valid")]
     InvalidPointer(String),
 }
+
+/// Why an entry, or one of its instances, could not be expanded by
+/// [`JSCalendar::expand_between`](crate::jscalendar::JSCalendar::expand_between).
+#[cfg(feature = "jmap")]
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+#[non_exhaustive]
+pub enum ExpandError {
+    /// The dates or recurrence rule of the entry are invalid.
+    #[error("{0}")]
+    Calendar(crate::icalendar::dates::CalendarErrorType),
+    /// The patch in `recurrenceOverrides` could not be applied; the instance
+    /// is returned without it.
+    #[error(transparent)]
+    Patch(#[from] PatchError),
+}
+
+#[cfg(feature = "jmap")]
+impl From<crate::icalendar::dates::CalendarErrorType> for ExpandError {
+    fn from(error: crate::icalendar::dates::CalendarErrorType) -> Self {
+        ExpandError::Calendar(error)
+    }
+}
