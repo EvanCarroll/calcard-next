@@ -96,26 +96,6 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
                 Value::Str(format!("{UID_PREFIX}{index}").into()),
             );
         }
-        // The iCalendar conversion expects the entries inside a Group.
-        if let Value::Object(root) = &tagged.0
-            && object_type(root) != Some(JSCalendarType::Group)
-        {
-            let entry = std::mem::take(&mut tagged.0);
-            tagged.0 = Value::Object(Map::from(vec![
-                (
-                    Key::Property(JSCalendarProperty::Type),
-                    Value::Element(JSCalendarValue::Type(JSCalendarType::Group)),
-                ),
-                (
-                    Key::Property(JSCalendarProperty::Version),
-                    Value::Str("2.0".into()),
-                ),
-                (
-                    Key::Property(JSCalendarProperty::Entries),
-                    Value::Array(vec![entry]),
-                ),
-            ]));
-        }
         let mut result = JSCalendarExpand {
             instances: Vec::new(),
             errors: Vec::new(),

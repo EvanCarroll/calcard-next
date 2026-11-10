@@ -27,7 +27,15 @@ impl<'x, I: JSCalendarId, B: JSCalendarId> JSCalendar<'x, I, B> {
     /// 2.0 first (see [`JSCalendar::upgrade`]).
     pub fn into_icalendar(mut self) -> Option<ICalendar> {
         self.upgrade();
-        self.0.into_object().map(|entries| {
+        self.0.into_object().map(|mut entries| {
+            if matches!(
+                entries.get(&Key::Property(JSCalendarProperty::Type)),
+                Some(Value::Element(JSCalendarValue::Type(
+                    JSCalendarType::Event | JSCalendarType::Task
+                )))
+            ) {
+                entries = into_group(entries);
+            }
             let mut ical = ICalendar::default();
 
             ical.from_jscalendar(
@@ -2346,6 +2354,27 @@ impl ICalendarComponent {
                 .with_value(serde_json::to_string(&value).unwrap_or_default()),
         );
     }
+}
+
+/// A lone Event or Task as the only entry of a Group. Calendar components
+/// live inside a VCALENDAR object (RFC 5545, Section 3.4), so a lone object
+/// converts as a Group would; its `prodId` describes the whole object and
+/// becomes the VCALENDAR's PRODID.
+fn into_group<'x, I: JSCalendarId, B: JSCalendarId>(
+    mut object: JSMap<'x, I, B>,
+) -> JSMap<'x, I, B> {
+    let mut group = Map::from(vec![(
+        Key::Property(JSCalendarProperty::Type),
+        Value::Element(JSCalendarValue::Type(JSCalendarType::Group)),
+    )]);
+    if let Some(prod_id) = object.remove(&Key::Property(JSCalendarProperty::ProdId)) {
+        group.insert_unchecked(Key::Property(JSCalendarProperty::ProdId), prod_id);
+    }
+    group.insert_unchecked(
+        Key::Property(JSCalendarProperty::Entries),
+        Value::Array(vec![Value::Object(object)]),
+    );
+    group
 }
 
 /// The main object as the base of its recurrence overrides: everything except
