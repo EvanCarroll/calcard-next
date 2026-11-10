@@ -208,7 +208,9 @@ impl ICalendar {
                     if !recurrences.is_empty() || !preserved.is_empty() {
                         let component_type = component.component_type.clone();
                         let mut main = component.into_object().into_object().unwrap_or_default();
-                        let base = override_base(&main);
+                        // Shifted in place to each recurrence id in turn; the shift keeps
+                        // the distance from start to due, so it needs no copy.
+                        let mut base = override_base(&main);
                         let overrides = main
                             .insert_or_get_mut(
                                 Key::Property(JSCalendarProperty::RecurrenceOverrides),
@@ -220,7 +222,7 @@ impl ICalendar {
                             let recurrence_id = JSCalendarDateTime::new(recurrence_id, true);
                             let instance =
                                 recurrence.into_object().into_object().unwrap_or_default();
-                            let (base, _) = patch::occurrence(&base, Some(recurrence_id), None);
+                            patch::shift_to_recurrence_id(&mut base, recurrence_id);
                             overrides.insert(
                                 Key::Property(JSCalendarProperty::DateTime(recurrence_id)),
                                 Value::Object(patch::diff(&base, &instance)),

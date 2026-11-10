@@ -119,12 +119,15 @@ fn apply_entries<'p, 'x: 'p, I: JSCalendarId + 'p, B: JSCalendarId + 'p>(
         }
     }
 
-    let mut work = Value::Object(target.clone());
-    for (path, value) in paths {
-        apply_one(&mut work, &path, value.clone())?;
+    // The pointers do not overlap, so the parents of each one are the same
+    // before and after the others are applied: checking every pointer against
+    // the unmodified target is exact, and the patch is then applied in place
+    // without failing half-way.
+    for (path, value) in &paths {
+        check_one(target, path, value)?;
     }
-    if let Value::Object(work) = work {
-        *target = work;
+    for (path, value) in paths {
+        apply_one(target, &path, value.clone());
     }
     Ok(())
 }
@@ -190,26 +193,80 @@ pub(crate) fn occurrence<'x, I: JSCalendarId, B: JSCalendarId>(
     (object, error)
 }
 
-fn apply_one<'x, I: JSCalendarId, B: JSCalendarId>(
-    root: &mut JSValue<'x, I, B>,
+/// The object or array that holds the last segment of `path`.
+fn parent<'a, 'x, I: JSCalendarId, B: JSCalendarId>(
+    root: &'a JSMap<'x, I, B>,
+    parents: &[Segment<I>],
+) -> Option<ParentRef<'a, 'x, I, B>> {
+    let mut current = ParentRef::Object(root);
+    for segment in parents {
+        let next = match current {
+            ParentRef::Object(map) => map.get(&segment.to_key()),
+            ParentRef::Array(array) => segment.as_index().and_then(|index| array.get(index)),
+        }?;
+        current = match next {
+            Value::Object(map) => ParentRef::Object(map),
+            Value::Array(array) => ParentRef::Array(array),
+            _ => return None,
+        };
+    }
+    Some(current)
+}
+
+enum ParentRef<'a, 'x, I: JSCalendarId, B: JSCalendarId> {
+    Object(&'a JSMap<'x, I, B>),
+    Array(&'a Vec<JSValue<'x, I, B>>),
+}
+
+/// Whether `value` can be set at `path` in `root`: every parent exists, and
+/// an array member is replaced, not inserted or removed.
+fn check_one<I: JSCalendarId, B: JSCalendarId>(
+    root: &JSMap<'_, I, B>,
     path: &[Segment<I>],
-    value: JSValue<'x, I, B>,
+    value: &JSValue<'_, I, B>,
 ) -> Result<(), PatchError> {
     let (last, parents) = path
         .split_last()
         .ok_or_else(|| PatchError::InvalidPointer(String::new()))?;
-    let mut current = root;
-    for segment in parents {
-        current = match current {
-            Value::Object(map) => map.get_mut(&segment.to_key()),
-            Value::Array(array) => segment.as_index().and_then(|index| array.get_mut(index)),
-            _ => None,
+    match parent(root, parents) {
+        Some(ParentRef::Object(_)) => Ok(()),
+        Some(ParentRef::Array(array))
+            if !value.is_null() && last.as_index().is_some_and(|index| index < array.len()) =>
+        {
+            Ok(())
         }
-        .ok_or_else(|| PatchError::MissingParent(path_string(path)))?;
+        Some(ParentRef::Array(_)) => Err(PatchError::ArrayChange(path_string(path))),
+        None => Err(PatchError::MissingParent(path_string(path))),
+    }
+}
+
+/// Sets `value` at `path`, which [`check_one`] accepted.
+fn apply_one<'x, I: JSCalendarId, B: JSCalendarId>(
+    root: &mut JSMap<'x, I, B>,
+    path: &[Segment<I>],
+    value: JSValue<'x, I, B>,
+) {
+    let Some((last, parents)) = path.split_last() else {
+        return;
+    };
+    let mut current = ParentMut::Object(root);
+    for segment in parents {
+        let next = match current {
+            ParentMut::Object(map) => map.get_mut(&segment.to_key()),
+            ParentMut::Array(array) => segment.as_index().and_then(|index| array.get_mut(index)),
+        };
+        current = match next {
+            Some(Value::Object(map)) => ParentMut::Object(map),
+            Some(Value::Array(array)) => ParentMut::Array(array),
+            _ => {
+                debug_assert!(false, "unchecked pointer {}", path_string(path));
+                return;
+            }
+        };
     }
 
     match current {
-        Value::Object(map) => {
+        ParentMut::Object(map) => {
             let key = last.to_key();
             if value.is_null() {
                 map.remove(&key);
@@ -218,17 +275,18 @@ fn apply_one<'x, I: JSCalendarId, B: JSCalendarId>(
             } else {
                 map.insert_unchecked(key, value);
             }
-            Ok(())
         }
-        Value::Array(array) => match last.as_index().and_then(|index| array.get_mut(index)) {
-            Some(existing) if !value.is_null() => {
+        ParentMut::Array(array) => {
+            if let Some(existing) = last.as_index().and_then(|index| array.get_mut(index)) {
                 *existing = value;
-                Ok(())
             }
-            _ => Err(PatchError::ArrayChange(path_string(path))),
-        },
-        _ => Err(PatchError::MissingParent(path_string(path))),
+        }
     }
+}
+
+enum ParentMut<'a, 'x, I: JSCalendarId, B: JSCalendarId> {
+    Object(&'a mut JSMap<'x, I, B>),
+    Array(&'a mut Vec<JSValue<'x, I, B>>),
 }
 
 /// Computes the PatchObject that transforms `base` into `target`.
@@ -457,6 +515,17 @@ mod tests {
         let mut base = object(r#"{"title": "A"}"#);
         let before = base.clone();
         assert!(apply_patch(&mut base, &object(r#"{"title": "B", "x/y": 1}"#)).is_err());
+        assert_eq!(base, before);
+    }
+
+    #[test]
+    fn a_bad_pointer_after_a_good_one_changes_nothing() {
+        let mut base = object(r#"{"title": "A", "keywords2": ["a"]}"#);
+        let before = base.clone();
+        assert!(matches!(
+            apply_patch(&mut base, &object(r#"{"title": "B", "keywords2/3": "x"}"#)),
+            Err(PatchError::ArrayChange(_))
+        ));
         assert_eq!(base, before);
     }
 
